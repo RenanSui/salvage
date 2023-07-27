@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.draggable{
+  -webkit-user-select: none;
+   user-select: none;
+   -webkit-app-region: drag;
+}
+
+body{
+  overflow: hidden;
+  background-color: black;
+  height: 100vh;
+}
+
+.main::-webkit-scrollbar{
+  width: 12px;
+}
+
+.main::-webkit-scrollbar-track{
+  background-color: transparent;
+}
+
+.main::-webkit-scrollbar-thumb{
+  border-right: 4px solid rgba(255, 255, 255, 1);
+}
+.main::-webkit-scrollbar-thumb:hover{
+  border-right: 4px solid rgba(255, 255, 255, 0.5);
+}
+
