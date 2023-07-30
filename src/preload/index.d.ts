@@ -1,4 +1,5 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
+// eslint-disable-next-line prettier/prettier
+import { ElectronAPI } from '@electron-toolkit/preload';
 
 declare global {
   interface Window {
@@ -7,9 +8,8 @@ declare global {
       copyFiles: (dir: { srcDir: string; destDir: string }) => void
       closeApp: () => void
       minimizeApp: () => void
+      get: <T>(key: string) => T
+      set: (key: string, val: unknown) => void
     }
-    // ipcRenderer: {
-    //   send: (channel: string, data: string[]) => void
-    // }
   }
 }

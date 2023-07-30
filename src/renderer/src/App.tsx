@@ -1,11 +1,75 @@
+import { useEffect, useState } from 'react'
+import { Icons } from './components/icons'
 import { SalvageItem } from './components/salvage-item'
+import { randomId } from './lib/utils'
+import { ISalvageItem } from './types'
+
+// const itemPaths = [
+//   {
+//     id: 0,
+//     title: 'Kingdom Hearts III',
+//     srcDir: 'C:/Users/renan/Documents/KINGDOM HEARTS III',
+//     destDir:
+//       'D:/Games/0.GAME SAVE FILES BACKUP/Kingdom Hearts/KINGDOM HEARTS III',
+//     isActive: true,
+//   },
+//   {
+//     id: 1,
+//     title: 'Dark Souls III',
+//     srcDir: 'C:/Users/renan/AppData/Roaming/DarkSoulsIII',
+//     destDir: 'D:/Games/0.GAME SAVE FILES BACKUP/DarkSoulsIII',
+//     isActive: true,
+//   },
+//   {
+//     id: 2,
+//     title: 'Dark Souls II',
+//     srcDir: 'C:/Users/renan/AppData/Roaming/DarkSoulsII',
+//     destDir: 'D:/Games/0.GAME SAVE FILES BACKUP/DarkSoulsII',
+//     isActive: true,
+//   },
+// ]
+
+// export type PathItem = typeof item
 
 function App(): JSX.Element {
+  const [responsePathItems, setResponsePathItems] = useState<ISalvageItem[]>([])
+  const [rerender, setRerender] = useState(false)
+
+  const addPathItem = () => {
+    const randomID = { id: randomId() }
+    const newPaths = [randomID, ...responsePathItems]
+    window.api.set('pathItems', newPaths)
+
+    const response = window.api.get<ISalvageItem[]>('pathItems') || []
+    setResponsePathItems(response)
+
+    // toast('Path added!')
+  }
+
+  useEffect(() => {
+    const response = window.api.get<ISalvageItem[]>('pathItems') || []
+    setResponsePathItems(response)
+  }, [rerender])
+
   return (
-    <main className="bg-black text-white flex flex-col gap-2">
-      <div className="p-12 ml-2 rounded-md bg-neutral-900"></div>
-      <section className="h-[calc(100vh-45px)] overflow-auto flex flex-col gap-2 mx-2 main flex-grow">
-        <SalvageItem />
+    <main className="bg-neutral-950 text-white flex flex-col gap-2">
+      <section className="salvageContainer h-[calc(100vh_-_53px)] mb-2 overflow-auto flex flex-col gap-2 mx-2 mt-2 flex-grow">
+        <div
+          className="bg-transparent hover:bg-neutral-900 border border-neutral-800 flex justify-center items-center group py-2 rounded-md cursor-pointer transition-all duration-300"
+          onClick={addPathItem}
+        >
+          <Icons.plusCircle className="group-hover:text-neutral-100 text-neutral-400 transition-all duration-300" />
+        </div>
+
+        {/* <button
+          onClick={() => window.electron.ipcRenderer.send('observe-watch')}
+        >
+          observe
+        </button> */}
+
+        {responsePathItems?.map((item) => (
+          <SalvageItem item={item} key={item.id} setRerender={setRerender} />
+        ))}
       </section>
     </main>
   )
