@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { ISalvageItem, pathSchema } from '../types'
 import { Icons } from './icons'
@@ -57,6 +58,8 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
 
     // console.log(newSalvageItems)
 
+    title && toast(`Updated ${title}`)
+
     window.api.set('pathItems', newSalvageItems)
     setRerender((prev) => !prev)
     setSalvageState('maximized')
@@ -72,24 +75,29 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
       ...SalvageItems.slice(currentItemIndex + 1),
     ]
 
-    window.electron.ipcRenderer.send('unwatch-path', 'pathItems', id)
+    window.api.unwatchPath('pathItems', id)
     window.api.set('pathItems', newSalvageItems)
+
+    title && toast(`Deleted ${title}`)
+
     setRerender((prev) => !prev)
   }
 
   const onSubmit = (data: PathSchema) => updateItem(data)
 
-  const stopWatchPath = () => {
-    window.electron.ipcRenderer.send('unwatch-path', 'pathItems', id)
+  function stopWatchPath() {
+    window.api.unwatchPath('pathItems', id)
+    title && toast(`Stopped Watching ${title}`)
     setIsActive(false)
   }
 
   const watchPath = useCallback(() => {
-    window.electron.ipcRenderer.send('unwatch-path', 'pathItems', id)
-    window.electron.ipcRenderer.send('watch-path', srcDir)
-    window.electron.ipcRenderer.send('copyFiles', { srcDir, destDir })
+    window.api.unwatchPath('pathItems', id)
+    window.api.watchPath(srcDir)
+    window.api.copyFiles({ srcDir, destDir })
+    title && toast(`Watching ${title}`)
     setIsActive(true)
-  }, [id, srcDir, destDir])
+  }, [id, srcDir, destDir, title])
 
   const setForm = useCallback(() => {
     form.setValue('title', title)

@@ -35,7 +35,7 @@ function App(): JSX.Element {
   const [responsePathItems, setResponsePathItems] = useState<ISalvageItem[]>([])
   const [rerender, setRerender] = useState(false)
 
-  const addPathItem = () => {
+  function addPathItem() {
     const randomID = { id: randomId() }
     const newPaths = [randomID, ...responsePathItems]
     window.api.set('pathItems', newPaths)
@@ -61,11 +61,7 @@ function App(): JSX.Element {
           <Icons.plusCircle className="group-hover:text-neutral-100 text-neutral-400 transition-all duration-300" />
         </div>
 
-        {/* <button
-          onClick={() => window.electron.ipcRenderer.send('observe-watch')}
-        >
-          observe
-        </button> */}
+        {/* <button onClick={() => window.api.observeWatch()}>observe</button> */}
 
         {responsePathItems?.map((item) => (
           <SalvageItem item={item} key={item.id} setRerender={setRerender} />

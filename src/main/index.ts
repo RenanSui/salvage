@@ -26,11 +26,12 @@ const watcher = chokidar.watch(process.resourcesPath, {
 
 watcher.close()
 
-// const log = console.log.bind(console)
-// watcher
-//   .on('add', (path) => log(`File ${path} has been added`))
-//   .on('change', (path) => log(`File ${path} has been changed`))
-//   .on('unlink', (path) => log(`File ${path} has been removed`))
+// LOGGER
+const log = console.log.bind(console)
+watcher
+  .on('add', (path) => log(`File ${path} has been added`))
+  .on('change', (path) => log(`File ${path} has been changed`))
+  .on('unlink', (path) => log(`File ${path} has been removed`))
 
 let mainWindow: BrowserWindow, tray: Tray
 
@@ -72,8 +73,8 @@ app.on('window-all-closed', () => {
 })
 
 ipcMain.on('observe-watch', () => {
-  // const watchedPaths = watcher.getWatched()
-  // console.log(watchedPaths)
+  const watchedPaths = watcher.getWatched()
+  console.log(watchedPaths)
 })
 
 ipcMain.on('watch-path', (_, srcDir) => {
@@ -115,10 +116,8 @@ ipcMain.on('close-app', () => mainWindow.close())
 
 ipcMain.on('min-app', () => mainWindow.hide())
 
-ipcMain.on('copyFiles', (_, args: { srcDir: string; destDir: string }) => {
+ipcMain.on('copy-files', (_, args: { srcDir: string; destDir: string }) => {
   const { srcDir, destDir } = args
-
-  // console.log('IPC COPY FILES')
 
   watcher.on('change', (path) => {
     if (path.includes(join(srcDir))) {
@@ -136,7 +135,7 @@ ipcMain.on('electron-store-set', async (_, key, val) => {
   store.set(key, val)
 })
 
-const createTray = () => {
+function createTray() {
   tray = new Tray(is.dev ? devIconPath : prodIconPath)
 
   tray.setToolTip('Salvage\nClick to Restore')
@@ -150,7 +149,7 @@ const createTray = () => {
   })
 }
 
-const createWindow = () => {
+function createWindow() {
   mainWindow = new BrowserWindow({
     width: 360,
     height: 576,
@@ -182,7 +181,7 @@ const createWindow = () => {
   })
 }
 
-const getSimilarity = (srcDir: string, destDir: string) => {
+function getSimilarity(srcDir: string, destDir: string) {
   const srcFile = fs.readFileSync(srcDir).toString()
   const destDirFile = fs.readFileSync(destDir).toString()
   const similarity = compareTwoStrings(srcFile, destDirFile)
@@ -192,7 +191,7 @@ const getSimilarity = (srcDir: string, destDir: string) => {
   return isSimilar
 }
 
-const filterFunc = (srcDir: string, destDir: string) => {
+function filterFunc(srcDir: string, destDir: string) {
   const isSrcDir = fs.lstatSync(srcDir).isDirectory()
 
   if (isSrcDir) {
@@ -217,8 +216,10 @@ const filterFunc = (srcDir: string, destDir: string) => {
   return false
 }
 
-export const copyDir = (srcDir: string, destDir: string) => {
+function copyDir(srcDir: string, destDir: string) {
   // console.log(`File has been changed`)
+
+  if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true })
 
   fse.copy(srcDir, destDir, { filter: filterFunc, overwrite: true }, (err) => {
     if (err) return console.error(err)
