@@ -9,6 +9,7 @@ declare global {
 
       closeApp: () => void
       minimizeApp: () => void
+      getIsDev: () => boolean
 
       watchPath: (srcDir: string) => void
       unwatchPath: (path: string, id: unknown) => void

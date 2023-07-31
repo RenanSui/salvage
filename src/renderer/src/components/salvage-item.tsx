@@ -47,6 +47,36 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     resolver: zodResolver(pathSchema),
   })
 
+  const onSubmit = (data: PathSchema) => updateItem(data)
+
+  const setForm = useCallback(() => {
+    form.setValue('title', title)
+    form.setValue('srcDir', srcDir)
+    form.setValue('destDir', destDir)
+  }, [title, srcDir, destDir, form])
+
+  const watchPath = useCallback(() => {
+    window.api.unwatchPath('pathItems', id)
+    window.api.watchPath(srcDir)
+    window.api.copyFiles({ srcDir, destDir })
+
+    if (title) {
+      toast(`Watching ${title}`)
+    }
+
+    setIsActive(true)
+  }, [id, srcDir, destDir, title])
+
+  const stopWatchPath = () => {
+    window.api.unwatchPath('pathItems', id)
+
+    if (title) {
+      toast(`Stopped Watching ${title}`)
+    }
+
+    setIsActive(false)
+  }
+
   const updateItem = (data: updateItemProps) => {
     const newUpdatedItem = { ...data, id }
 
@@ -56,13 +86,14 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
       item.id === id ? newUpdatedItem : item,
     )
 
-    // console.log(newSalvageItems)
-
-    title && toast(`Updated ${title}`)
+    if (title) {
+      toast(`Updated ${title}`)
+    }
 
     window.api.set('pathItems', newSalvageItems)
     setRerender((prev) => !prev)
     setSalvageState('maximized')
+    watchPath()
   }
 
   const deleteItem = () => {
@@ -78,32 +109,12 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     window.api.unwatchPath('pathItems', id)
     window.api.set('pathItems', newSalvageItems)
 
-    title && toast(`Deleted ${title}`)
+    if (title) {
+      toast(`Deleted ${title}`)
+    }
 
     setRerender((prev) => !prev)
   }
-
-  const onSubmit = (data: PathSchema) => updateItem(data)
-
-  function stopWatchPath() {
-    window.api.unwatchPath('pathItems', id)
-    title && toast(`Stopped Watching ${title}`)
-    setIsActive(false)
-  }
-
-  const watchPath = useCallback(() => {
-    window.api.unwatchPath('pathItems', id)
-    window.api.watchPath(srcDir)
-    window.api.copyFiles({ srcDir, destDir })
-    title && toast(`Watching ${title}`)
-    setIsActive(true)
-  }, [id, srcDir, destDir, title])
-
-  const setForm = useCallback(() => {
-    form.setValue('title', title)
-    form.setValue('srcDir', srcDir)
-    form.setValue('destDir', destDir)
-  }, [title, srcDir, destDir, form])
 
   useEffect(() => {
     watchPath()
