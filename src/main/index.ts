@@ -1,11 +1,10 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import * as chokidar from 'chokidar'
-import { BrowserWindow, Tray, app, ipcMain } from 'electron'
+import chokidar from 'chokidar'
+import { BrowserWindow, Tray, app, dialog, ipcMain } from 'electron'
 import log from 'electron-log'
 import Store from 'electron-store'
-import fs from 'fs'
 import fse from 'fs-extra'
-import path, { join } from 'path'
+import path from 'path'
 import { CopyFiles, ISalvageItem } from '../preload/types'
 import { compareTwoStrings } from './utils'
 
@@ -14,14 +13,15 @@ const watcher = chokidar.watch(process.resourcesPath, {
   awaitWriteFinish: {
     stabilityThreshold: 5000,
   },
+  ignoreInitial: true,
 })
 
 // LOGGER
-// const log = console.log.bind(console)
+// const logger = console.log.bind(console)
 // watcher
-//   .on('add', (path) => log(`File ${path} has been added`))
-//   .on('change', (path) => log(`File ${path} has been changed`))
-//   .on('unlink', (path) => log(`File ${path} has been removed`))
+//   .on('add', (path) => logger(`File ${path} has been added`))
+//   .on('change', (path) => logger(`File ${path} has been changed`))
+//   .on('unlink', (path) => logger(`File ${path} has been removed`))
 
 let mainWindow: BrowserWindow, tray: Tray
 
@@ -79,21 +79,33 @@ ipcMain.on('electron-store-set', async (_, key, val) => {
 })
 
 ipcMain.on('watch-path', (_, srcDir) => {
-  if (fs.existsSync(srcDir) === true) {
+  if (fse.existsSync(srcDir) === true) {
     watcher.add(srcDir)
     // console.log('watching', srcDir)
+    // console.log('watching', path.join(srcDir))
   }
 })
 
 ipcMain.on('copy-files', (_, args: CopyFiles) => {
   const { srcDir, destDir } = args
 
-  watcher.on('change', (path) => {
-    if (path.includes(join(srcDir)) === true) {
+  watcher.on('change', (filePath) => {
+    if (filePath.includes(path.join(srcDir)) === true) {
       // console.log('changed item', path)
       copyDir(srcDir, destDir)
     }
   })
+})
+
+ipcMain.on('dialog-path-get', async (event) => {
+  try {
+    const dialogPath = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    })
+    event.returnValue = dialogPath
+  } catch (error) {
+    log.error(error)
+  }
 })
 
 ipcMain.on('unwatch-path', (_, globalPaths, id) => {
@@ -174,15 +186,15 @@ const getSimilarity = async (srcDir: string, destDir: string) => {
 
 const filterFunc = async (srcDir: string, destDir: string) => {
   try {
-    const isSrcDir = fs.lstatSync(srcDir).isDirectory()
+    const isSrcDir = fse.lstatSync(srcDir).isDirectory()
 
     if (isSrcDir) {
-      if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true })
+      if (!fse.existsSync(destDir)) fse.mkdirSync(destDir, { recursive: true })
       // console.log('is a Dir')
       return true
     }
 
-    if (fs.existsSync(destDir) === false) {
+    if (fse.existsSync(destDir) === false) {
       // console.log('do not exist')
       return true
     }
@@ -190,7 +202,7 @@ const filterFunc = async (srcDir: string, destDir: string) => {
     const isSimilar = await getSimilarity(srcDir, destDir)
 
     if (isSimilar === false) {
-      console.log(srcDir)
+      // console.log(srcDir)
       // console.log('Not a dir, and exist, and is not similar')
       return true
     }
@@ -205,8 +217,8 @@ const filterFunc = async (srcDir: string, destDir: string) => {
 const copyDir = async (srcDir: string, destDir: string) => {
   // console.log(`File has been changed`)
 
-  if (fs.existsSync(destDir) === false) {
-    fs.mkdirSync(destDir, { recursive: true })
+  if (fse.existsSync(destDir) === false) {
+    fse.mkdirSync(destDir, { recursive: true })
   }
 
   try {

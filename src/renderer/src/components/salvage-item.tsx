@@ -116,6 +116,22 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     setRerender((prev) => !prev)
   }
 
+  const getDialogSourcePath = () => {
+    const sourcePathFromDialog = window.api.getDialogPath()
+
+    if (sourcePathFromDialog.canceled === false) {
+      form.setValue('srcDir', sourcePathFromDialog.filePaths[0])
+    }
+  }
+
+  const getDialogDestPath = () => {
+    const sourcePathFromDialog = window.api.getDialogPath()
+
+    if (sourcePathFromDialog.canceled === false) {
+      form.setValue('destDir', sourcePathFromDialog.filePaths[0])
+    }
+  }
+
   useEffect(() => {
     watchPath()
     setForm()
@@ -156,6 +172,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
               onClick={() => {
                 setSalvageState('maximized')
                 watchPath()
+                setForm()
               }}
             />
           )}
@@ -238,6 +255,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
                       <Input
                         placeholder="C:/Games/Elden Ring/save files"
                         {...field}
+                        onClick={getDialogSourcePath}
                       />
                     </FormControl>
                     <FormMessage />
@@ -255,6 +273,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
                       <Input
                         placeholder="D:/Games/Save Backup/Elden Ring"
                         {...field}
+                        onClick={getDialogDestPath}
                       />
                     </FormControl>
                     <FormMessage />

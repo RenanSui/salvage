@@ -15,6 +15,8 @@ const api = {
   minimizeApp: () => ipcRenderer.send('min-app'),
   getIsDev: () => ipcRenderer.sendSync('env'),
 
+  getDialogPath: () => ipcRenderer.sendSync('dialog-path-get'),
+
   watchPath: (srcDir) => ipcRenderer.send('watch-path', srcDir),
   unwatchPath: (path, id) => ipcRenderer.send('unwatch-path', path, id),
   observeWatch: () => ipcRenderer.send('observe-watch'),

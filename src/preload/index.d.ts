@@ -1,5 +1,6 @@
 // eslint-disable-next-line prettier/prettier
 import { ElectronAPI } from '@electron-toolkit/preload';
+import { OpenDialogReturnValue } from 'electron'
 
 declare global {
   interface Window {
@@ -10,6 +11,8 @@ declare global {
       closeApp: () => void
       minimizeApp: () => void
       getIsDev: () => boolean
+
+      getDialogPath: () => OpenDialogReturnValue
 
       watchPath: (srcDir: string) => void
       unwatchPath: (path: string, id: unknown) => void
