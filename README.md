@@ -1,3 +1,12 @@
+<div align="center">
+  <img alt="Salvage Title" src=".github/images/salvage-title.png" width="800px">
+</div>
+<div align="center">
+  <img alt="Salvage Screens " src=".github/images/salvage-screens.png" width="800px">
+</div>
+
+<p align="center">Simple Backup Automator.</p>
+
 # salvage
 
 An Electron application with React and TypeScript
