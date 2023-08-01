@@ -5,6 +5,9 @@ on:
     tags:
       - v*.*.*
 
+permissions: 
+  contents: write
+
 jobs:
   release:
     runs-on: ${{ matrix.os }}
@@ -25,7 +28,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         name: Install pnpm
         with:
-          version: 6
+          version: 8
           run_install: false
 
       - name: Get pnpm store directory
