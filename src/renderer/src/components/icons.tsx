@@ -1,4 +1,5 @@
 import {
+  AlertCircle,
   AlignLeft,
   ChevronDown,
   ChevronLeft,
@@ -9,10 +10,13 @@ import {
   PlusCircle,
   RefreshCw,
   X,
+  AlignJustify,
 } from 'lucide-react'
 
 export const Icons = {
   x: X,
+  alignJustify: AlignJustify,
+  alertCircle: AlertCircle,
   plusCircle: PlusCircle,
   chevronUp: ChevronUp,
   chevronDown: ChevronDown,
