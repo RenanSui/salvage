@@ -50,7 +50,7 @@ app.whenReady().then(() => {
   mainWindow.setMenu(null)
 
   // check for updates
-  updateInterval = setInterval(() => autoUpdater.checkForUpdates(), 30)
+  updateInterval = setInterval(() => autoUpdater.checkForUpdates(), 600000)
 })
 
 app.on('browser-window-created', (_, window) => {
@@ -85,17 +85,16 @@ ipcMain.on('electron-store-set', async (_, key, val) => {
 })
 
 ipcMain.on('open-path', (_event, folderPath) => {
-  if (!fse.existsSync(folderPath)) {
-    fse.mkdirSync(folderPath, { recursive: true })
-    shell.openPath(path.join(folderPath))
-  }
+  const exist = !fse.existsSync(folderPath)
+
+  if (exist) fse.mkdirSync(folderPath, { recursive: true })
+
+  shell.openPath(path.join(folderPath))
 })
 
 ipcMain.on('watch-path', (_, srcDir) => {
   if (fse.existsSync(srcDir) === true) {
     watcher.add(srcDir)
-    // console.log('watching', srcDir)
-    // console.log('watching', path.join(srcDir))
   }
 })
 

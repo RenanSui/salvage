@@ -44,4 +44,5 @@ appImage:
 npmRebuild: false
 publish:
   provider: github
-  protocol: https 
+  owner: renansui
+  repo: salvage 

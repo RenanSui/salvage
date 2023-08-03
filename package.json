@@ -1,6 +1,6 @@
 {
   "name": "salvage",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Simple backup automator",
   "main": "./out/main/index.js",
   "author": "RenanSui",
@@ -8,13 +8,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/RenanSui/salvage.git"
-  },
-  "build": {
-    "publish": [{
-        "provider": "github",
-        "owner": "renansui",
-        "repo": "salvage"
-    }]
   },
   "scripts": {
     "format": "prettier --write .",
