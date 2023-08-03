@@ -5,7 +5,10 @@
   "main": "./out/main/index.js",
   "author": "RenanSui",
   "homepage": "https://github.com/RenanSui/salvage",
-  "repository": "https://github.com/RenanSui/salvage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenanSui/salvage.git"
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
