@@ -34,9 +34,9 @@ const TitleBar = () => {
 
       <div className="draggable h-full w-full"></div>
 
-      <div className="z-50 flex h-[35px]">
-        <MinimizeButton />
-        <CloseButton />
+      <div className="h-full flex">
+        <MinimizeButton onClick={window.api.minimizeApp} />
+        <CloseButton onClick={window.api.closeApp} />
       </div>
     </header>
   )

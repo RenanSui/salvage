@@ -1,11 +1,16 @@
-const MinimizeButton = () => {
-  const minimizeApp = () => window.api.minimizeApp()
+import { FC } from 'react'
+import { Icons } from './icons'
 
+type minimizeButtonProps = React.HTMLAttributes<HTMLSpanElement>
+
+const MinimizeButton: FC<minimizeButtonProps> = ({ ...props }) => {
   return (
     <span
-      className="after:bg-white relative z-50 flex w-[45px] items-center justify-center transition-all duration-300 after:absolute after:left-1/2 after:z-50 after:h-[1px] after:w-4 after:-translate-x-1/2 hover:bg-neutral-800"
-      onClick={minimizeApp}
-    />
+      className="group flex justify-center items-center px-3 hover:bg-neutral-800 h-full"
+      {...props}
+    >
+      <Icons.minus className="text-white" />
+    </span>
   )
 }
 
