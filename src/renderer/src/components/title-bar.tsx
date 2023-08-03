@@ -1,8 +1,14 @@
-import { useState } from 'react'
+import { Dispatch, useState } from 'react'
 import { Icons } from './icons'
 import { IconShell } from './shells/icon-shell'
 
-const TitleBar = () => {
+const TitleBar = ({
+  showMenu,
+  setShowMenu,
+}: {
+  showMenu: boolean
+  setShowMenu: Dispatch<React.SetStateAction<boolean>>
+}) => {
   const [showDownload, setShowDownload] = useState(false)
 
   window.electron.ipcRenderer.on('update-downloaded', () => {
@@ -19,20 +25,30 @@ const TitleBar = () => {
   return (
     <header className="relative z-20 flex h-[35px] w-full cursor-default items-center justify-center bg-black">
       <div className="h-full flex">
-        <IconShell variant="transparent" as={'button'}>
-          <Icons.alignLeft className="text-white group-hover:text-green-300" />
+        <IconShell
+          variant="transparent"
+          size="sm"
+          as={'button'}
+          onClick={() => setShowMenu((prev) => !prev)}
+        >
+          {showMenu ? (
+            <Icons.chevronLeft className="text-white group-hover:text-green-300" />
+          ) : (
+            <Icons.alignLeft className="text-white group-hover:text-green-300" />
+          )}
         </IconShell>
 
-        {showDownload ? (
+        {showDownload && (
           <IconShell
             variant="transparent"
+            size="sm"
             as={'button'}
             onClick={installUpdate}
             title="Install Update?"
           >
             <Icons.hardDriveDownload className="text-green-300 animate-pulse mb-1 group-hover:text-white" />
           </IconShell>
-        ) : null}
+        )}
       </div>
 
       <div className="draggable h-full w-full bg-transparent" />

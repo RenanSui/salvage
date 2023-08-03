@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 import { Icons } from './components/icons'
+import { Menu } from './components/menu'
 import { SalvageItem } from './components/salvage-item'
 import { IconShell } from './components/shells/icon-shell'
 import { Shell } from './components/shells/shell'
@@ -13,6 +14,7 @@ import { ISalvageItem } from './types'
 
 function App(): JSX.Element {
   const [responsePathItems, setResponsePathItems] = useState<ISalvageItem[]>([])
+  const [showMenu, setShowMenu] = useState(false)
   const [rerender, setRerender] = useState(false)
 
   function addPathItem() {
@@ -33,7 +35,9 @@ function App(): JSX.Element {
 
   return (
     <>
-      <TitleBar />
+      <TitleBar {...{ showMenu, setShowMenu }} />
+
+      {showMenu && <Menu />}
 
       <main className="bg-neutral-950 text-white ">
         <Shell className="overflow-hidden h-[calc(100vh-37px)] flex flex-shell gap-2 mx-2">
