@@ -1,7 +1,6 @@
 import { toast } from 'sonner'
-import { CloseButton } from './close-button'
+import { IconShell } from './icon-shell'
 import { Icons } from './icons'
-import { MinimizeButton } from './minimize-button'
 import { Button } from './ui/button'
 
 const TitleBar = () => {
@@ -24,19 +23,34 @@ const TitleBar = () => {
 
   return (
     <header className="relative z-20 flex h-[35px] w-full cursor-default items-center justify-center bg-black">
-      <div className="flex mx-3 gap-2">
-        <Icons.alignJustify className="cursor-pointer text-neutral-400 hover:text-green-300 transition-all duration-300" />
+      <div className="h-full flex">
+        {/* <Icons.alignJustify className="cursor-pointer text-neutral-400 hover:text-green-300 transition-all duration-300" />
         <Icons.alertCircle
           className="cursor-pointer animate-pulse text-red-400 hover:text-neutral-400 transition-all duration-1000"
           onClick={showWarning}
-        />
+        /> */}
+        <IconShell variant="transparent" as={'button'}>
+          <Icons.alignJustify className="text-white group-hover:text-green-300" />
+        </IconShell>
+
+        <IconShell variant="transparent" as={'button'}>
+          <Icons.hardDriveDownload
+            className="text-green-300 animate-pulse mb-1 group-hover:text-white"
+            onClick={showWarning}
+          />
+        </IconShell>
       </div>
 
-      <div className="draggable h-full w-full"></div>
+      <div className="draggable h-full w-full bg-white" />
 
       <div className="h-full flex">
-        <MinimizeButton onClick={window.api.minimizeApp} />
-        <CloseButton onClick={window.api.closeApp} />
+        <IconShell as={'span'}>
+          <Icons.minus className="text-white" />
+        </IconShell>
+
+        <IconShell variant="red" as={'span'}>
+          <Icons.x className="text-white" />
+        </IconShell>
       </div>
     </header>
   )
