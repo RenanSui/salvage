@@ -21,8 +21,8 @@ const api = {
   unwatchPath: (path, id) => ipcRenderer.send('unwatch-path', path, id),
   observeWatch: () => ipcRenderer.send('observe-watch'),
 
-  get: (key) => ipcRenderer.sendSync('electron-store-get', key),
-  set: (key, val) => ipcRenderer.send('electron-store-set', key, val),
+  getStore: (key) => ipcRenderer.sendSync('electron-store-get', key),
+  setStore: (key, val) => ipcRenderer.send('electron-store-set', key, val),
 }
 
 if (process.contextIsolated) {

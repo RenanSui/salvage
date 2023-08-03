@@ -18,8 +18,8 @@ declare global {
       unwatchPath: (path: string, id: unknown) => void
       observeWatch: () => void
 
-      get: <T>(key: string) => T
-      set: (key: string, val: unknown) => void
+      getStore: <T>(key: string) => T
+      setStore: (key: string, val: unknown) => void
     }
   }
 }

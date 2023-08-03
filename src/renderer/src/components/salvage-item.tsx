@@ -80,7 +80,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
   const updateItem = (data: updateItemProps) => {
     const newUpdatedItem = { ...data, id }
 
-    const SalvageItems = window.api.get<ISalvageItem[]>('pathItems') || []
+    const SalvageItems = window.api.getStore<ISalvageItem[]>('pathItems') || []
 
     const newSalvageItems = SalvageItems.map((item) =>
       item.id === id ? newUpdatedItem : item,
@@ -90,14 +90,14 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
       toast(`Updated ${title}`)
     }
 
-    window.api.set('pathItems', newSalvageItems)
+    window.api.setStore('pathItems', newSalvageItems)
     setRerender((prev) => !prev)
     setSalvageState('maximized')
     watchPath()
   }
 
   const deleteItem = () => {
-    const SalvageItems = window.api.get<ISalvageItem[]>('pathItems') || []
+    const SalvageItems = window.api.getStore<ISalvageItem[]>('pathItems') || []
     const currentItemIndex = SalvageItems.findIndex((item) => item.id === id)
 
     // Remove item from array based on current item index
@@ -107,7 +107,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     ]
 
     window.api.unwatchPath('pathItems', id)
-    window.api.set('pathItems', newSalvageItems)
+    window.api.setStore('pathItems', newSalvageItems)
 
     if (title) {
       toast(`Deleted ${title}`)

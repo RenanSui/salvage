@@ -11,16 +11,16 @@ function App(): JSX.Element {
   function addPathItem() {
     const randomID = { id: randomId() }
     const newPaths = [randomID, ...responsePathItems]
-    window.api.set('pathItems', newPaths)
+    window.api.setStore('pathItems', newPaths)
 
-    const response = window.api.get<ISalvageItem[]>('pathItems') || []
+    const response = window.api.getStore<ISalvageItem[]>('pathItems') || []
     setResponsePathItems(response)
 
     // toast('Path added!')
   }
 
   useEffect(() => {
-    const response = window.api.get<ISalvageItem[]>('pathItems') || []
+    const response = window.api.getStore<ISalvageItem[]>('pathItems') || []
     setResponsePathItems(response)
   }, [rerender])
 
