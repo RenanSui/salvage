@@ -144,11 +144,11 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
   return (
     <>
       <section
-        className={`p-4 pt-0 transition-all duration-300 border border-neutral-900 rounded-lg flex flex-col
+        className={`p-4 pt-0 transition-all duration-300 border rounded-lg flex flex-col
         ${
           salvageState === 'minimized'
-            ? 'bg-neutral-900 hover:bg-neutral-800'
-            : 'hover:bg-neutral-900 bg-transparent'
+            ? 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 hover:border-neutral-700'
+            : 'bg-transparent hover:bg-neutral-900 border-neutral-800'
         }`}
       >
         <section className="flex items-center justify-between mt-1 ">

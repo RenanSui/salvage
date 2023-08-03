@@ -77,11 +77,9 @@
   }
 }
 
-html{
-  background-color: black !important;
+body{
+  background-color: black;
   border: 1px solid rgb(48, 48, 48);
-  /* border: 1px solid rgb(37, 37, 37); */
-  /* border: 1px solid rgb(23, 23, 23); */
 }
 
 .draggable{
