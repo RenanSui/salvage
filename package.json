@@ -40,6 +40,7 @@
     "lucide-react": "^0.263.1",
     "react-hook-form": "^7.45.2",
     "sonner": "^0.6.2",
+    "tailwind-variants": "^0.1.13",
     "zod": "^3.21.4"
   },
   "devDependencies": {
