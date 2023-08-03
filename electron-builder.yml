@@ -1,5 +1,5 @@
 appId: com.renansui.salvage
-productName: Salvage
+productName: salvage
 directories:
   buildResources: build
 files:
@@ -43,5 +43,5 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  protocol: https 
