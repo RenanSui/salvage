@@ -1,5 +1,5 @@
 appId: com.renansui.salvage
-productName: salvage
+productName: Salvage
 directories:
   buildResources: build
 files:
@@ -14,15 +14,11 @@ asarUnpack:
 afterSign: build/notarize.js
 win:
   executableName: Salvage
-  requestedExecutionLevel: requireAdministrator
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
-  oneClick: false
-  perMachine: true
-  allowToChangeInstallationDirectory: true
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
