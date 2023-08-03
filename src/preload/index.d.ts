@@ -18,6 +18,7 @@ declare global {
       watchPath: (srcDir: string) => void
       unwatchPath: (path: string, id: unknown) => void
       observeWatch: () => void
+      openPath: (folderPath: string) => void
 
       getStore: <T>(key: string) => T
       setStore: (key: string, val: unknown) => void

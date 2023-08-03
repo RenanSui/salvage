@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Dispatch,
-  ReactNode,
+  HTMLAttributes,
   SetStateAction,
   memo,
   useCallback,
@@ -185,11 +185,21 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
           )}
 
           {srcDir && salvageState === 'maximized' && (
-            <Ellipis>Source: {srcDir}</Ellipis>
+            <Ellipis
+              className="cursor-pointer"
+              onClick={() => window.api.openPath(srcDir)}
+            >
+              Source: {srcDir}
+            </Ellipis>
           )}
 
           {destDir && salvageState === 'maximized' && (
-            <Ellipis className="text-green-300">Dest: {destDir}</Ellipis>
+            <Ellipis
+              className="text-green-300 cursor-pointer"
+              onClick={() => window.api.openPath(destDir)}
+            >
+              Dest: {destDir}
+            </Ellipis>
           )}
         </div>
 
@@ -286,13 +296,12 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
 const Ellipis = ({
   children,
   className,
-}: {
-  children: ReactNode
-  className?: string
-}) => (
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => (
   <p
     title={JSON.stringify(children)}
     className={`cursor-default select-none whitespace-nowrap overflow-hidden overflow-ellipsis w-full ${className}`}
+    {...props}
   >
     {children}
   </p>

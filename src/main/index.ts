@@ -1,6 +1,6 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import chokidar from 'chokidar'
-import { BrowserWindow, Tray, app, dialog, ipcMain } from 'electron'
+import { BrowserWindow, Tray, app, dialog, ipcMain, shell } from 'electron'
 import log from 'electron-log'
 import Store from 'electron-store'
 import { autoUpdater } from 'electron-updater'
@@ -82,6 +82,13 @@ ipcMain.on('electron-store-get', async (event, val) => {
 
 ipcMain.on('electron-store-set', async (_, key, val) => {
   store.set(key, val)
+})
+
+ipcMain.on('open-path', (_event, folderPath) => {
+  if (!fse.existsSync(folderPath)) {
+    fse.mkdirSync(folderPath, { recursive: true })
+    shell.openPath(path.join(folderPath))
+  }
 })
 
 ipcMain.on('watch-path', (_, srcDir) => {

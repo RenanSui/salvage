@@ -20,6 +20,7 @@ const api = {
   watchPath: (srcDir) => ipcRenderer.send('watch-path', srcDir),
   unwatchPath: (path, id) => ipcRenderer.send('unwatch-path', path, id),
   observeWatch: () => ipcRenderer.send('observe-watch'),
+  openPath: (folderPath) => ipcRenderer.send('open-path', folderPath),
 
   getStore: (key) => ipcRenderer.sendSync('electron-store-get', key),
   setStore: (key, val) => ipcRenderer.send('electron-store-set', key, val),
