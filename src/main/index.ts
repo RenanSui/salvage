@@ -26,6 +26,8 @@ const watcher = chokidar.watch(process.resourcesPath, {
 
 let mainWindow: BrowserWindow, tray: Tray
 
+let updateInterval: NodeJS.Timer | null = null
+
 const store = new Store({})
 
 const windowURL =
@@ -46,6 +48,9 @@ app.whenReady().then(() => {
 
   // remove menu to stop the window being closed on Ctrl+W. See #121
   mainWindow.setMenu(null)
+
+  // check for updates
+  updateInterval = setInterval(() => autoUpdater.checkForUpdates(), 30)
 })
 
 app.on('browser-window-created', (_, window) => {
@@ -119,9 +124,6 @@ ipcMain.on('unwatch-path', (_, globalPaths, id) => {
   watcher.close()
 
   watcher.add(newWatchedPaths)
-
-  // console.log('unwatching', id)
-  // console.log(newWatchedPaths)
 })
 
 const createWindow = () => {
@@ -153,6 +155,10 @@ const createWindow = () => {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+
+  mainWindow.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify()
   })
 
   // remove menu if mainWindow.setMenu(null) fails
@@ -238,14 +244,10 @@ const copyDir = async (srcDir: string, destDir: string) => {
   }
 }
 
-let updateInterval: NodeJS.Timer | null = null
-
-autoUpdater.autoDownload = true
-autoUpdater.autoInstallOnAppQuit = true
-
 autoUpdater.on('update-available', () => {
   mainWindow.webContents.send('update-available')
   updateInterval = null
+  console.log(updateInterval)
 })
 
 autoUpdater.on('update-downloaded', () => {
@@ -256,13 +258,4 @@ ipcMain.on('install-update', () => autoUpdater.quitAndInstall())
 
 ipcMain.on('get-app-version', (event) => {
   event.returnValue = { version: app.getVersion() }
-})
-
-app.on('ready', () => {
-  // check for updates
-  if (import.meta.env.PROD) {
-    autoUpdater.checkForUpdates()
-    // updateInterval = setInterval(() => autoUpdater.checkForUpdates(), 600000)
-    console.log(updateInterval)
-  }
 })
