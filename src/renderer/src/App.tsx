@@ -4,33 +4,6 @@ import { SalvageItem } from './components/salvage-item'
 import { randomId } from './lib/utils'
 import { ISalvageItem } from './types'
 
-// const itemPaths = [
-//   {
-//     id: 0,
-//     title: 'Kingdom Hearts III',
-//     srcDir: 'C:/Users/renan/Documents/KINGDOM HEARTS III',
-//     destDir:
-//       'D:/Games/0.GAME SAVE FILES BACKUP/Kingdom Hearts/KINGDOM HEARTS III',
-//     isActive: true,
-//   },
-//   {
-//     id: 1,
-//     title: 'Dark Souls III',
-//     srcDir: 'C:/Users/renan/AppData/Roaming/DarkSoulsIII',
-//     destDir: 'D:/Games/0.GAME SAVE FILES BACKUP/DarkSoulsIII',
-//     isActive: true,
-//   },
-//   {
-//     id: 2,
-//     title: 'Dark Souls II',
-//     srcDir: 'C:/Users/renan/AppData/Roaming/DarkSoulsII',
-//     destDir: 'D:/Games/0.GAME SAVE FILES BACKUP/DarkSoulsII',
-//     isActive: true,
-//   },
-// ]
-
-// export type PathItem = typeof item
-
 function App(): JSX.Element {
   const [responsePathItems, setResponsePathItems] = useState<ISalvageItem[]>([])
   const [rerender, setRerender] = useState(false)
