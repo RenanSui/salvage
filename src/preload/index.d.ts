@@ -22,7 +22,6 @@ declare global {
       getStore: <T>(key: string) => T
       setStore: (key: string, val: unknown) => void
 
-      downloadUpdate: () => void
       installUpdate: () => void
       getAppVersion: () => { version: string }
     }

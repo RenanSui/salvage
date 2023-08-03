@@ -24,7 +24,6 @@ const api = {
   getStore: (key) => ipcRenderer.sendSync('electron-store-get', key),
   setStore: (key, val) => ipcRenderer.send('electron-store-set', key, val),
 
-  downloadUpdate: () => ipcRenderer.send('download-update'),
   installUpdate: () => ipcRenderer.send('install-update'),
   getAppVersion: () => ipcRenderer.sendSync('get-app-version'),
 }
