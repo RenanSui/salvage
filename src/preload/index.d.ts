@@ -23,7 +23,7 @@ declare global {
       setStore: (key: string, val: unknown) => void
 
       downloadUpdate: () => void
-      restartApp: () => void
+      installUpdate: () => void
       getAppVersion: () => { version: string }
     }
   }
