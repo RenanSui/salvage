@@ -137,155 +137,149 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     setForm()
   }, [watchPath, setForm])
 
-  useEffect(() => {
-    // console.log({ isActive })
-  }, [isActive])
-
   return (
-    <>
-      <section
-        className={`p-4 pt-0 transition-all duration-300 border rounded-lg flex flex-col
+    <section
+      className={`p-4 pt-0 transition-all duration-300 border rounded-lg flex flex-col
         ${
           salvageState === 'minimized'
             ? 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 hover:border-neutral-700'
             : 'bg-transparent hover:bg-neutral-900 border-neutral-800'
         }`}
-      >
-        <section className="flex items-center justify-between mt-1 ">
-          {salvageState === 'maximized' && (
-            <Icons.chevronUp
-              className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
-              onClick={() => setSalvageState('minimized')}
-            />
-          )}
-
-          {salvageState === 'minimized' && (
-            <Icons.chevronDown
-              className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
-              onClick={() => setSalvageState('maximized')}
-            />
-          )}
-
-          {salvageState === 'editing' && (
-            <Icons.chevronLeft
-              className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
-              onClick={() => {
-                setSalvageState('maximized')
-                watchPath()
-                setForm()
-              }}
-            />
-          )}
-
-          <Icons.x
-            className="h-5 w-5 mr-1 cursor-pointer hover:text-red-300 transition-all duration-300"
-            onClick={deleteItem}
+    >
+      <header className="flex items-center justify-between mt-1 ">
+        {salvageState === 'maximized' && (
+          <Icons.chevronUp
+            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
+            onClick={() => setSalvageState('minimized')}
           />
-        </section>
+        )}
 
-        <section className="flex gap-1 w-full justify-between">
-          <div className="flex flex-col justify-between gap-2 max-w-[260px] flex-grow">
-            {salvageState !== 'editing' && title && (
-              <Ellipis className="text-3xl">{title}</Ellipis>
-            )}
+        {salvageState === 'minimized' && (
+          <Icons.chevronDown
+            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
+            onClick={() => setSalvageState('maximized')}
+          />
+        )}
 
-            {srcDir && salvageState === 'maximized' && (
-              <Ellipis>Source: {srcDir}</Ellipis>
-            )}
+        {salvageState === 'editing' && (
+          <Icons.chevronLeft
+            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
+            onClick={() => {
+              setSalvageState('maximized')
+              watchPath()
+              setForm()
+            }}
+          />
+        )}
 
-            {destDir && salvageState === 'maximized' && (
-              <Ellipis className="text-green-300">Dest: {destDir}</Ellipis>
-            )}
-          </div>
+        <Icons.x
+          className="h-5 w-5 mr-1 cursor-pointer hover:text-red-300 transition-all duration-300"
+          onClick={deleteItem}
+        />
+      </header>
 
-          <div className=" flex flex-col gap-2 mt-2 justify-between">
-            {salvageState !== 'editing' && (
-              <Icons.refreshCw
-                className={`h-7 w-7 cursor-pointer 
+      <main className="flex gap-1 w-full justify-between">
+        <div className="flex flex-col justify-between gap-2 max-w-[260px] flex-grow">
+          {salvageState !== 'editing' && title && (
+            <Ellipis className="text-3xl">{title}</Ellipis>
+          )}
+
+          {srcDir && salvageState === 'maximized' && (
+            <Ellipis>Source: {srcDir}</Ellipis>
+          )}
+
+          {destDir && salvageState === 'maximized' && (
+            <Ellipis className="text-green-300">Dest: {destDir}</Ellipis>
+          )}
+        </div>
+
+        <div className=" flex flex-col gap-2 mt-2 justify-between">
+          {salvageState !== 'editing' && (
+            <Icons.refreshCw
+              className={`h-7 w-7 cursor-pointer 
               ${
                 srcDir &&
                 destDir &&
                 isActive &&
                 'animate-loading text-green-300'
               }`}
-                onClick={() => {
-                  setIsActive((prev) => !prev)
-                  if (!isActive) watchPath()
-                  if (isActive) stopWatchPath()
-                }}
-              />
-            )}
+              onClick={() => {
+                setIsActive((prev) => !prev)
+                if (!isActive) watchPath()
+                if (isActive) stopWatchPath()
+              }}
+            />
+          )}
 
-            {salvageState === 'maximized' && (
-              <Icons.pencilLine
-                className="h-7 w-7 cursor-pointer text-white hover:text-neutral-500 transition-all duration-300"
-                onClick={() => {
-                  setSalvageState('editing')
-                  stopWatchPath()
-                }}
-              />
-            )}
-          </div>
-        </section>
+          {salvageState === 'maximized' && (
+            <Icons.pencilLine
+              className="h-7 w-7 cursor-pointer text-white hover:text-neutral-500 transition-all duration-300"
+              onClick={() => {
+                setSalvageState('editing')
+                stopWatchPath()
+              }}
+            />
+          )}
+        </div>
+      </main>
 
-        {salvageState === 'editing' && (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Elden Ring" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      {salvageState === 'editing' && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Elden Ring" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="srcDir"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Source</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="C:/Games/Elden Ring/save files"
-                        {...field}
-                        onClick={getDialogSourcePath}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="srcDir"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Source</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="C:/Games/Elden Ring/save files"
+                      {...field}
+                      onClick={getDialogSourcePath}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="destDir"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Destination</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="D:/Games/Save Backup/Elden Ring"
-                        {...field}
-                        onClick={getDialogDestPath}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
-        )}
-      </section>
-    </>
+            <FormField
+              control={form.control}
+              name="destDir"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Destination</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="D:/Games/Save Backup/Elden Ring"
+                      {...field}
+                      onClick={getDialogDestPath}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
+      )}
+    </section>
   )
 }
 

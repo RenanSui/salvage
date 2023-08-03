@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 import { Icons } from './components/icons'
 import { SalvageItem } from './components/salvage-item'
+import { IconShell } from './components/shells/icon-shell'
+import { Shell } from './components/shells/shell'
 import { TailwindIndicator } from './components/tailwind-indicator'
 import TitleBar from './components/title-bar'
 import { Pattern } from './components/ui/pattern'
@@ -32,31 +34,41 @@ function App(): JSX.Element {
   return (
     <>
       <TitleBar />
-      <Toaster />
-      <main className="bg-neutral-950 text-white flex flex-col">
-        <section className="salvageContainer h-[calc(100vh_-_37px)] overflow-auto flex flex-col gap-2 mx-2  flex-grow">
-          <div
-            className="bg-transparent hover:bg-neutral-900 border border-neutral-800 hover:border-neutral-700 flex justify-center items-center group py-2 rounded-md cursor-pointer transition-all duration-300"
+
+      <main className="bg-neutral-950 text-white ">
+        <Shell className="overflow-hidden h-[calc(100vh-37px)] flex flex-shell gap-2 mx-2">
+          <Shell
+            variant={'transparent'}
+            size={'sm'}
+            center={true}
+            as={'button'}
             onClick={addPathItem}
           >
-            <Icons.plusCircle className="group-hover:text-neutral-100 text-neutral-400 transition-all duration-300" />
-          </div>
-
-          {/* <section>
-            <IconShell variant="transparent">
+            <IconShell variant="transparent" as={'span'}>
               <Icons.plusCircle className="group-hover:text-neutral-100 text-neutral-400 transition-all duration-300" />
             </IconShell>
-          </section> */}
+          </Shell>
 
           {/* <button onClick={() => window.api.observeWatch()}>observe</button> */}
 
-          {responsePathItems?.map((item) => (
-            <SalvageItem item={item} key={item.id} setRerender={setRerender} />
-          ))}
-        </section>
+          <Shell className="salvageContainer h-[calc(100vh_-_95px)] gap-2 overflow-auto">
+            {responsePathItems?.map((item) => (
+              <SalvageItem
+                item={item}
+                key={item.id}
+                setRerender={setRerender}
+              />
+            ))}
+          </Shell>
+        </Shell>
       </main>
+
+      <Toaster />
+
       <Pattern />
+
       <Vignette />
+
       <TailwindIndicator />
     </>
   )
