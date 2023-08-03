@@ -67,6 +67,9 @@ devDependencies:
   '@rocketseat/eslint-config':
     specifier: ^2.1.0
     version: 2.1.0(eslint@8.46.0)(typescript@5.1.6)
+  '@total-typescript/ts-reset':
+    specifier: ^0.4.2
+    version: 0.4.2
   '@types/node':
     specifier: ^18.17.1
     version: 18.17.1
@@ -941,6 +944,10 @@ packages:
   /@tootallnate/once@2.0.0:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
+    dev: true
+
+  /@total-typescript/ts-reset@0.4.2:
+    resolution: {integrity: sha512-vqd7ZUDSrXFVT1n8b2kc3LnklncDQFPvR58yUS1kEP23/nHPAO9l1lMjUfnPrXYYk4Hj54rrLKMW5ipwk7k09A==}
     dev: true
 
   /@types/cacheable-request@6.0.3:
