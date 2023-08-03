@@ -252,8 +252,6 @@ autoUpdater.on('update-downloaded', () => {
   mainWindow.webContents.send('update-downloaded')
 })
 
-ipcMain.on('download-update', () => autoUpdater.downloadUpdate())
-
 ipcMain.on('install-update', () => autoUpdater.quitAndInstall())
 
 ipcMain.on('get-app-version', (event) => {
