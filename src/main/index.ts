@@ -3,6 +3,7 @@ import chokidar from 'chokidar'
 import { BrowserWindow, Tray, app, dialog, ipcMain } from 'electron'
 import log from 'electron-log'
 import Store from 'electron-store'
+import { autoUpdater } from 'electron-updater'
 import fse from 'fs-extra'
 import path from 'path'
 import { CopyFiles, ISalvageItem } from '../preload/types'
@@ -153,6 +154,13 @@ const createWindow = () => {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
+
+  // remove menu if mainWindow.setMenu(null) fails
+  const WM_INITMENU = 0x0116
+  mainWindow.hookWindowMessage(WM_INITMENU, () => {
+    mainWindow.setEnabled(false)
+    mainWindow.setEnabled(true)
+  })
 }
 
 const createTray = () => {
@@ -229,3 +237,34 @@ const copyDir = async (srcDir: string, destDir: string) => {
     log.error(err)
   }
 }
+
+let updateInterval: NodeJS.Timer | null = null
+
+autoUpdater.autoDownload = true
+autoUpdater.autoInstallOnAppQuit = true
+
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update-available')
+  updateInterval = null
+})
+
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update-downloaded')
+})
+
+ipcMain.on('download-update', () => autoUpdater.downloadUpdate())
+
+ipcMain.on('install-update', () => autoUpdater.quitAndInstall())
+
+ipcMain.on('get-app-version', (event) => {
+  event.returnValue = { version: app.getVersion() }
+})
+
+app.on('ready', () => {
+  // check for updates
+  if (import.meta.env.PROD) {
+    autoUpdater.checkForUpdates()
+    // updateInterval = setInterval(() => autoUpdater.checkForUpdates(), 600000)
+    console.log(updateInterval)
+  }
+})

@@ -13,9 +13,9 @@ const api = {
 
   closeApp: () => ipcRenderer.send('close-app'),
   minimizeApp: () => ipcRenderer.send('min-app'),
-  getIsDev: () => ipcRenderer.sendSync('env'),
 
   getDialogPath: () => ipcRenderer.sendSync('dialog-path-get'),
+  getIsDev: () => ipcRenderer.sendSync('env'),
 
   watchPath: (srcDir) => ipcRenderer.send('watch-path', srcDir),
   unwatchPath: (path, id) => ipcRenderer.send('unwatch-path', path, id),
@@ -23,6 +23,10 @@ const api = {
 
   getStore: (key) => ipcRenderer.sendSync('electron-store-get', key),
   setStore: (key, val) => ipcRenderer.send('electron-store-set', key, val),
+
+  downloadUpdate: () => ipcRenderer.send('download-update'),
+  installUpdate: () => ipcRenderer.send('install-update'),
+  getAppVersion: () => ipcRenderer.sendSync('get-app-version'),
 }
 
 if (process.contextIsolated) {
