@@ -1,54 +1,48 @@
-import { toast } from 'sonner'
-import { IconShell } from './icon-shell'
+import { useState } from 'react'
 import { Icons } from './icons'
-import { Button } from './ui/button'
+import { IconShell } from './shells/icon-shell'
 
 const TitleBar = () => {
-  const showWarning = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    e.stopPropagation()
-    toast(
-      <div>
-        <h1 className="text-2xl mb-2">New version is available.</h1>
-        <Button variant={'secondary'} onClick={updateApp}>
-          Update
-        </Button>
-      </div>,
-    )
-  }
+  const [showDownload, setShowDownload] = useState(false)
 
-  const updateApp = () => {
-    console.log('Updating!')
-    console.log('Updated!')
-  }
+  window.electron.ipcRenderer.on('update-downloaded', () => {
+    window.electron.ipcRenderer.removeAllListeners('update-downloaded')
+    console.log('Update download received')
+    setShowDownload(true)
+  })
+
+  const installUpdate = () => window.api.installUpdate()
+
+  const closeApp = () => window.api.closeApp()
+  const minimizeApp = () => window.api.minimizeApp()
 
   return (
     <header className="relative z-20 flex h-[35px] w-full cursor-default items-center justify-center bg-black">
       <div className="h-full flex">
-        {/* <Icons.alignJustify className="cursor-pointer text-neutral-400 hover:text-green-300 transition-all duration-300" />
-        <Icons.alertCircle
-          className="cursor-pointer animate-pulse text-red-400 hover:text-neutral-400 transition-all duration-1000"
-          onClick={showWarning}
-        /> */}
         <IconShell variant="transparent" as={'button'}>
-          <Icons.alignJustify className="text-white group-hover:text-green-300" />
+          <Icons.alignLeft className="text-white group-hover:text-green-300" />
         </IconShell>
 
-        <IconShell variant="transparent" as={'button'}>
-          <Icons.hardDriveDownload
-            className="text-green-300 animate-pulse mb-1 group-hover:text-white"
-            onClick={showWarning}
-          />
-        </IconShell>
+        {showDownload ? (
+          <IconShell
+            variant="transparent"
+            as={'button'}
+            onClick={installUpdate}
+            title="Install Update?"
+          >
+            <Icons.hardDriveDownload className="text-green-300 animate-pulse mb-1 group-hover:text-white" />
+          </IconShell>
+        ) : null}
       </div>
 
-      <div className="draggable h-full w-full bg-white" />
+      <div className="draggable h-full w-full bg-transparent" />
 
       <div className="h-full flex">
-        <IconShell as={'span'}>
+        <IconShell as={'span'} onClick={minimizeApp}>
           <Icons.minus className="text-white" />
         </IconShell>
 
-        <IconShell variant="red" as={'span'}>
+        <IconShell variant="red" as={'span'} onClick={closeApp}>
           <Icons.x className="text-white" />
         </IconShell>
       </div>
