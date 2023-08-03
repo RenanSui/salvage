@@ -12,11 +12,13 @@ import {
   X,
   Minus,
   AlignJustify,
+  HardDriveDownload,
 } from 'lucide-react'
 
 export const Icons = {
   x: X,
   minus: Minus,
+  hardDriveDownload: HardDriveDownload,
   alignJustify: AlignJustify,
   alertCircle: AlertCircle,
   plusCircle: PlusCircle,
