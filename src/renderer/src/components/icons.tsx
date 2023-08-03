@@ -10,11 +10,13 @@ import {
   PlusCircle,
   RefreshCw,
   X,
+  Minus,
   AlignJustify,
 } from 'lucide-react'
 
 export const Icons = {
   x: X,
+  minus: Minus,
   alignJustify: AlignJustify,
   alertCircle: AlertCircle,
   plusCircle: PlusCircle,
