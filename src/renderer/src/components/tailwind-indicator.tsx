@@ -1,5 +1,7 @@
 export function TailwindIndicator() {
   if (window.api.getIsDev() === false) return null
+  // for testing version update
+  // if (import.meta.env.DEV === false) return null
 
   return (
     <div className="fixed bottom-1 left-1 z-50 flex h-7 w-7 items-center justify-center rounded-full bg-gray-800 p-3 font-mono text-base text-white">
