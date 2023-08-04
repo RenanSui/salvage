@@ -1,6 +1,6 @@
 {
   "name": "salvage",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "Simple backup automator",
   "main": "./out/main/index.js",
   "author": "RenanSui",

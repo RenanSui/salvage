@@ -81,23 +81,3 @@ module.exports = {
   },
   plugins: [require('tailwindcss-animate')],
 }
-
-// module.exports = {
-//   content: ['./src/renderer/src/**/*.{js,ts,jsx,tsx}'],
-//   theme: {
-//     extend: {
-//       colors: {},
-//       animation: {
-//         loading: 'loading 1.25s linear infinite',
-//       },
-//       keyframes: {
-//         loading: {
-//           '0%': { transform: 'rotate(0turn)' },
-//           '70%': { transform: 'rotate(1turn)' },
-//           '100%': { transform: 'rotate(1turn)' },
-//         },
-//       },
-//     },
-//   },
-//   plugins: [],
-// }

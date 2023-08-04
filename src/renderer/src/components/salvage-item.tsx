@@ -41,7 +41,11 @@ type PathSchema = z.infer<typeof pathSchema>
 const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
   const [salvageState, setSalvageState] = useState<SalvageState>('maximized')
   const [isActive, setIsActive] = useState(true)
+
   const { destDir, id, srcDir, title } = item
+
+  const SalvageItems = window.api.getStore<ISalvageItem[]>('pathItems') || []
+  const currentItemIndex = SalvageItems.findIndex((item) => item.id === id)
 
   const form = useForm<PathSchema>({
     resolver: zodResolver(pathSchema),
@@ -97,9 +101,6 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
   }
 
   const deleteItem = () => {
-    const SalvageItems = window.api.getStore<ISalvageItem[]>('pathItems') || []
-    const currentItemIndex = SalvageItems.findIndex((item) => item.id === id)
-
     // Remove item from array based on current item index
     const newSalvageItems = [
       ...SalvageItems.slice(0, currentItemIndex),
@@ -130,6 +131,26 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     if (sourcePathFromDialog.canceled === false) {
       form.setValue('destDir', sourcePathFromDialog.filePaths[0])
     }
+  }
+
+  const moveItemUp = () => {
+    const arr = window.api.getStore<ISalvageItem[]>('pathItems') || []
+    const index = arr.findIndex((item) => item.id === id)
+
+    if (index <= 0 || index >= arr.length) {
+      // Index is already at the top or invalid, nothing to do
+      return
+    }
+
+    const newSalvageItems = [...arr]
+    const itemToMove = newSalvageItems[index]
+
+    newSalvageItems.splice(index, 1) // Remove the item from the original position
+    newSalvageItems.splice(index - 1, 0, itemToMove) // Insert the item at the new position
+
+    window.api.setStore('pathItems', newSalvageItems)
+
+    setRerender((prev) => !prev)
   }
 
   useEffect(() => {
@@ -179,14 +200,20 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
       </header>
 
       <main className="flex gap-1 w-full justify-between">
-        <div className="flex flex-col justify-between gap-2 max-w-[260px] flex-grow">
+        <div className="flex flex-col gap-1 max-w-[260px] flex-grow">
           {salvageState !== 'editing' && title && (
-            <Ellipis className="text-3xl">{title}</Ellipis>
+            <Ellipis
+              className={`font-semibold
+                ${salvageState === 'maximized' ? 'text-2xl ' : 'text-xl'}
+              `}
+            >
+              {title}
+            </Ellipis>
           )}
 
           {srcDir && salvageState === 'maximized' && (
             <Ellipis
-              className="cursor-pointer"
+              className="cursor-pointer font-light mt-4"
               onClick={() => window.api.openPath(srcDir)}
             >
               Source: {srcDir}
@@ -195,7 +222,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
 
           {destDir && salvageState === 'maximized' && (
             <Ellipis
-              className="text-green-300 cursor-pointer"
+              className="text-green-300 cursor-pointer font-light"
               onClick={() => window.api.openPath(destDir)}
             >
               Dest: {destDir}
@@ -203,7 +230,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
           )}
         </div>
 
-        <div className=" flex flex-col gap-2 mt-2 justify-between">
+        <div className=" flex flex-col gap-2 mt-1 justify-between">
           {salvageState !== 'editing' && (
             <Icons.refreshCw
               className={`h-7 w-7 cursor-pointer 
@@ -218,6 +245,13 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
                 if (!isActive) watchPath()
                 if (isActive) stopWatchPath()
               }}
+            />
+          )}
+
+          {salvageState === 'maximized' && (
+            <Icons.arrowDownUp
+              className="h-7 w-7 cursor-pointer text-white hover:text-neutral-500 transition-all duration-300"
+              onClick={moveItemUp}
             />
           )}
 
