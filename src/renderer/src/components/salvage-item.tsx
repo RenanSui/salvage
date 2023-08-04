@@ -51,25 +51,17 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     resolver: zodResolver(pathSchema),
   })
 
-  const onSubmit = (data: PathSchema) => updateItem(data)
-
-  const setForm = useCallback(() => {
-    form.setValue('title', title)
-    form.setValue('srcDir', srcDir)
-    form.setValue('destDir', destDir)
-  }, [title, srcDir, destDir, form])
-
   const watchPath = useCallback(() => {
     window.api.unwatchPath('pathItems', id)
     window.api.watchPath(srcDir)
-    window.api.copyFiles({ srcDir, destDir })
+    window.api.copyFiles()
 
     if (title) {
       toast(`Watching ${title}`)
     }
 
     setIsActive(true)
-  }, [id, srcDir, destDir, title])
+  }, [id, srcDir, title])
 
   const stopWatchPath = () => {
     window.api.unwatchPath('pathItems', id)
@@ -152,6 +144,14 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
 
     setRerender((prev) => !prev)
   }
+
+  const setForm = useCallback(() => {
+    form.setValue('title', title)
+    form.setValue('srcDir', srcDir)
+    form.setValue('destDir', destDir)
+  }, [title, srcDir, destDir, form])
+
+  const onSubmit = (data: PathSchema) => updateItem(data)
 
   useEffect(() => {
     watchPath()

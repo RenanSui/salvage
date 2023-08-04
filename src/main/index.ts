@@ -6,7 +6,7 @@ import Store from 'electron-store'
 import { autoUpdater } from 'electron-updater'
 import fse from 'fs-extra'
 import path from 'path'
-import { CopyFiles, ISalvageItem } from '../preload/types'
+import { ISalvageItem } from '../preload/types'
 import { compareTwoStrings } from './utils'
 
 const watcher = chokidar.watch(process.resourcesPath, {
@@ -72,15 +72,15 @@ ipcMain.on('close-app', () => mainWindow.close())
 
 ipcMain.on('min-app', () => mainWindow.hide())
 
-ipcMain.on('env', async (event) => {
+ipcMain.on('env', (event) => {
   event.returnValue = is.dev
 })
 
-ipcMain.on('electron-store-get', async (event, val) => {
+ipcMain.on('electron-store-get', (event, val) => {
   event.returnValue = store.get(val)
 })
 
-ipcMain.on('electron-store-set', async (_, key, val) => {
+ipcMain.on('electron-store-set', (_, key, val) => {
   store.set(key, val)
 })
 
@@ -98,12 +98,16 @@ ipcMain.on('watch-path', (_, srcDir) => {
   }
 })
 
-ipcMain.on('copy-files', (_, args: CopyFiles) => {
-  const { srcDir, destDir } = args
+ipcMain.on('copy-files', () => {
+  console.log('copy-files')
 
   watcher.on('change', (filePath) => {
+    const pathItems = store.get('pathItems') as ISalvageItem[]
+
+    const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+    const { destDir, srcDir } = pathItem[0]
+
     if (filePath.includes(path.join(srcDir)) === true) {
-      // console.log('changed item', path)
       copyDir(srcDir, destDir)
     }
   })
