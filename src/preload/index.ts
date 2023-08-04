@@ -5,11 +5,10 @@ import { contextBridge, ipcRenderer } from 'electron';
 // eslint-disable-next-line prettier/prettier
 import log from 'electron-log';
 // eslint-disable-next-line prettier/prettier
-import { CopyFiles } from './types';
 
 // Custom APIs for renderer
 const api = {
-  copyFiles: (dir: CopyFiles) => ipcRenderer.send('copy-files', dir),
+  copyFiles: () => ipcRenderer.send('copy-files'),
 
   closeApp: () => ipcRenderer.send('close-app'),
   minimizeApp: () => ipcRenderer.send('min-app'),
