@@ -1,4 +1,4 @@
-import { Dispatch, useState } from 'react'
+import { Dispatch, useEffect, useState } from 'react'
 import { Icons } from './icons'
 import { IconShell } from './shells/icon-shell'
 
@@ -11,16 +11,19 @@ const TitleBar = ({
 }) => {
   const [showDownload, setShowDownload] = useState(false)
 
-  window.electron.ipcRenderer.on('update-downloaded', () => {
-    window.electron.ipcRenderer.removeAllListeners('update-downloaded')
-    console.log('Update download received')
-    setShowDownload(true)
-  })
-
   const installUpdate = () => window.api.installUpdate()
 
   const closeApp = () => window.api.closeApp()
   const minimizeApp = () => window.api.minimizeApp()
+
+  useEffect(() => {
+    const handleDownloaded = () => {
+      window.electron.ipcRenderer.removeAllListeners('update-downloaded')
+      setShowDownload(true)
+    }
+
+    window.electron.ipcRenderer.on('update-downloaded', handleDownloaded)
+  }, [])
 
   return (
     <header className="relative z-20 flex h-[35px] w-full cursor-default items-center justify-center bg-black">
