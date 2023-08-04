@@ -32,9 +32,9 @@ const TitleBar = ({
           onClick={() => setShowMenu((prev) => !prev)}
         >
           {showMenu ? (
-            <Icons.chevronLeft className="text-white group-hover:text-green-300" />
+            <Icons.chevronLeft className="text-white group-hover:text-green-300 stroke-[1.5]" />
           ) : (
-            <Icons.alignLeft className="text-white group-hover:text-green-300" />
+            <Icons.alignLeft className="text-white group-hover:text-green-300 stroke-2" />
           )}
         </IconShell>
 
@@ -55,11 +55,11 @@ const TitleBar = ({
 
       <div className="h-full flex">
         <IconShell as={'span'} onClick={minimizeApp}>
-          <Icons.minus className="text-white" />
+          <Icons.minus className="text-white stroke-[2]" />
         </IconShell>
 
         <IconShell variant="red" as={'span'} onClick={closeApp}>
-          <Icons.x className="text-white" />
+          <Icons.x className="text-white stroke-[1.5]" />
         </IconShell>
       </div>
     </header>

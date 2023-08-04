@@ -2,7 +2,7 @@ import { ElementType, FC, HTMLAttributes } from 'react'
 import { VariantProps, tv } from 'tailwind-variants'
 
 const shell = tv({
-  base: 'group flex flex-col rounded-md transition-all duration-300',
+  base: 'flex flex-col rounded-md transition-all duration-300',
   variants: {
     variant: {
       default: '',

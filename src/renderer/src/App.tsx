@@ -39,7 +39,7 @@ function App(): JSX.Element {
 
       {showMenu && <Menu />}
 
-      <main className="bg-neutral-950 text-white ">
+      <main className="bg-neutral-950 text-white">
         <Shell className="overflow-hidden h-[calc(100vh-37px)] flex flex-shell gap-2 mx-2">
           <Shell
             variant={'transparent'}
@@ -47,6 +47,7 @@ function App(): JSX.Element {
             center={true}
             as={'button'}
             onClick={addPathItem}
+            className="group"
           >
             <IconShell variant="transparent" as={'span'}>
               <Icons.plusCircle className="group-hover:text-neutral-100 text-neutral-400 transition-all duration-300" />
@@ -55,7 +56,7 @@ function App(): JSX.Element {
 
           {/* <button onClick={() => window.api.observeWatch()}>observe</button> */}
 
-          <Shell className="salvageContainer h-[calc(100vh_-_95px)] gap-2 overflow-auto">
+          <Shell className="group salvageContainer h-[calc(100vh_-_95px)] gap-2 overflow-auto">
             {responsePathItems?.map((item) => (
               <SalvageItem
                 item={item}

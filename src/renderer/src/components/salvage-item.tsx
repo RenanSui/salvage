@@ -170,21 +170,21 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
       <header className="flex items-center justify-between mt-1 ">
         {salvageState === 'maximized' && (
           <Icons.chevronUp
-            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
+            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300 stroke-[1]"
             onClick={() => setSalvageState('minimized')}
           />
         )}
 
         {salvageState === 'minimized' && (
           <Icons.chevronDown
-            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
+            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300 stroke-[1]"
             onClick={() => setSalvageState('maximized')}
           />
         )}
 
         {salvageState === 'editing' && (
           <Icons.chevronLeft
-            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300"
+            className="h-6 w-6 cursor-pointer hover:opacity-50 transition-all duration-300 stroke-[1.25]"
             onClick={() => {
               setSalvageState('maximized')
               watchPath()
@@ -194,7 +194,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
         )}
 
         <Icons.x
-          className="h-5 w-5 mr-1 cursor-pointer hover:text-red-300 transition-all duration-300"
+          className="h-5 w-5 mr-1 cursor-pointer hover:text-red-300 transition-all duration-300 stroke-[1]"
           onClick={deleteItem}
         />
       </header>
@@ -203,8 +203,8 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
         <div className="flex flex-col gap-1 max-w-[260px] flex-grow">
           {salvageState !== 'editing' && title && (
             <Ellipis
-              className={`font-semibold
-                ${salvageState === 'maximized' ? 'text-2xl ' : 'text-xl'}
+              className={`
+                ${salvageState === 'maximized' ? 'text-2xl ' : 'text-2xl'}
               `}
             >
               {title}
@@ -233,7 +233,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
         <div className=" flex flex-col gap-2 mt-1 justify-between">
           {salvageState !== 'editing' && (
             <Icons.refreshCw
-              className={`h-7 w-7 cursor-pointer 
+              className={`h-7 w-7 cursor-pointer stroke-[1]
               ${
                 srcDir &&
                 destDir &&
@@ -250,14 +250,14 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
 
           {salvageState === 'maximized' && (
             <Icons.arrowDownUp
-              className="h-7 w-7 cursor-pointer text-white hover:text-neutral-500 transition-all duration-300"
+              className="stroke-[1] h-7 w-7 cursor-pointer text-white hover:text-neutral-500 transition-all duration-300"
               onClick={moveItemUp}
             />
           )}
 
           {salvageState === 'maximized' && (
             <Icons.pencilLine
-              className="h-7 w-7 cursor-pointer text-white hover:text-neutral-500 transition-all duration-300"
+              className="stroke-[1] h-7 w-7 cursor-pointer text-white hover:text-neutral-500 transition-all duration-300"
               onClick={() => {
                 setSalvageState('editing')
                 stopWatchPath()
