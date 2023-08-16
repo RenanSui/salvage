@@ -15,8 +15,8 @@ declare global {
       getDialogPath: () => OpenDialogReturnValue
       getIsDev: () => boolean
 
-      watchPath: (srcDir: string) => void
-      unwatchPath: (path: string, id: unknown) => void
+      watchPath: (globalPaths: string, id: unknown) => void
+      unwatchPath: (globalPaths: string, id: unknown) => void
       observeWatch: () => void
       openPath: (folderPath: string) => void
 

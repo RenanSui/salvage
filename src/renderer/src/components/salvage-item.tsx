@@ -53,7 +53,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
 
   const watchPath = useCallback(() => {
     window.api.unwatchPath('pathItems', id)
-    window.api.watchPath(srcDir)
+    window.api.watchPath('pathItems', id)
     window.api.copyFiles()
 
     if (title) {
@@ -61,7 +61,7 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
     }
 
     setIsActive(true)
-  }, [id, srcDir, title])
+  }, [id, title])
 
   const stopWatchPath = () => {
     window.api.unwatchPath('pathItems', id)

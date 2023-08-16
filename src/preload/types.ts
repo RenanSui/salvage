@@ -4,7 +4,7 @@ export interface CopyFiles {
 }
 
 export interface ISalvageItem {
-  id: number
+  id: string
   title: string
   srcDir: string
   destDir: string

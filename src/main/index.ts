@@ -1,5 +1,6 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import chokidar from 'chokidar'
+import console from 'console'
 import { BrowserWindow, Tray, app, dialog, ipcMain, shell } from 'electron'
 import log from 'electron-log'
 import Store from 'electron-store'
@@ -8,6 +9,10 @@ import fse from 'fs-extra'
 import path from 'path'
 import { ISalvageItem } from '../preload/types'
 import { compareTwoStrings } from './utils'
+
+// const placeholderPath = path.join(process.resourcesPath, 'placeholder.txt')
+
+// fse.writeFile(placeholderPath, 'placeholder')
 
 const watcher = chokidar.watch(process.resourcesPath, {
   persistent: true,
@@ -18,11 +23,61 @@ const watcher = chokidar.watch(process.resourcesPath, {
 })
 
 // LOGGER
-// const logger = console.log.bind(console)
-// watcher
-//   .on('add', (path) => logger(`File ${path} has been added`))
-//   .on('change', (path) => logger(`File ${path} has been changed`))
-//   .on('unlink', (path) => logger(`File ${path} has been removed`))
+const logger = console.log.bind(console)
+watcher
+  .on('add', (path) => logger(`File ${path} has been added`))
+  .on('change', (path) => logger(`File ${path} has been changed`))
+  .on('unlink', (path) => logger(`File ${path} has been removed`))
+  .on('add', (filePath) => {
+    console.log({ filePath })
+
+    const pathItems = store.get('pathItems') as ISalvageItem[]
+
+    const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+    const { destDir, srcDir } = pathItem[0]
+
+    if (filePath.includes(path.join(srcDir)) === true) {
+      copyDir(srcDir, destDir)
+    }
+  })
+  .on('change', (filePath) => {
+    const pathItems = store.get('pathItems') as ISalvageItem[]
+
+    const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+
+    const { destDir, srcDir } = pathItem[0]
+
+    console.log({ filePath })
+    console.log({ srcDir })
+    console.log({ destDir })
+
+    if (filePath.includes(path.join(srcDir)) === true) {
+      copyDir(srcDir, destDir)
+    }
+  })
+  .on('unlink', (filePath) => {
+    console.log({ filePath })
+
+    const pathItems = store.get('pathItems') as ISalvageItem[]
+
+    const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+
+    const { destDir, srcDir } = pathItem[0]
+
+    console.log({ srcDir })
+    console.log({ destDir })
+
+    fse.removeSync(destDir)
+    fse.copy(srcDir, destDir)
+  })
+// .on('addDir', (path) => logger(`Directory ${path} has been added`))
+// .on('unlinkDir', (path) => logger(`Directory ${path} has been removed`))
+// .on('error', (error) => logger(`Watcher error: ${error}`))
+// .on('ready', () => logger('Initial scan complete. Ready for changes'))
+// .on('raw', (event, path, details) => {
+//   // internal
+//   logger('Raw event info:', event, path, details)
+// })
 
 let mainWindow: BrowserWindow, tray: Tray
 
@@ -92,25 +147,81 @@ ipcMain.on('open-path', (_event, folderPath) => {
   shell.openPath(path.join(folderPath))
 })
 
-ipcMain.on('watch-path', (_, srcDir) => {
-  if (fse.existsSync(srcDir) === true) {
-    watcher.add(srcDir)
+let unwatchPaths: string[] = []
+
+ipcMain.on('watch-path', (_, globalPaths, id: string) => {
+  if (unwatchPaths.includes(id)) {
+    unwatchPaths = unwatchPaths.filter((pathId: string) => pathId !== id)
   }
+
+  const globalStoragePaths = store.get(globalPaths) as ISalvageItem[]
+
+  const newWatchedPaths = globalStoragePaths
+    .filter((pathItem) => !unwatchPaths.includes(pathItem.id))
+    .map((pathItem) => pathItem.srcDir)
+
+  newWatchedPaths.map((path) => {
+    if (fse.existsSync(path)) {
+      watcher.add(path)
+    }
+
+    return null
+  })
+
+  console.log(watcher.getWatched())
 })
+
+ipcMain.on('unwatch-path', async (_, globalPaths, id: string) => {
+  if (!unwatchPaths.includes(id)) {
+    unwatchPaths.push(id)
+  }
+
+  const globalStoragePaths = store.get(globalPaths) as ISalvageItem[]
+
+  const newWatchedPaths = globalStoragePaths
+    .filter((pathItem) => pathItem.id === id)
+    .map((pathItem) => pathItem.srcDir)
+
+  newWatchedPaths.map((pathItem) => {
+    watcher.unwatch(path.join(pathItem, '**'))
+
+    return null
+  })
+
+  console.log(watcher.getWatched())
+})
+
+// watcher.on('change', (filePath) => {
+//   const pathItems = store.get('pathItems') as ISalvageItem[]
+
+//   const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+
+//   const { destDir, srcDir } = pathItem[0]
+
+//   console.log({ filePath })
+//   console.log({ srcDir })
+//   console.log({ destDir })
+
+//   if (filePath.includes(path.join(srcDir)) === true) {
+//     copyDir(srcDir, destDir)
+//   }
+// })
+
+// watcher.on('add', (filePath) => {
+//   console.log({ filePath })
+
+//   const pathItems = store.get('pathItems') as ISalvageItem[]
+
+//   const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+//   const { destDir, srcDir } = pathItem[0]
+
+//   if (filePath.includes(path.join(srcDir)) === true) {
+//     copyDir(srcDir, destDir)
+//   }
+// })
 
 ipcMain.on('copy-files', () => {
   console.log('copy-files')
-
-  watcher.on('change', (filePath) => {
-    const pathItems = store.get('pathItems') as ISalvageItem[]
-
-    const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
-    const { destDir, srcDir } = pathItem[0]
-
-    if (filePath.includes(path.join(srcDir)) === true) {
-      copyDir(srcDir, destDir)
-    }
-  })
 })
 
 ipcMain.on('dialog-path-get', async (event) => {
@@ -122,18 +233,6 @@ ipcMain.on('dialog-path-get', async (event) => {
   } catch (error) {
     log.error(error)
   }
-})
-
-ipcMain.on('unwatch-path', (_, globalPaths, id) => {
-  const globalStoragePaths = store.get(globalPaths) as ISalvageItem[]
-
-  const newWatchedPaths = globalStoragePaths
-    .filter((pathItem) => pathItem.id !== id && pathItem.srcDir)
-    .map((pathItem) => pathItem.srcDir)
-
-  watcher.close()
-
-  watcher.add(newWatchedPaths)
 })
 
 const createWindow = () => {
