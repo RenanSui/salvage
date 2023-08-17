@@ -1,3 +1,6 @@
+import fse from 'fs-extra'
+import path from 'path'
+
 export const compareTwoStrings = async (first: string, second: string) => {
   // return string1 === string2
   first = first.replace(/\s+/g, '')
@@ -26,4 +29,48 @@ export const compareTwoStrings = async (first: string, second: string) => {
   }
 
   return (2.0 * intersectionSize) / (first.length + second.length - 2)
+}
+
+export const removeEmptyDir = async (destDir: string) => {
+  try {
+    const Files: string[] = []
+
+    const ThroughDirectory = (Directory: string) => {
+      fse.readdirSync(Directory).forEach((File) => {
+        const Absolute = path.join(Directory, File)
+        if (fse.statSync(Absolute).isDirectory()) {
+          ThroughDirectory(Absolute)
+          return Files.push(Absolute)
+        } else return Files.push(Absolute)
+      })
+    }
+
+    ThroughDirectory(destDir)
+
+    Files.map(async (filePath) => {
+      try {
+        const dirExist = fse.existsSync(filePath)
+        if (!dirExist) {
+          return null
+        }
+
+        const isDir = fse.lstatSync(filePath).isDirectory()
+        if (!isDir) {
+          return null
+        }
+
+        const isDirEmpty = fse.readdirSync(filePath).length === 0
+        if (!isDirEmpty) {
+          return null
+        }
+
+        // console.log('existe and its a dir and is empty')
+        fse.removeSync(filePath)
+
+        return null
+      } catch (error) {
+        return console.log(error)
+      }
+    })
+  } catch (error) {}
 }

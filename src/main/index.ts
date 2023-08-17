@@ -8,7 +8,7 @@ import { autoUpdater } from 'electron-updater'
 import fse from 'fs-extra'
 import path from 'path'
 import { ISalvageItem } from '../preload/types'
-import { compareTwoStrings } from './utils'
+import { compareTwoStrings, removeEmptyDir } from './utils'
 
 // const placeholderPath = path.join(process.resourcesPath, 'placeholder.txt')
 
@@ -23,14 +23,20 @@ const watcher = chokidar.watch(process.resourcesPath, {
 })
 
 // LOGGER
-const logger = console.log.bind(console)
+// const logger = console.log.bind(console)
 watcher
-  .on('add', (path) => logger(`File ${path} has been added`))
-  .on('change', (path) => logger(`File ${path} has been changed`))
-  .on('unlink', (path) => logger(`File ${path} has been removed`))
+  // .on('add', (path) => logger(`File ${path} has been added`))
+  // .on('change', (path) => logger(`File ${path} has been changed`))
+  // .on('unlink', (path) => logger(`File ${path} has been removed`))
+  // .on('addDir', (path) => logger(`Directory ${path} has been added`))
+  // .on('unlinkDir', (path) => logger(`Directory ${path} has been removed`))
+  // .on('error', (error) => logger(`Watcher error: ${error}`))
+  // .on('ready', () => logger('Initial scan complete. Ready for changes'))
+  // .on('raw', (event, path, details) => {
+  //   // internal
+  //   logger('Raw event info:', event, path, details)
+  // })
   .on('add', (filePath) => {
-    console.log({ filePath })
-
     const pathItems = store.get('pathItems') as ISalvageItem[]
 
     const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
@@ -47,37 +53,30 @@ watcher
 
     const { destDir, srcDir } = pathItem[0]
 
-    console.log({ filePath })
-    console.log({ srcDir })
-    console.log({ destDir })
-
     if (filePath.includes(path.join(srcDir)) === true) {
       copyDir(srcDir, destDir)
     }
   })
-  .on('unlink', (filePath) => {
-    console.log({ filePath })
+  .on('unlink', async (filePath) => {
+    try {
+      const pathItems = store.get('pathItems') as ISalvageItem[]
 
-    const pathItems = store.get('pathItems') as ISalvageItem[]
+      const pathItem = pathItems.filter((item) =>
+        filePath.includes(item.srcDir),
+      )
 
-    const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+      const { destDir, srcDir } = pathItem[0]
 
-    const { destDir, srcDir } = pathItem[0]
+      const replaceDir = filePath.replace(srcDir, destDir)
 
-    console.log({ srcDir })
-    console.log({ destDir })
+      await fse.remove(replaceDir)
+      await fse.copy(srcDir, destDir)
 
-    fse.removeSync(destDir)
-    fse.copy(srcDir, destDir)
+      await removeEmptyDir(destDir)
+    } catch (error) {
+      console.log(error)
+    }
   })
-// .on('addDir', (path) => logger(`Directory ${path} has been added`))
-// .on('unlinkDir', (path) => logger(`Directory ${path} has been removed`))
-// .on('error', (error) => logger(`Watcher error: ${error}`))
-// .on('ready', () => logger('Initial scan complete. Ready for changes'))
-// .on('raw', (event, path, details) => {
-//   // internal
-//   logger('Raw event info:', event, path, details)
-// })
 
 let mainWindow: BrowserWindow, tray: Tray
 
