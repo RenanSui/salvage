@@ -1,5 +1,22 @@
+import { is } from '@electron-toolkit/utils'
 import fse from 'fs-extra'
 import path from 'path'
+import log from 'electron-log'
+
+export const getSimilarity = async (srcDir: string, destDir: string) => {
+  try {
+    const srcFile = await fse.readFile(srcDir, 'utf-8')
+    const destDirFile = await fse.readFile(destDir, 'utf-8')
+
+    const similarity = await compareTwoStrings(srcFile, destDirFile)
+    const isSimilar = similarity === 1
+
+    return isSimilar
+  } catch (error) {
+    log.error(error)
+    return false
+  }
+}
 
 export const compareTwoStrings = async (first: string, second: string) => {
   // return string1 === string2
@@ -74,3 +91,12 @@ export const removeEmptyDir = async (destDir: string) => {
     })
   } catch (error) {}
 }
+
+export const windowURL =
+  is.dev && process.env.ELECTRON_RENDERER_URL
+    ? process.env.ELECTRON_RENDERER_URL
+    : path.join('file://', __dirname, '../renderer/index.html')
+
+export const iconPath = is.dev
+  ? path.join(__dirname, '../../resources/tray.png')
+  : path.join(process.resourcesPath, 'app.asar.unpacked/resources/tray.png')

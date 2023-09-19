@@ -17,10 +17,8 @@ const api = {
   getIsDev: () => ipcRenderer.sendSync('env'),
 
   // watchPath: (srcDir) => ipcRenderer.send('watch-path', srcDir),
-  watchPath: (globalPaths, id) =>
-    ipcRenderer.send('watch-path', globalPaths, id),
-  unwatchPath: (globalPaths, id) =>
-    ipcRenderer.send('unwatch-path', globalPaths, id),
+  watchPath: (path, id) => ipcRenderer.send('watch-path', path, id),
+  unwatchPath: (path, id) => ipcRenderer.send('unwatch-path', path, id),
   observeWatch: () => ipcRenderer.send('observe-watch'),
   openPath: (folderPath) => ipcRenderer.send('open-path', folderPath),
 
