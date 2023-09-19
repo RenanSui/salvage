@@ -7,37 +7,44 @@
 
 <p align="center">Simple Backup Automator.</p>
 
-# salvage
+---
 
-An Electron application with React and TypeScript
+- [Overview](#overview)
+- [Install](#install)
+  - [Download](#download)
+- [Development](#development)
+  - [Build Setup](#build-setup)
+- [License](#license)
 
-## Recommended IDE Setup
+## Overview
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+Salvage is a simple Backup Automator. It aims to provide a visually-pleasing and reliable way to safely store your files in another device or folder.
 
-## Project Setup
+## Install
 
-### Install
+### Download
+
+Download the latest version from the [releases](https://github.com/RenanSui/salvage/releases) page.
+
+Salvage is available for Windows.
+
+## Development
+
+Salvage is built with [React](https://github.com/facebook/react), [Electron](https://github.com/electron/electron), and [electron-vite](https://github.com/electron-vite/electron-vite-react).
+
+### Build Setup
 
 ```bash
-$ npm install
+# install dependencies
+npm i
+
+# serve with vite hot reload at localhost:5173
+npm run dev
+
+# build Salvage for production
+npm run build:win
 ```
 
-### Development
+## License
 
-```bash
-$ npm dev
-```
-
-### Build
-
-```bash
-# For windows
-$ npm build:win
-
-# For macOS
-$ npm build:mac
-
-# For Linux
-$ npm build:linux
-```
+MIT &copy; [Renan Sui](https://github.com/RenanSui)
