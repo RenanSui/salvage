@@ -14,8 +14,6 @@ export const handleOpenPath = (folderPath: string) => {
   if (folderExist === false) fse.mkdirSync(folderPath, { recursive: true })
 
   shell.openPath(path.join(folderPath))
-
-  return true
 }
 
 export const getDialogPath = async (event: Electron.IpcMainEvent) => {
@@ -51,7 +49,7 @@ export const watchPath = (globalPaths, id: string) => {
   console.log(watcher.getWatched())
 }
 
-export const unwatchPath = (globalPaths, id: string) => {
+export const unwatchPath = (globalPaths: string, id: string) => {
   if (!unwatchPaths.includes(id)) {
     unwatchPaths.push(id)
   }
@@ -63,6 +61,10 @@ export const unwatchPath = (globalPaths, id: string) => {
     .map((pathItem) => pathItem.srcDir)
 
   newWatchedPaths.map((pathItem) => {
+    if (!pathItem) {
+      return null
+    }
+
     watcher.unwatch(path.join(pathItem, '**'))
 
     return null

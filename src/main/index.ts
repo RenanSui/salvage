@@ -20,6 +20,7 @@ app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
 
   const { windowInstance, trayInstance } = createWindowAndTray()
+
   mainWindow = windowInstance
   tray = trayInstance
 
@@ -44,16 +45,13 @@ app.on('activate', () => mainWindow === null && createWindowAndTray())
 ipcMain.on('close-app', () => mainWindow.close())
 ipcMain.on('min-app', () => mainWindow.hide())
 
-// is environment dev
-ipcMain.on('env', (event) => (event.returnValue = is.dev))
-
 // store
 ipcMain.on('electron-store-get', (event, val) => getStore(event, val))
 ipcMain.on('electron-store-set', (_, key, val) => setStore(key, val))
 
 // path handlers
 ipcMain.on('open-path', (_event, folderPath) => handleOpenPath(folderPath))
-ipcMain.on('dialog-path-get', async (event) => getDialogPath(event))
+ipcMain.on('dialog-path-get', (event) => getDialogPath(event))
 ipcMain.on('watch-path', (_, path, id) => watchPath(path, id))
 ipcMain.on('unwatch-path', (_, path, id) => unwatchPath(path, id))
 
@@ -62,11 +60,10 @@ ipcMain.on('observe-watch', () => console.log(watcher.getWatched()))
 watcher
   .on('add', (filePath) => handleAddFile(filePath))
   .on('change', (filePath) => handleChangeFile(filePath))
-  .on('unlink', async (filePath) => handleDeleteFile(filePath))
+  .on('unlink', (filePath) => handleDeleteFile(filePath))
 
-// ipcMain.on('copy-files', () => {
-//   console.log('copy-files')
-// })
+// is environment dev
+ipcMain.on('env', (event) => (event.returnValue = is.dev))
 
 // Auto Updater Handler
 autoUpdater.on('update-available', () => {

@@ -7,8 +7,6 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: {
-      copyFiles: () => void
-
       closeApp: () => void
       minimizeApp: () => void
 

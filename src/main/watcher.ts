@@ -28,13 +28,20 @@ watcher
     logger('Raw event info:', event, path, details),
   )
 
-// add file
-export const handleAddFile = (filePath: string) => {
+const getFirstPathItem = (filePath: string) => {
   const pathItems = store.get('pathItems') as ISalvageItem[]
 
   const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
 
-  const { destDir, srcDir } = pathItem[0]
+  return {
+    destDir: pathItem[0].destDir,
+    srcDir: pathItem[0].srcDir,
+  }
+}
+
+// add file
+export const handleAddFile = (filePath: string) => {
+  const { srcDir, destDir } = getFirstPathItem(filePath)
 
   if (filePath.includes(path.join(srcDir)) === true) {
     copyDirectory(srcDir, destDir)
@@ -43,11 +50,7 @@ export const handleAddFile = (filePath: string) => {
 
 // change file
 export const handleChangeFile = (filePath: string) => {
-  const pathItems = store.get('pathItems') as ISalvageItem[]
-
-  const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
-
-  const { destDir, srcDir } = pathItem[0]
+  const { srcDir, destDir } = getFirstPathItem(filePath)
 
   if (filePath.includes(path.join(srcDir)) === true) {
     copyDirectory(srcDir, destDir)
@@ -55,21 +58,21 @@ export const handleChangeFile = (filePath: string) => {
 }
 
 // delete file
-export const handleDeleteFile = async (filePath: string) => {
-  try {
-    const pathItems = store.get('pathItems') as ISalvageItem[]
+export const handleDeleteFile = (filePath: string) => {
+  const { srcDir, destDir } = getFirstPathItem(filePath)
 
-    const pathItem = pathItems.filter((item) => filePath.includes(item.srcDir))
+  const isDestDir = fse.existsSync(destDir)
 
-    const { destDir, srcDir } = pathItem[0]
-
-    const replaceDir = filePath.replace(srcDir, destDir)
-
-    await fse.remove(replaceDir)
-    await fse.copy(srcDir, destDir)
-
-    await removeEmptyDir(destDir)
-  } catch (error) {
-    console.log(error)
+  if (!isDestDir) {
+    return null
   }
+
+  const replaceDir = filePath.replace(srcDir, destDir)
+
+  fse.removeSync(replaceDir)
+  fse.copySync(srcDir, destDir)
+
+  removeEmptyDir(destDir)
+
+  return null
 }

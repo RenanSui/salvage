@@ -8,15 +8,12 @@ import log from 'electron-log';
 
 // Custom APIs for renderer
 const api = {
-  copyFiles: () => ipcRenderer.send('copy-files'),
-
   closeApp: () => ipcRenderer.send('close-app'),
   minimizeApp: () => ipcRenderer.send('min-app'),
 
   getDialogPath: () => ipcRenderer.sendSync('dialog-path-get'),
   getIsDev: () => ipcRenderer.sendSync('env'),
 
-  // watchPath: (srcDir) => ipcRenderer.send('watch-path', srcDir),
   watchPath: (path, id) => ipcRenderer.send('watch-path', path, id),
   unwatchPath: (path, id) => ipcRenderer.send('unwatch-path', path, id),
   observeWatch: () => ipcRenderer.send('observe-watch'),

@@ -54,7 +54,6 @@ const SalvageItemComponent = ({ item, setRerender }: SalvageItemProps) => {
   const watchPath = useCallback(() => {
     window.api.unwatchPath('pathItems', id)
     window.api.watchPath('pathItems', id)
-    window.api.copyFiles()
 
     if (title) {
       toast(`Watching ${title}`)

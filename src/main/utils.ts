@@ -1,24 +1,18 @@
 import { is } from '@electron-toolkit/utils'
 import fse from 'fs-extra'
 import path from 'path'
-import log from 'electron-log'
 
-export const getSimilarity = async (srcDir: string, destDir: string) => {
-  try {
-    const srcFile = await fse.readFile(srcDir, 'utf-8')
-    const destDirFile = await fse.readFile(destDir, 'utf-8')
+export const getSimilarity = (srcDir: string, destDir: string) => {
+  const srcFile = fse.readFileSync(srcDir, 'utf-8')
+  const destDirFile = fse.readFileSync(destDir, 'utf-8')
 
-    const similarity = await compareTwoStrings(srcFile, destDirFile)
-    const isSimilar = similarity === 1
+  const similarity = compareTwoStrings(srcFile, destDirFile)
+  const isSimilar = similarity === 1
 
-    return isSimilar
-  } catch (error) {
-    log.error(error)
-    return false
-  }
+  return isSimilar
 }
 
-export const compareTwoStrings = async (first: string, second: string) => {
+export const compareTwoStrings = (first: string, second: string) => {
   // return string1 === string2
   first = first.replace(/\s+/g, '')
   second = second.replace(/\s+/g, '')
@@ -48,48 +42,42 @@ export const compareTwoStrings = async (first: string, second: string) => {
   return (2.0 * intersectionSize) / (first.length + second.length - 2)
 }
 
-export const removeEmptyDir = async (destDir: string) => {
-  try {
-    const Files: string[] = []
+export const removeEmptyDir = (destDir: string) => {
+  const Files: string[] = []
 
-    const ThroughDirectory = (Directory: string) => {
-      fse.readdirSync(Directory).forEach((File) => {
-        const Absolute = path.join(Directory, File)
-        if (fse.statSync(Absolute).isDirectory()) {
-          ThroughDirectory(Absolute)
-          return Files.push(Absolute)
-        } else return Files.push(Absolute)
-      })
+  const ThroughDirectory = (Directory: string) => {
+    fse.readdirSync(Directory).forEach((File) => {
+      const Absolute = path.join(Directory, File)
+      if (fse.statSync(Absolute).isDirectory()) {
+        ThroughDirectory(Absolute)
+        return Files.push(Absolute)
+      } else return Files.push(Absolute)
+    })
+  }
+
+  ThroughDirectory(destDir)
+
+  Files.map((filePath) => {
+    const dirExist = fse.existsSync(filePath)
+    if (!dirExist) {
+      return null
     }
 
-    ThroughDirectory(destDir)
+    const isDir = fse.lstatSync(filePath).isDirectory()
+    if (!isDir) {
+      return null
+    }
 
-    Files.map(async (filePath) => {
-      try {
-        const dirExist = fse.existsSync(filePath)
-        if (!dirExist) {
-          return null
-        }
+    const isDirEmpty = fse.readdirSync(filePath).length === 0
+    if (!isDirEmpty) {
+      return null
+    }
 
-        const isDir = fse.lstatSync(filePath).isDirectory()
-        if (!isDir) {
-          return null
-        }
+    // console.log('existe and its a dir and is empty')
+    fse.removeSync(filePath)
 
-        const isDirEmpty = fse.readdirSync(filePath).length === 0
-        if (!isDirEmpty) {
-          return null
-        }
-
-        // console.log('existe and its a dir and is empty')
-        fse.removeSync(filePath)
-
-        return null
-      } catch (error) {
-        return console.log(error)
-      }
-    })
-  } catch (error) {}
+    return null
+  })
 }
 
 export const windowURL =
