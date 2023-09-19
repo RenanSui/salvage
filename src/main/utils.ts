@@ -2,14 +2,19 @@ import { is } from '@electron-toolkit/utils'
 import fse from 'fs-extra'
 import path from 'path'
 
-export const getSimilarity = (srcDir: string, destDir: string) => {
-  const srcFile = fse.readFileSync(srcDir, 'utf-8')
-  const destDirFile = fse.readFileSync(destDir, 'utf-8')
+export const getSimilarity = async (srcDir: string, destDir: string) => {
+  try {
+    const srcFile = await fse.readFile(srcDir, 'utf-8')
+    const destDirFile = await fse.readFile(destDir, 'utf-8')
 
-  const similarity = compareTwoStrings(srcFile, destDirFile)
-  const isSimilar = similarity === 1
+    const similarity = compareTwoStrings(srcFile, destDirFile)
+    const isSimilar = similarity === 1
 
-  return isSimilar
+    return isSimilar
+  } catch (error) {
+    console.error(error)
+    return false
+  }
 }
 
 export const compareTwoStrings = (first: string, second: string) => {
