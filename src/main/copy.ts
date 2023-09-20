@@ -23,26 +23,29 @@ export const filterDirectory = async (srcDir: string, destDir: string) => {
   try {
     const srcDirStatus = fse.lstatSync(srcDir)
 
+    // return false if is a symbolic link
     if (srcDirStatus.isSymbolicLink()) {
       return false
     }
 
     const isSourceDir = srcDirStatus.isDirectory()
 
-    if (isSourceDir) {
+    // return true if is a dir
+    if (isSourceDir === true) {
       if (!fse.existsSync(destDir)) fse.mkdirSync(destDir, { recursive: true })
-      // console.log('is a Dir')
       return true
     }
 
-    if (fse.existsSync(destDir) === false) {
-      // console.log('do not exist')
+    const dirExist = fse.existsSync(destDir)
+
+    // return true if do not exist
+    if (dirExist === false) {
       return true
     }
 
     const isSimilar = await getSimilarity(srcDir, destDir)
 
-    // Not a dir, file exist and is not similar to each other
+    // return true if files are not similar
     if (isSimilar === false) {
       return true
     }

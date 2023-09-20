@@ -35,9 +35,9 @@ const TitleBar = ({
           onClick={() => setShowMenu((prev) => !prev)}
         >
           {showMenu ? (
-            <Icons.chevronLeft className="text-white group-hover:text-green-300 stroke-[1.5]" />
+            <Icons.chevronLeft className="text-white group-hover:text-green-300 stroke-[1.5] mx-1" />
           ) : (
-            <Icons.alignLeft className="text-white group-hover:text-green-300 stroke-2" />
+            <Icons.alignLeft className="text-white group-hover:text-green-300 stroke-2 mx-1" />
           )}
         </IconShell>
 

@@ -33,7 +33,6 @@ export const createWindow = () => {
     resizable: false,
     fullscreenable: false,
     transparent: true,
-    alwaysOnTop: true,
     show: false,
     autoHideMenuBar: true,
     icon: iconPath,

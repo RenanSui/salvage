@@ -24,6 +24,8 @@ app.whenReady().then(() => {
   mainWindow = windowInstance
   tray = trayInstance
 
+  mainWindow.hide()
+
   // check for updates
   updateInterval = setInterval(() => autoUpdater.checkForUpdates(), 1000 * 600) // every 10 minutes
 })
