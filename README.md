@@ -1,50 +1,58 @@
 <div align="center">
   <img alt="Salvage Title" src=".github/images/salvage-title.png" width="800px">
 </div>
-<div align="center">
-  <img alt="Salvage Screens " src=".github/images/salvage-screens.png" width="800px">
-</div>
 
-<p align="center">Simple Backup Automator.</p>
+<p align="center">Copy files comfortably and automate your backups.</p>
+<p align="center">Bootstrapped with <a href="https://github.com/alex8088/quick-start/tree/master/packages/create-electron" target="_blank">create-electron</a> </p>
 
----
+[![Salvage](.github/images/salvage-screens.png)](https://github.com/RenanSui/salvage)
 
-- [Overview](#overview)
-- [Install](#install)
-  - [Download](#download)
-- [Development](#development)
-  - [Build Setup](#build-setup)
-- [License](#license)
+## Tech Stack
 
-## Overview
+- **Frameworks:** [React](https://react.dev) + [Electron](https://www.electronjs.org/pt/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com)
+- **Store:** [Electron Store](https://github.com/sindresorhus/electron-store)
+- **Updater:** [Electron Updater](https://www.npmjs.com/package/electron-updater)
+- **File Watcher:** [Chokidar](https://github.com/paulmillr/chokidar)
+- **File Management:** [FS-Extra](https://github.com/jprichardson/node-fs-extra)
+- **Form:** [React Hook Form](https://react-hook-form.com)
+- **Toaster:** [Sonner](https://sonner.emilkowal.ski)
 
-Salvage is a simple Backup Automator. It aims to provide a visually-pleasing and reliable way to safely store your files in another device or folder.
+## Features
 
-## Install
+- Copy files from Source to Destination
+- Automatically monitor files
+- Copy monitored files when changes occur
 
-### Download
+## Running Locally
 
-Download the latest version from the [releases](https://github.com/RenanSui/salvage/releases) page.
+1. Clone the repository
 
-Salvage is available for Windows.
+   ```bash
+   git clone https://github.com/RenanSui/salvage.git
+   ```
 
-## Development
+2. Install dependencies using pnpm
 
-Salvage is built with [React](https://github.com/facebook/react), [Electron](https://github.com/electron/electron), and [electron-vite](https://github.com/electron-vite/electron-vite-react).
+   ```bash
+   pnpm install
+   ```
 
-### Build Setup
+3. Start the development server
 
-```bash
-# install dependencies
-npm i
+   ```bash
+   pnpm run dev
+   ```
+4. Build for production
+ 
+   ```bash
+   pnpm run build:win
+   ```
 
-# serve with vite hot reload at localhost:5173
-npm run dev
+## How do I deploy this?
 
-# build Salvage for production
-npm run build:win
-```
+Follow the deployment guides for [Electron Vite](https://electron-vite.org/guide/distribution) and [Electron Builder](https://www.electron.build) for more information.
 
 ## License
 
-MIT &copy; [Renan Sui](https://github.com/RenanSui)
+Licensed under the MIT License. Check the [LICENSE](./LICENSE) file for details.
