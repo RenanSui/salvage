@@ -1,5 +1,5 @@
-import { getSimilarity } from './utils'
 import fse from 'fs-extra'
+import { getSimilarity } from './utils'
 
 export const copyDirectory = async (srcDir: string, destDir: string) => {
   // Create dir if false
@@ -22,6 +22,11 @@ export const copyDirectory = async (srcDir: string, destDir: string) => {
 export const filterDirectory = async (srcDir: string, destDir: string) => {
   try {
     const srcDirStatus = fse.lstatSync(srcDir)
+    const srcDirSize = Math.trunc(srcDirStatus.size / 1024)
+
+    if (srcDirSize > 10000) {
+      return true
+    }
 
     // return false if is a symbolic link
     if (srcDirStatus.isSymbolicLink()) {

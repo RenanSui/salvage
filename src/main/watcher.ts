@@ -1,10 +1,10 @@
 import chokidar from 'chokidar'
+import fse from 'fs-extra'
 import path from 'path'
 import { ISalvageItem } from '../preload/types'
 import { copyDirectory } from './copy'
 import { store } from './store'
 import { removeEmptyDir } from './utils'
-import fse from 'fs-extra'
 
 const logger = console.log.bind(console)
 
