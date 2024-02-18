@@ -63,6 +63,8 @@
         "height": 720,
         "width": 384,
         "resizable": false,
+        "decorations": false,
+        "transparent": true,
         "title": "Salvage"
       }
     ]
