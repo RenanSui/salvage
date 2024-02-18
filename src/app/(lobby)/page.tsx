@@ -1,11 +1,9 @@
 'use client'
 
-export default function Home() {
-
+export default function Lobby() {
   return (
-   <main>
-    <div className="bg-red-500 aspect-video">
-    </div>
-   </main>
-  );
+    <main>
+      <div className="aspect-video bg-red-500"></div>
+    </main>
+  )
 }
