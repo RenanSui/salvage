@@ -21,7 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('font-light tracking-wider', lato.className)}>
+      <body
+        className={cn('font-light tracking-wider', lato.className)}
+        data-menu-active="false"
+      >
         <Draggable>{children}</Draggable>
       </body>
     </html>

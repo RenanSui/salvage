@@ -7,7 +7,7 @@ export const Draggable = ({
   children,
 }: React.HTMLAttributes<HTMLDivElement>) => {
   useEffect(() => {
-    const noDragSelector = 'h1, p'
+    const noDragSelector = 'h1, p, button'
 
     const handleDragging = async (e: MouseEvent) => {
       const target = e.target as HTMLElement
