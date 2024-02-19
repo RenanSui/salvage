@@ -27,22 +27,22 @@ export const MenuIcon = () => {
     >
       <div
         className={cn(
-          'absolute left-4 top-4 h-[2px] w-7 rotate-0 bg-white transition-all duration-300',
-          isMenuActive ? 'top-5 w-4 -rotate-[40deg]' : '',
+          'absolute left-4 top-5 h-[2px] w-7 rotate-0 bg-white transition-all duration-300',
+          isMenuActive ? 'top-6 w-4 -rotate-[40deg]' : '',
         )}
       />
 
       <div
         className={cn(
-          'absolute left-4 top-6 h-[2px] w-5 bg-white transition-all duration-300',
+          'absolute left-4 top-7 h-[2px] w-5 bg-white transition-all duration-300',
           isMenuActive ? '-left-6' : '',
         )}
       />
 
       <div
         className={cn(
-          'absolute left-4 top-8 h-[2px] w-3 bg-white transition-all duration-300',
-          isMenuActive ? 'top-[29px] w-4 rotate-[40deg]' : '',
+          'absolute left-4 top-9 h-[2px] w-3 bg-white transition-all duration-300',
+          isMenuActive ? 'top-[33px] w-4 rotate-[40deg]' : '',
         )}
       />
     </button>
