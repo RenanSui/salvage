@@ -67,6 +67,7 @@
         "transparent": true,
         "title": "Salvage"
       }
-    ]
+    ],
+    "macOSPrivateApi": true
   }
 }
