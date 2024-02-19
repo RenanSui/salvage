@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri::{App, Manager};
+use window_shadows::set_shadow;
 use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial};
 
 fn main() {
@@ -27,6 +28,9 @@ fn setup_window(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(target_os = "windows")]
     apply_blur(&window, Some((13, 13, 13, 200)))
         .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
+
+    #[cfg(any(windows, target_os = "macos"))]
+    set_shadow(&window, true).unwrap();
 
     // println!("Opening");
 
