@@ -15,7 +15,8 @@
       "all": false,
       "window": {
         "startDragging": true,
-        "create": true
+        "create": true,
+        "close": true
       }
     },
     "bundle": {

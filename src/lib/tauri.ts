@@ -22,4 +22,3 @@ export async function window() {
   const window = await import('@tauri-apps/api/window')
   return window
 }
-

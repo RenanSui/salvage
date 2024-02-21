@@ -1,3 +1,6 @@
+'use client'
+
+import { window } from '@/lib/tauri'
 import { MenuIcon } from '../menu-icon'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
@@ -15,7 +18,14 @@ export const SiteHeader = () => {
         <Button size={'icon'} className="cursor-default hover:text-yellow-500">
           <Icons.minus />
         </Button>
-        <Button size={'icon'} className="cursor-default hover:text-yellow-500">
+        <Button
+          size={'icon'}
+          className="cursor-default hover:text-yellow-500"
+          onClick={async () => {
+            const { appWindow } = await window()
+            appWindow.close()
+          }}
+        >
           <Icons.cross />
         </Button>
       </div>

@@ -1,6 +1,9 @@
 'use client'
 
 import { Icons } from '@/components/ui/icons'
+import { invoke } from '@/lib/tauri'
+import { cn } from '@/lib/utils'
+import { useEffect } from 'react'
 
 const Paths = [
   {
@@ -13,6 +16,14 @@ const Paths = [
 
 type PathItems = (typeof Paths)[0]
 
+const replaceDir =
+  'C:\\Users\\renan\\Desktop\\New folder\\salvage\\sair\\aoba2.txt'.replace(
+    Paths[0].source,
+    Paths[0].dest,
+  )
+
+console.log(replaceDir)
+
 export default function Lobby() {
   return (
     <div className="flex flex-col gap-2">
@@ -20,17 +31,23 @@ export default function Lobby() {
         <Icons.cross className="rotate-45 text-neutral-600" />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         {Paths.map((item) => (
-          <PathCard key={item.id} path={item} />
+          <SalvageCard key={item.id} path={item} />
         ))}
       </div>
     </div>
   )
 }
 
-const PathCard = ({ path }: { path: PathItems }) => {
+const SalvageCard = ({ path }: { path: PathItems }) => {
   const { dest, source, title } = path
+
+  useEffect(() => {
+    invoke('salvage_watching', { source, dest })
+      .then(() => console.log('succes'))
+      .catch(console.error)
+  }, [source, dest])
 
   return (
     <div className="mx-4 flex min-h-4 flex-col items-center justify-center gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">
@@ -38,11 +55,11 @@ const PathCard = ({ path }: { path: PathItems }) => {
         <Icons.minus className="h-4 w-4 text-neutral-600" />
         <Icons.cross className="h-4 w-4 text-neutral-600" />
       </div>
-      <div className="flex w-full justify-between">
-        <div>
-          <h1>{title}</h1>
-          <p>{source}</p>
-          <p className="text-green-500">{dest}</p>
+      <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col gap-2">
+          <Ellipsis className="text-3xl">{title}</Ellipsis>
+          <Ellipsis>{source}</Ellipsis>
+          <Ellipsis>{dest}</Ellipsis>
         </div>
         <div className="flex flex-col gap-4">
           <Icons.cross className="h-4 w-4 text-neutral-600" />
@@ -50,6 +67,25 @@ const PathCard = ({ path }: { path: PathItems }) => {
           <Icons.cross className="h-4 w-4 text-neutral-600" />
         </div>
       </div>
+    </div>
+  )
+}
+
+interface EllipsisProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: string
+}
+
+const Ellipsis = ({ children, className, ...props }: EllipsisProps) => {
+  return (
+    <div
+      title={children}
+      className={cn(
+        'w-72 overflow-hidden text-ellipsis whitespace-nowrap',
+        className,
+      )}
+      {...props}
+    >
+      {children}
     </div>
   )
 }

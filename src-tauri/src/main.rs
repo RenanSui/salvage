@@ -1,44 +1,41 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::{App, Manager};
-use window_shadows::set_shadow;
-use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial};
+pub mod tauri_lib;
+pub mod watcher;
+pub mod salvage;
+
+use crate::{tauri_lib::setup_window, watcher::NotifyHandler};
+use chrono::prelude::{DateTime, Local};
+use std::time::Duration;
 
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![salvage_watching])
         .setup(setup_window)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-fn setup_window(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    let Some(window) = app.get_window("main") else {
-        return Ok(());
+#[tauri::command]
+async fn salvage_watching(source: String, dest: String) {
+    let mut notifier: NotifyHandler = NotifyHandler {
+        notify_watcher: None,
+        receiver: None,
     };
 
-    let _ = window.set_decorations(false);
+    notifier.initialize_notify_scheduler().await;
+    notifier.watch(source, dest).await.unwrap();
 
-    #[cfg(target_os = "macos")]
-    apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
-        .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+    loop {
+        tokio::time::sleep(Duration::from_secs(3)).await;
 
-    #[cfg(target_os = "windows")]
-    apply_blur(&window, Some((13, 13, 13, 200)))
-        .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
+        let time: DateTime<Local> = Local::now();
 
-    #[cfg(any(windows, target_os = "macos"))]
-    set_shadow(&window, true).unwrap();
-
-    // println!("Opening");
-
-    // Command::new("explorer")
-    //     .arg("-C") // <- Specify the directory you'd like to open.
-    //     .arg("/Games")
-    //     .spawn()
-    //     .unwrap();
-
-    Ok(())
+        println!(
+            "{}: Hello, world!",
+            time.format("%Y-%m-%d %H:%M:%S").to_string()
+        );
+    }
 }
