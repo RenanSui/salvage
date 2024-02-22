@@ -111,7 +111,7 @@ pub fn filter(path: &PathBuf) -> bool {
     // if is_greater_than(path, 10) {
     //     return true;
     // }
-
+        println!("filter path: {:?}", path);
     true
 }
 

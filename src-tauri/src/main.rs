@@ -9,7 +9,7 @@ use crate::{tauri_lib::setup_window, watcher::NotifyHandler};
 use chrono::prelude::{DateTime, Local};
 use std::env;
 use std::{path::Path, process::Command, time::Duration};
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 
 fn main() {
     tauri::Builder::default()
