@@ -1,4 +1,5 @@
 import type { EventCallback, EventName } from '@tauri-apps/api/event'
+import type { ShortcutHandler } from '@tauri-apps/api/globalShortcut'
 import type { InvokeArgs } from '@tauri-apps/api/tauri'
 
 const isNode = (): boolean =>
@@ -37,6 +38,16 @@ export async function listen<T>(event: EventName, handler: EventCallback<T>) {
   const tauriAppsApi = await import('@tauri-apps/api')
   const tauriEventListen = tauriAppsApi.event.listen
   return tauriEventListen(event, handler)
+}
+
+export async function register(shortcut: string, handler: ShortcutHandler) {
+  if (isNode()) {
+    // This shouldn't ever happen when React fully loads
+    return Promise.resolve(undefined as unknown)
+  }
+  const tauriAppsApi = await import('@tauri-apps/api')
+  const tauriShortcutRegister = tauriAppsApi.globalShortcut.register
+  return tauriShortcutRegister(shortcut, handler)
 }
 
 export async function window() {

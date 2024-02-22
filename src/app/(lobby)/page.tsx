@@ -1,7 +1,7 @@
 'use client'
 
 import { Icons } from '@/components/ui/icons'
-import { invoke, listen } from '@/lib/tauri'
+import { invoke, listen, register } from '@/lib/tauri'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 
@@ -67,6 +67,18 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
     })
   }, [progress])
 
+  useEffect(() => {
+    register('CommandOrControl+Shift+C', (shortcut) => {
+      console.log(`Shortcut ${shortcut} triggered`)
+    })
+  }, [])
+
+  const openPath = (path: string) => {
+    invoke('open_path', { path })
+      .then(() => console.log('succes'))
+      .catch(console.error)
+  }
+
   return (
     <div className="mx-4 flex min-h-4 flex-col items-center justify-center gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">
       <div className="mx-4 flex w-full justify-between">
@@ -75,9 +87,13 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
       </div>
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col gap-2">
-          <Ellipsis className="text-3xl">{title}</Ellipsis>
-          <Ellipsis>{source}</Ellipsis>
-          <Ellipsis>{dest}</Ellipsis>
+          <Ellipsis className="cursor-default text-3xl">{title}</Ellipsis>
+          <Ellipsis className="cursor-pointer" onClick={() => openPath(source)}>
+            {source}
+          </Ellipsis>
+          <Ellipsis className="cursor-pointer" onClick={() => openPath(dest)}>
+            {dest}
+          </Ellipsis>
         </div>
         <div className="flex flex-col gap-4">
           <Icons.cross className="h-4 w-4 text-neutral-600" />
@@ -96,7 +112,7 @@ interface EllipsisProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Ellipsis = ({ children, className, ...props }: EllipsisProps) => {
   return (
-    <div
+    <p
       title={children}
       className={cn(
         'w-72 overflow-hidden text-ellipsis whitespace-nowrap',
@@ -105,7 +121,7 @@ const Ellipsis = ({ children, className, ...props }: EllipsisProps) => {
       {...props}
     >
       {children}
-    </div>
+    </p>
   )
 }
 
