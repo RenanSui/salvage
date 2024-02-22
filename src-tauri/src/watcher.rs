@@ -6,8 +6,8 @@ use notify_debouncer_full::{
     new_debouncer, DebounceEventResult, DebouncedEvent, Debouncer, FileIdMap,
 };
 use std::{path::Path, time::Duration};
+use tauri::AppHandle;
 use tokio::{runtime::Handle, sync::mpsc::Receiver};
-
 use crate::salvage;
 
 pub struct NotifyHandler {
@@ -48,7 +48,12 @@ impl NotifyHandler {
         }
     }
 
-    pub async fn watch(&mut self, source: String, dest: String) -> notify::Result<()> {
+    pub async fn watch(
+        &mut self,
+        source: String,
+        dest: String,
+        app: AppHandle,
+    ) -> notify::Result<()> {
         let watch_path = Path::new(&source);
 
         if watch_path.exists() {
@@ -74,18 +79,18 @@ impl NotifyHandler {
                             Ok(events) => {
                                 // ERROR WAS IN ORDER
                                 // for event in events.into_iter().rev().into_iter() {
-                                for event in events.iter().rev() {
+                                for event in events.iter() {
                                     let kind = event.event.kind;
                                     let paths = event.event.paths.clone();
 
                                     match kind {
                                         EventKind::Create(CreateKind::Any) => {
                                             // println!("Create: {:?}", paths);
-                                            salvage::copy_file(paths, &dest)
+                                            salvage::copy_file(app.clone(), paths, &source, &dest)
                                         }
                                         EventKind::Modify(ModifyKind::Any) => {
                                             // println!("Modify: {:?}", paths);
-                                            salvage::copy_file(paths, &dest)
+                                            salvage::copy_file(app.clone(), paths, &source, &dest)
                                         }
                                         EventKind::Remove(RemoveKind::Any) => {
                                             // println!("Remove: {:?}", paths);

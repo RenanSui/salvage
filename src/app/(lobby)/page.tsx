@@ -1,7 +1,7 @@
 'use client'
 
 import { Icons } from '@/components/ui/icons'
-import { invoke } from '@/lib/tauri'
+import { invoke, listen } from '@/lib/tauri'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
 
@@ -40,6 +40,15 @@ export default function Lobby() {
   )
 }
 
+type RustEventMessage = {
+  event: string
+  id: number
+  payload: {
+    message: string
+  }
+  windowLabel?: string | null
+}
+
 const SalvageCard = ({ path }: { path: PathItems }) => {
   const { dest, source, title } = path
 
@@ -48,6 +57,12 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
       .then(() => console.log('succes'))
       .catch(console.error)
   }, [source, dest])
+
+  useEffect(() => {
+    const unlisten = listen('progress', (event: RustEventMessage) => {
+      console.log('Progress: ', event.payload.message)
+    })
+  }, [])
 
   return (
     <div className="mx-4 flex min-h-4 flex-col items-center justify-center gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">

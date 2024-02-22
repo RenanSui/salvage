@@ -1,13 +1,14 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+pub mod salvage;
 pub mod tauri_lib;
 pub mod watcher;
-pub mod salvage;
 
 use crate::{tauri_lib::setup_window, watcher::NotifyHandler};
 use chrono::prelude::{DateTime, Local};
 use std::time::Duration;
+use tauri::AppHandle;
 
 fn main() {
     tauri::Builder::default()
@@ -19,14 +20,14 @@ fn main() {
 }
 
 #[tauri::command]
-async fn salvage_watching(source: String, dest: String) {
+async fn salvage_watching(app_handle: AppHandle, source: String, dest: String) {
     let mut notifier: NotifyHandler = NotifyHandler {
         notify_watcher: None,
         receiver: None,
     };
 
     notifier.initialize_notify_scheduler().await;
-    notifier.watch(source, dest).await.unwrap();
+    notifier.watch(source, dest, app_handle).await.unwrap();
 
     loop {
         tokio::time::sleep(Duration::from_secs(3)).await;
