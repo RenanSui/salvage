@@ -3,7 +3,7 @@
 import { Icons } from '@/components/ui/icons'
 import { invoke, listen } from '@/lib/tauri'
 import { cn } from '@/lib/utils'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const Paths = [
   {
@@ -50,6 +50,7 @@ type RustEventMessage = {
 }
 
 const SalvageCard = ({ path }: { path: PathItems }) => {
+  const [progress, setProgress] = useState(0)
   const { dest, source, title } = path
 
   useEffect(() => {
@@ -59,10 +60,12 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
   }, [source, dest])
 
   useEffect(() => {
-    const unlisten = listen('progress', (event: RustEventMessage) => {
+    listen('progress', (event: RustEventMessage) => {
       console.log('Progress: ', event.payload.message)
+      const progressMessage = Number(event.payload.message)
+      setProgress(progressMessage === 100 ? 0 : progressMessage)
     })
-  }, [])
+  }, [progress])
 
   return (
     <div className="mx-4 flex min-h-4 flex-col items-center justify-center gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">
@@ -82,6 +85,7 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
           <Icons.cross className="h-4 w-4 text-neutral-600" />
         </div>
       </div>
+      <ProgressBar progressWidth={progress} />
     </div>
   )
 }
@@ -101,6 +105,19 @@ const Ellipsis = ({ children, className, ...props }: EllipsisProps) => {
       {...props}
     >
       {children}
+    </div>
+  )
+}
+
+const ProgressBar = ({ progressWidth }: { progressWidth: number }) => {
+  return (
+    <div className="h-2 w-full overflow-hidden rounded-xl border border-neutral-700">
+      {progressWidth === 100 ? null : (
+        <div
+          className="h-full bg-neutral-700/50"
+          style={{ width: `${progressWidth}%` }}
+        ></div>
+      )}
     </div>
   )
 }
