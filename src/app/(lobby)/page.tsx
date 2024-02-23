@@ -47,7 +47,7 @@ export default function Lobby() {
   return (
     <div className="flex flex-col gap-4 p-4">
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger className="outline-none">
           <div className="flex min-h-4 items-center justify-center rounded-md border border-dashed border-neutral-700 py-4 transition-colors duration-300 hover:bg-neutral-800/70">
             <Icons.cross className="rotate-45 text-neutral-600" />
           </div>
@@ -62,12 +62,12 @@ export default function Lobby() {
           <DropdownMenuSeparator />
           <ScrollArea>
             {Paths.map((item) => {
+              const { id, title } = item
+              const changeBackup = () => setSalvage(id)
+
               return (
-                <DropdownMenuItem
-                  key={item.id}
-                  onClick={() => setSalvage(item.id)}
-                >
-                  <Ellipsis className="w-32">{item.title}</Ellipsis>
+                <DropdownMenuItem key={id} onClick={changeBackup}>
+                  <Ellipsis className="w-32">{title}</Ellipsis>
                 </DropdownMenuItem>
               )
             })}
@@ -126,13 +126,8 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
   const commom = longestCommonStartingSubstring([source, dest])
 
   return (
-    <div className=" flex min-h-4 flex-col items-center justify-center gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">
-      <div className="mx-4 flex w-full justify-between">
-        <Icons.minus className="h-4 w-4 text-neutral-600" />
-        <Icons.cross className="h-4 w-4 text-neutral-600" />
-      </div>
-
-      <div className="flex w-full items-center justify-between">
+    <div className="flex h-full flex-col items-center justify-center gap-4 rounded-md border border-neutral-700 p-4 pb-8 transition-colors duration-300 hover:bg-neutral-800/70">
+      <div className="flex w-full items-start justify-between">
         <div className="flex flex-col gap-2">
           <Ellipsis className="cursor-default text-3xl">{title}</Ellipsis>
           <Ellipsis
@@ -151,8 +146,6 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
           </Ellipsis>
         </div>
         <div className="flex flex-col gap-4">
-          <Icons.cross className="h-4 w-4 text-neutral-600" />
-          <Icons.cross className="h-4 w-4 text-neutral-600" />
           <Icons.cross className="h-4 w-4 text-neutral-600" />
         </div>
       </div>
@@ -182,7 +175,8 @@ const Ellipsis = ({ children, className, ...props }: EllipsisProps) => {
 
 const ProgressBar = ({ progressWidth }: { progressWidth: number }) => {
   return (
-    <div className="h-2 w-full overflow-hidden rounded-xl border border-neutral-700">
+    // It's hidden
+    <div className="absolute hidden h-2 w-full overflow-hidden rounded-xl border border-neutral-700">
       {progressWidth === 100 ? null : (
         <div
           className="h-full bg-neutral-700/50"
