@@ -5,7 +5,11 @@ pub fn setup_window(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     };
 
-    let _ = window.set_decorations(false);
+    // let _ = window.set_decorations(false);
+    // let _ = window.set_size(PhysicalSize {
+    //     width: 384,
+    //     height: 300,
+    // });
 
     #[cfg(target_os = "macos")]
     window_vibrancy::apply_vibrancy(

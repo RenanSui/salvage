@@ -13,7 +13,7 @@ use tauri::AppHandle;
 
 fn main() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        // .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![salvage_watching, open_path])
         .setup(setup_window)
         .run(tauri::generate_context!())
