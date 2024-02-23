@@ -1,3 +1,4 @@
+use crate::salvage;
 use notify::{
     event::{CreateKind, ModifyKind, RemoveKind},
     Error, EventKind, ReadDirectoryChangesWatcher, RecursiveMode, Watcher,
@@ -8,7 +9,6 @@ use notify_debouncer_full::{
 use std::{path::Path, time::Duration};
 use tauri::AppHandle;
 use tokio::{runtime::Handle, sync::mpsc::Receiver};
-use crate::salvage;
 
 pub struct NotifyHandler {
     pub notify_watcher: Option<Debouncer<ReadDirectoryChangesWatcher, FileIdMap>>,
