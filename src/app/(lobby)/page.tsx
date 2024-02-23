@@ -128,7 +128,7 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
       <div className="flex w-full items-start justify-between">
         <div className="flex flex-col gap-6">
           <Ellipsis className="cursor-default text-3xl">{title}</Ellipsis>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <Ellipsis
               className="cursor-pointer transition-all duration-300 hover:text-neutral-400"
               onClick={() => openPath(source)}
@@ -163,7 +163,7 @@ const Ellipsis = ({ children, className, ...props }: EllipsisProps) => {
   return (
     <p
       className={cn(
-        'w-72 select-none overflow-hidden text-ellipsis whitespace-nowrap',
+        'w-fit max-w-72 select-none overflow-hidden text-ellipsis whitespace-nowrap',
         className,
       )}
       {...props}
