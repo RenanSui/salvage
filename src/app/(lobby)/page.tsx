@@ -45,7 +45,7 @@ export default function Lobby() {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex min-h-screen flex-col justify-between gap-4 p-4">
       <DropdownMenu>
         <DropdownMenuTrigger className="outline-none">
           <div className="flex min-h-4 items-center justify-center rounded-md border border-dashed border-neutral-700 py-4 transition-colors duration-300 hover:bg-neutral-800/70">
@@ -75,9 +75,7 @@ export default function Lobby() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div className="flex flex-col gap-4">
-        <SalvageCard path={Paths[salvage]} />
-      </div>
+      <SalvageCard path={Paths[salvage]} />
     </div>
   )
 }
@@ -126,24 +124,26 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
   const commom = longestCommonStartingSubstring([source, dest])
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 rounded-md border border-neutral-700 p-4 pb-8 transition-colors duration-300 hover:bg-neutral-800/70">
+    <div className="flex h-full flex-1 flex-col  gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">
       <div className="flex w-full items-start justify-between">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-6">
           <Ellipsis className="cursor-default text-3xl">{title}</Ellipsis>
-          <Ellipsis
-            className="cursor-pointer transition-all duration-300 hover:text-neutral-400"
-            onClick={() => openPath(source)}
-            title={source}
-          >
-            {source.replace(commom, `..source\\${title}\\`)}
-          </Ellipsis>
-          <Ellipsis
-            className="cursor-pointer transition-all duration-300 hover:text-neutral-400"
-            onClick={() => openPath(dest)}
-            title={dest}
-          >
-            {dest.replace(commom, `..destination\\${title}\\`)}
-          </Ellipsis>
+          <div className="flex flex-col gap-2">
+            <Ellipsis
+              className="cursor-pointer transition-all duration-300 hover:text-neutral-400"
+              onClick={() => openPath(source)}
+              title={source}
+            >
+              {source.replace(commom, `..source\\${title}\\`)}
+            </Ellipsis>
+            <Ellipsis
+              className="cursor-pointer transition-all duration-300 hover:text-neutral-400"
+              onClick={() => openPath(dest)}
+              title={dest}
+            >
+              {dest.replace(commom, `..destination\\${title}\\`)}
+            </Ellipsis>
+          </div>
         </div>
         <div className="flex flex-col gap-4">
           <Icons.cross className="h-4 w-4 text-neutral-600" />

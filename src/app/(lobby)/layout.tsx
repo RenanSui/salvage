@@ -1,5 +1,3 @@
-import { SiteFooter } from '@/components/layouts/site-footer'
-
 export default function LobbyLayout({
   children,
 }: {
@@ -10,7 +8,7 @@ export default function LobbyLayout({
       {/* <SiteHeader /> */}
       {/* <div className="pointer-events-none absolute -left-24 -top-24 -z-10 h-96 w-96 rounded-full bg-white/10 blur-3xl" /> */}
       <main className="flex-1 ">{children}</main>
-      <SiteFooter />
+      {/* <SiteFooter /> */}
     </div>
   )
 }
