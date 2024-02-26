@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn('font-light tracking-wider', lato.className)}
-        data-menu-active="false"
+        data-session-active="false"
       >
         <Draggable>{children}</Draggable>
       </body>

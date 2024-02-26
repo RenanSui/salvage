@@ -9,10 +9,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { invoke, listen } from '@/lib/tauri'
+import { emit, invoke, listen } from '@/lib/tauri'
 import { cn, longestCommonStartingSubstring } from '@/lib/utils'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 
 const Paths = [
   {
@@ -38,44 +40,86 @@ const Paths = [
 type PathItems = (typeof Paths)[0]
 
 export default function Lobby() {
-  const [salvage, setSalvage] = useState(0)
+  const [salvage, setSalvage] = useState(Paths[0].id)
+  const [isMenuActive, setIsMenuActive] = useState(false)
 
-  const addNewBackup = () => {
-    console.log('Add New Backup')
+  // const toggleMenu = () => {
+  // const menuActive = document.body.getAttribute('data-menu-active')
+  // if (!menuActive) return null
+  // const toggleMenuActive = menuActive === 'true' ? 'false' : 'true'
+  // document.body.setAttribute('data-session-active', toggleMenuActive)
+  // setIsMenuActive(menuActive !== 'true')
+  // }
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault()
+    setIsMenuActive(false)
   }
 
+  const path = Paths.filter((path) => path.id === salvage)[0]
+
   return (
-    <div className="flex min-h-screen flex-col justify-between gap-4 p-4">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="outline-none">
-          <div className="flex min-h-4 items-center justify-center rounded-md border border-dashed border-neutral-700 py-4 transition-colors duration-300 hover:bg-neutral-800/70">
-            <Icons.cross className="rotate-45 text-neutral-600" />
-          </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem className="font-bold" onClick={addNewBackup}>
-            <Ellipsis className="w-32">Add New Backup</Ellipsis>
-          </DropdownMenuItem>
+    <div className="flex min-h-screen flex-col justify-between gap-4">
+      <div
+        className={cn(
+          'absolute top-0 flex h-full min-h-screen w-full flex-col justify-between gap-4 p-4 transition-all duration-1000',
+          isMenuActive ? 'left-96' : 'left-0',
+        )}
+      >
+        <DropdownMenu>
+          <DropdownMenuTrigger className="outline-none">
+            <div className="flex min-h-4 items-center justify-center rounded-md border border-dashed border-neutral-700 py-4 transition-colors duration-300 hover:bg-neutral-800/70">
+              <Icons.cross className="rotate-45 text-neutral-600" />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              className="font-bold"
+              onClick={() => {
+                emit('shutdown_salvage')
+                  .then(() => console.log('succes'))
+                  .catch(console.error)
+                setIsMenuActive(true)
+              }}
+            >
+              <Ellipsis className="w-32">Add New Backup</Ellipsis>
+            </DropdownMenuItem>
 
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel>Backups</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <ScrollArea>
-            {Paths.map((item) => {
-              const { id, title } = item
-              const changeBackup = () => setSalvage(id)
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Backups</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <ScrollArea>
+              {Paths.map((item) => {
+                const { id, title } = item
+                const changeBackup = () => setSalvage(id)
 
-              return (
-                <DropdownMenuItem key={id} onClick={changeBackup}>
-                  <Ellipsis className="w-32">{title}</Ellipsis>
-                </DropdownMenuItem>
-              )
-            })}
-          </ScrollArea>
-        </DropdownMenuContent>
-      </DropdownMenu>
+                return (
+                  <DropdownMenuItem key={id} onClick={changeBackup}>
+                    <Ellipsis className="w-32">{title}</Ellipsis>
+                  </DropdownMenuItem>
+                )
+              })}
+            </ScrollArea>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-      <SalvageCard path={Paths[salvage]} />
+        <SalvageCard path={path} />
+      </div>
+
+      <div
+        className={cn(
+          'absolute top-0 z-10 h-full w-full cursor-pointer rounded-md p-4 transition-all duration-1000',
+          isMenuActive ? 'left-0' : '-left-96',
+        )}
+      >
+        <div className="flex h-full flex-1 flex-col gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300">
+          <form action="" onSubmit={handleSubmit}>
+            <Label htmlFor="title"></Label>
+            <Input></Input>
+            <button type="submit">Add</button>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
@@ -124,7 +168,7 @@ const SalvageCard = ({ path }: { path: PathItems }) => {
   const commom = longestCommonStartingSubstring([source, dest])
 
   return (
-    <div className="flex h-full flex-1 flex-col  gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">
+    <div className="flex h-full flex-1 flex-col gap-4 rounded-md border border-neutral-700 p-4 transition-colors duration-300 hover:bg-neutral-800/70">
       <div className="flex w-full items-start justify-between">
         <div className="flex flex-col gap-6">
           <Ellipsis className="cursor-default text-3xl">{title}</Ellipsis>
