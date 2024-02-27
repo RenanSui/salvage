@@ -1,12 +1,10 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export const MenuIcon = () => {
   const [isMenuActive, setIsMenuActive] = useState(false)
-
-  useEffect(() => {}, [])
 
   const toggleMenu = () => {
     const menuActive = document.body.getAttribute('data-menu-active')
