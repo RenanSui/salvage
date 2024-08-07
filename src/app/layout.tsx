@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import './globals.css'
+import '../styles/globals.css'
 
 import { fontHeading } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
