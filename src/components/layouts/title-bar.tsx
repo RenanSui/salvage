@@ -9,7 +9,7 @@ export default function TitleBar() {
       className="bg-custom-color-300 dark:bg-custom-color-200 shadow-md flex items-center justify-between"
       data-tauri-drag-region
     >
-      <button className="px-2 group">
+      <button className="px-2 group cursor-default">
         <Icons.logo
           className="transition-all"
           middleStroke="dark:group-hover:stroke-primary-foreground group-hover:stroke-primary"
