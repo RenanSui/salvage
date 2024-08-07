@@ -68,10 +68,12 @@
       {
         "decorations": false,
         "fullscreen": false,
-        "height": 600,
         "resizable": true,
         "title": "Salvage",
-        "width": 800
+        "height": 600,
+        "width": 800,
+        "minWidth": 800,
+        "minHeight": 600
       }
     ]
   }
