@@ -6,19 +6,19 @@ import { Icons } from '../icons'
 export default function TitleBar() {
   return (
     <header
-      className="bg-custom-color-300 dark:bg-custom-color-200 shadow-md flex items-center justify-between"
+      className="bg-custom-gray-300 dark:bg-custom-dark-200 shadow-md flex items-center justify-between"
       data-tauri-drag-region
     >
       <button className="px-2 group cursor-default">
         <Icons.logo
           className="transition-all"
-          middleStroke="dark:group-hover:stroke-primary-foreground group-hover:stroke-primary"
-          sideStrokes="dark:group-hover:stroke-primary-foreground group-hover:stroke-primary"
+          middleStroke="group-hover:stroke-custom-primary-500 dark:group-hover:stroke-custom-primary-200"
+          sideStrokes="group-hover:stroke-custom-primary-500 dark:group-hover:stroke-custom-primary-200"
         />
       </button>
-      <div className="flex items-center">
+      <div className="flex items-center stroke-custom-primary-500">
         <button
-          className="w-11 h-7 hover:bg-[#505154] flex items-center justify-center transition-all cursor-default"
+          className="w-11 h-7 hover:bg-custom-gray-500 flex items-center justify-center transition-all cursor-default"
           onClick={async () => (await tauriWindow())?.appWindow.minimize()}
         >
           <Icons.minus />
