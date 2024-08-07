@@ -6,7 +6,7 @@ import { Icons } from '../icons'
 export default function TitleBar() {
   return (
     <header
-      className="bg-custom-gray-300 dark:bg-custom-dark-200 shadow-md flex items-center justify-between"
+      className="z-[999] bg-custom-gray-300 dark:bg-custom-dark-200 shadow-md flex items-center justify-between"
       data-tauri-drag-region
     >
       <button className="px-2 group cursor-default">
@@ -16,7 +16,7 @@ export default function TitleBar() {
           sideStrokes="group-hover:stroke-custom-primary-500 dark:group-hover:stroke-custom-primary-200"
         />
       </button>
-      <div className="flex items-center stroke-custom-primary-500">
+      <div className="flex items-center">
         <button
           className="w-11 h-7 hover:bg-custom-gray-500 flex items-center justify-center transition-all cursor-default"
           onClick={async () => (await tauriWindow())?.appWindow.minimize()}
