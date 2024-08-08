@@ -6,7 +6,7 @@ import { Icons } from '../icons'
 export default function TitleBar() {
   return (
     <header
-      className="z-[999] bg-custom-gray-300 dark:bg-custom-dark-200 shadow-md flex items-center justify-between"
+      className="sticky top-0 z-[999] bg-custom-gray-300/60 dark:bg-custom-dark-200/60 shadow-md flex items-center justify-between backdrop-blur"
       data-tauri-drag-region
     >
       <button className="px-2 group cursor-default">
