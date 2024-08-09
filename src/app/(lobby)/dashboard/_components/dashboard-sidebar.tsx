@@ -33,35 +33,39 @@ export function DashboardSidebar({
       </Link>
       <Separator />
       <ScrollArea className="h-[calc(100vh-127px)]">
-        {items.map((backup, index) => (
-          <Button
-            key={index}
-            variant="ghost"
-            size="sm"
-            className={cn(
-              'group w-full justify-start items-center gap-1 mb-1 font-normal bg-transparent cursor-default',
-              backup.id === backupSelected &&
-                'bg-foreground/10 hover:bg-foreground/10',
-            )}
-            onClick={() => setBackup(backup.id)}
-          >
-            <Icons.file
+        {items.map((backup, index) => {
+          const Icon = backup.is_file ? Icons.file : Icons.folder
+
+          return (
+            <Button
+              key={index}
+              variant="ghost"
+              size="sm"
               className={cn(
-                'size-4 text-foreground/70 group-hover:text-foreground',
+                'group w-full justify-start items-center gap-1 mb-1 font-normal bg-transparent cursor-default',
                 backup.id === backupSelected &&
-                  'text-custom-primary-200 group-hover:text-custom-primary-200',
+                  'bg-foreground/10 hover:bg-foreground/10',
               )}
-            />
-            <span
-              className={cn(
-                'text-sm text-foreground/70 group-hover:text-foreground',
-                backup.id === backupSelected && 'font-semibold',
-              )}
+              onClick={() => setBackup(backup.id)}
             >
-              {backup.name}
-            </span>
-          </Button>
-        ))}
+              <Icon
+                className={cn(
+                  'size-4 text-foreground/70 group-hover:text-foreground stroke-[1]',
+                  backup.id === backupSelected &&
+                    'text-custom-primary-200 group-hover:text-custom-primary-200 stroke-[3]',
+                )}
+              />
+              <span
+                className={cn(
+                  'text-sm text-foreground/70 group-hover:text-foreground',
+                  backup.id === backupSelected && 'font-semibold',
+                )}
+              >
+                {backup.name}
+              </span>
+            </Button>
+          )
+        })}
       </ScrollArea>
     </Card>
   )

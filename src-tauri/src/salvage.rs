@@ -81,6 +81,7 @@ pub mod salvage {
                     if data.id == id {
                         println!("# Update {:?} source", data.name);
                         data.source = String::from(source);
+                        data.is_file = Path::new(&data.source).is_file();
                     }
                     salvage_data.push(SalvageItem { ..data })
                 }
