@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import '../styles/globals.css'
 
+import { Providers } from '@/components/providers/providers'
 import { fontHeading } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 import { GeistMono } from 'geist/font/mono'
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontHeading.variable,
         )}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
