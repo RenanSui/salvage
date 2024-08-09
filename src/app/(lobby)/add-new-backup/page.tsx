@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 'use client'
 
 import { Icons } from '@/components/icons'
@@ -31,12 +32,18 @@ import {
   CreateBackupSchema,
   createBackupSchema,
 } from '@/lib/validations/backup'
+import { BackupSchema } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { useFieldArray, useForm } from 'react-hook-form'
 
 export default function Page() {
+  const navigation = useRouter()
+  const queryClient = useQueryClient()
+
   const form = useForm<CreateBackupSchema>({
     resolver: zodResolver(createBackupSchema),
     defaultValues: {
@@ -52,19 +59,23 @@ export default function Page() {
     name: 'exclusions',
   })
 
-  async function onSubmit(values: CreateBackupSchema) {
-    const newExclusions = values.exclusions.map((item) => item.exclusion)
-    const newValues = { ...values, exclusions: newExclusions, id: '' }
+  async function onSubmit({ exclusions, ...values }: CreateBackupSchema) {
+    const salvage_item: BackupSchema = {
+      ...values,
+      id: '',
+      is_file: false,
+      exclusions: exclusions.map((exclusion) => exclusion.exclusion),
+    }
 
-    console.log(newValues)
+    await tauriInvoke<string>('add_salvage_item', { salvage_item })
 
-    await tauriInvoke<string>('add_salvage_item', {
-      salvage_item: { ...newValues },
-    })
+    queryClient.invalidateQueries({ queryKey: [`salvage-data`] })
+
+    navigation.push('/dashboard')
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-28px)] p-4">
+    <div className="flex justify-center items-center h-[calc(100vh-28px)] p-4">
       <Card className="dark:bg-custom-dark-400 w-full max-w-screen-sm">
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -73,7 +84,10 @@ export default function Page() {
             </CardTitle>
             <Link
               href="/"
-              className={cn(buttonVariants({ size: 'icon', variant: 'ghost' }))}
+              className={cn(
+                buttonVariants({ size: 'icon', variant: 'ghost' }),
+                'cursor-default',
+              )}
             >
               <Icons.cross />
             </Link>
@@ -121,7 +135,7 @@ export default function Page() {
                           <DropdownMenuTrigger
                             className={cn(
                               buttonVariants({ variant: 'outline' }),
-                              'px-2 dark:bg-custom-dark-400 bg-white',
+                              'px-2 bg-transparent cursor-default',
                             )}
                           >
                             <Icons.computerUpload />
@@ -175,7 +189,7 @@ export default function Page() {
                           <DropdownMenuTrigger
                             className={cn(
                               buttonVariants({ variant: 'outline' }),
-                              'px-2 dark:bg-custom-dark-400 bg-white',
+                              'px-2 bg-transparent cursor-default',
                             )}
                           >
                             <Icons.computerUpload />
@@ -242,10 +256,13 @@ export default function Page() {
                               />
                               <DropdownMenu>
                                 <DropdownMenuTrigger
-                                  className={buttonVariants({
-                                    size: 'icon',
-                                    variant: 'outline',
-                                  })}
+                                  className={cn(
+                                    buttonVariants({
+                                      size: 'icon',
+                                      variant: 'outline',
+                                    }),
+                                    'cursor-default bg-transparent',
+                                  )}
                                 >
                                   <Icons.dots />
                                 </DropdownMenuTrigger>
@@ -265,7 +282,7 @@ export default function Page() {
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full dark:bg-custom-dark-400 bg-white"
+                          className="w-full bg-transparent cursor-default"
                           onClick={() => append({ exclusion: '' })}
                         >
                           Add new exclusion
@@ -277,7 +294,9 @@ export default function Page() {
                 )}
               />
 
-              <Button type="submit">Submit</Button>
+              <Button type="submit" className="cursor-default">
+                Submit
+              </Button>
             </form>
           </Form>
         </CardContent>
