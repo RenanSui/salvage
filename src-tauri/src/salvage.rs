@@ -11,6 +11,7 @@ pub mod salvage {
         pub source: String,
         pub destination: String,
         pub exclusions: Vec<String>,
+        pub is_file: bool
     }
 
     pub fn get_all<P: AsRef<Path>>(
@@ -31,10 +32,11 @@ pub mod salvage {
         Ok(json)
     }
 
-    pub fn add(salvage_item: SalvageItem) -> std::io::Result<()> {
+    pub fn add(mut salvage_item: SalvageItem) -> std::io::Result<()> {
         let mut salvage_data = get_all("./data.json")
             .map_err(|e| Error::new(ErrorKind::Other, format!("# Error reading data: {}", e)))?;
 
+        salvage_item.is_file = Path::new(&salvage_item.source).is_file();
         salvage_data.push(salvage_item);
 
         let json = serde_json::to_string(&salvage_data);
