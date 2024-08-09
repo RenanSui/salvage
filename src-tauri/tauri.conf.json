@@ -70,10 +70,10 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Salvage",
-        "height": 600,
-        "width": 800,
-        "minWidth": 800,
-        "minHeight": 600
+        "height": 656,
+        "width": 786,
+        "minWidth": 786,
+        "minHeight": 656
       }
     ]
   }
