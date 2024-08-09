@@ -12,6 +12,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             get_file,
             get_folder,
+            get_salvage_items,
             add_salvage_item,
         ])
         .run(tauri::generate_context!())
@@ -41,8 +42,17 @@ fn get_folder() -> String {
 }
 
 #[tauri::command(rename_all = "snake_case")]
+fn get_salvage_items() -> Option<Vec<Salvage::SalvageItem>> {
+    let salvage_data = Salvage::get_all("./data.json");
+
+    match salvage_data {
+        Ok(salvage_data) => Some(salvage_data),
+        Err(_) => None,
+    }
+}
+
+#[tauri::command(rename_all = "snake_case")]
 fn add_salvage_item(mut salvage_item: Salvage::SalvageItem) {
     salvage_item.id = Uuid::new_v4().to_string();
     let _ = Salvage::add(salvage_item);
 }
-
