@@ -6,26 +6,25 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useBackupById } from '@/hooks/use-backup-by-id'
 import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 import { useTabsAtom } from '@/hooks/use-tabs'
-import { BackupSchema } from '@/types'
+import { cn } from '@/lib/utils'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
 import Backup from './backup'
 import { BackupTabs } from './backup-tabs'
 
-type BackupDashboardProps = React.HTMLAttributes<HTMLDivElement> & {
-  items: BackupSchema[]
-}
+type BackupDashboardProps = React.HTMLAttributes<HTMLDivElement>
 
-export function BackupDashboard({ items }: BackupDashboardProps) {
+export function BackupDashboard({ className }: BackupDashboardProps) {
   const { tabs: tabSelected } = useTabsAtom()
   const { backupSelected } = useBackupSelectedAtom()
-  const backup = items.find((item) => item.id === backupSelected)
+  const { data: backup, isFetched } = useBackupById(backupSelected)
 
-  if (!backupSelected || !backup) {
+  if (!backupSelected) {
     return (
-      <Card className="w-full p-2 text-center">
+      <Card className={cn('w-full p-2 text-center', className)}>
         <CardHeader
           className="animate-fade-up mt-20"
           style={{ animationDelay: '0.20s', animationFillMode: 'both' }}
@@ -46,17 +45,23 @@ export function BackupDashboard({ items }: BackupDashboardProps) {
   }
 
   return (
-    <Card className="w-full p-2 ">
+    <Card
+      className={cn(
+        'w-full max-w-screen-lg pt-2 mx-auto border-none shadow-none bg-transparent',
+        className,
+        isFetched && 'animate-fade-up',
+      )}
+    >
       <ScrollArea className="h-[calc(100vh-78px)]">
         <CardHeader className="p-0 space-y-2">
           <CardTitle className="font-heading text-3xl">Dashboard</CardTitle>
           <BackupTabs />
           <p className="font-semibold leading-none tracking-tight text-2xl pb-2">
-            {backup.name}
+            {backup?.name}
           </p>
         </CardHeader>
         <CardContent className="p-0 pt-2">
-          {tabSelected === 'Backup' && <Backup backup={backup} />}
+          {tabSelected === 'Backup' && backup && <Backup backup={backup} />}
         </CardContent>
       </ScrollArea>
     </Card>
