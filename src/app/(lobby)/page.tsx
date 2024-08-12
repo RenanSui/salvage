@@ -21,7 +21,7 @@ export default function Lobby() {
 
   if (!mounted) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-28px)]">
+      <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-custom-gray-100">
         <Card className="w-full max-w-[415px] p-4 flex flex-col gap-2">
           <div
             className="animate-fade-up space-y-2"
@@ -43,7 +43,7 @@ export default function Lobby() {
 
   if (salvageData.length === 0) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-28px)]">
+      <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-custom-gray-100">
         <Card className="dark:bg-custom-dark-400">
           <CardHeader
             className="animate-fade-up"
@@ -74,7 +74,7 @@ export default function Lobby() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-28px)]">
+    <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-custom-gray-100">
       <Card className="dark:bg-custom-dark-400">
         <CardHeader
           className="animate-fade-up"
