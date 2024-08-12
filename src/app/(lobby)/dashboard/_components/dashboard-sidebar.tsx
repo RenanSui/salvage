@@ -22,7 +22,10 @@ export function DashboardSidebar({
 
   return (
     <Card
-      className={cn('w-full max-w-[248px] p-2 space-y-2', className)}
+      className={cn(
+        'w-full max-w-[200px] lg:max-w-[248px] p-2 space-y-2 shadow-none bg-transparent border-none',
+        className,
+      )}
       {...props}
     >
       <Link
