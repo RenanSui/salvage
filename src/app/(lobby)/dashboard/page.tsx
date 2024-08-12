@@ -1,14 +1,14 @@
 'use client'
 
 import { useMounted } from '@/hooks/use-mounted'
-import { useSalvageData } from '@/hooks/use-salvage-data'
+import { useBackups } from '@/hooks/use-backups'
 import { BackupDashboard } from './_components/backup-dashboard'
 import { DashboardSidebar } from './_components/dashboard-sidebar'
 import { DashboardSidebarSkeleton } from './_components/dashboard-sidebar-skeleton'
 
 export default function Page() {
   const mounted = useMounted()
-  const { data: salvageData } = useSalvageData()
+  const { data: salvageData } = useBackups()
 
   if (!mounted) {
     return (

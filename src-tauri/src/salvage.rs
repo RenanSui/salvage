@@ -31,6 +31,26 @@ pub mod salvage {
         Ok(json)
     }
 
+    pub fn get_by_id(id: &str) -> std::option::Option<SalvageItem> {
+        let json = get_all("./data.json");
+
+        match json {
+            Ok(json_data) => {
+                for data in json_data {
+                    if data.id == id {
+                        println!("# Get {:?} item", data.name);
+                        return Some(data);
+                    }
+                }
+                None
+            }
+            Err(error) => {
+                println!("# Error getting app data: {:#?}", error);
+                None
+            }
+        }
+    }
+
     pub fn add(mut salvage_item: SalvageItem) -> std::io::Result<()> {
         let mut salvage_data = get_all("./data.json")
             .map_err(|e| Error::new(ErrorKind::Other, format!("# Error reading data: {}", e)))?;

@@ -2,11 +2,11 @@ import { tauriInvoke } from '@/lib/tauri'
 import { BackupSchema } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 
-export function useSalvageData() {
+export function useBackups() {
   return useQuery({
-    queryKey: ['salvage-data'],
+    queryKey: ['backups'],
     queryFn: async () => {
-      return (await tauriInvoke<BackupSchema[]>('get_salvage_items')) ?? []
+      return (await tauriInvoke<BackupSchema[]>('get_all_backups')) ?? []
     },
     initialData: [],
     refetchOnWindowFocus: false,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useSalvageData } from '@/hooks/use-salvage-data'
+import { useBackups } from '@/hooks/use-backups'
 import { cn } from '@/lib/utils'
 
 import { buttonVariants } from '@/components/ui/button'
@@ -17,7 +17,7 @@ import Link from 'next/link'
 
 export default function Lobby() {
   const mounted = useMounted()
-  const { data: salvageData } = useSalvageData()
+  const { data: salvageData } = useBackups()
 
   if (!mounted) {
     return (

@@ -34,7 +34,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useBackupAtom } from '@/hooks/use-backup'
+import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 
 import { tauriInvoke } from '@/lib/tauri'
 import { cn } from '@/lib/utils'
@@ -53,7 +53,7 @@ type BackupProps = React.HTMLAttributes<HTMLDivElement> & {
 }
 
 export default function Backup({ backup }: BackupProps) {
-  const { setBackup } = useBackupAtom()
+  const { setBackupSelected } = useBackupSelectedAtom()
   const queryClient = useQueryClient()
 
   const form = useForm<CreateBackupSchema>({
@@ -83,10 +83,10 @@ export default function Backup({ backup }: BackupProps) {
     const salvage_item: BackupSchema = { ...backup, ...values }
     salvage_item.exclusions = exclusions.map((exclusion) => exclusion.exclusion)
 
-    await tauriInvoke('update_salvage_item_name', { ...salvage_item })
-    await tauriInvoke('update_salvage_item_source', { ...salvage_item })
-    await tauriInvoke('update_salvage_item_destination', { ...salvage_item })
-    await tauriInvoke('update_salvage_item_exclusions', { ...salvage_item })
+    await tauriInvoke('update_backup_name', { ...salvage_item })
+    await tauriInvoke('update_backup_source', { ...salvage_item })
+    await tauriInvoke('update_backup_destination', { ...salvage_item })
+    await tauriInvoke('update_backup_exclusions', { ...salvage_item })
 
     queryClient.invalidateQueries({ queryKey: [`salvage-data`] })
   }
@@ -341,8 +341,8 @@ export default function Backup({ backup }: BackupProps) {
                     'cursor-default',
                   )}
                   onClick={async () => {
-                    setBackup(null)
-                    await tauriInvoke('remove_salvage_item', { ...backup })
+                    setBackupSelected(null)
+                    await tauriInvoke('remove_backup', { ...backup })
                     queryClient.invalidateQueries({
                       queryKey: [`salvage-data`],
                     })

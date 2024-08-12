@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useBackupAtom } from '@/hooks/use-backup'
+import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 import { useTabsAtom } from '@/hooks/use-tabs'
 import { BackupSchema } from '@/types'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
@@ -20,10 +20,10 @@ type BackupDashboardProps = React.HTMLAttributes<HTMLDivElement> & {
 
 export function BackupDashboard({ items }: BackupDashboardProps) {
   const { tabs: tabSelected } = useTabsAtom()
-  const { backup } = useBackupAtom()
-  const backupSelected = items.find((item) => item.id === backup)
+  const { backupSelected } = useBackupSelectedAtom()
+  const backup = items.find((item) => item.id === backupSelected)
 
-  if (!backup || !backupSelected) {
+  if (!backupSelected || !backup) {
     return (
       <Card className="w-full p-2 text-center">
         <CardHeader
@@ -52,11 +52,11 @@ export function BackupDashboard({ items }: BackupDashboardProps) {
           <CardTitle className="font-heading text-3xl">Dashboard</CardTitle>
           <BackupTabs />
           <p className="font-semibold leading-none tracking-tight text-2xl pb-2">
-            {backupSelected.name}
+            {backup.name}
           </p>
         </CardHeader>
         <CardContent className="p-0 pt-2">
-          {tabSelected === 'Backup' && <Backup backup={backupSelected} />}
+          {tabSelected === 'Backup' && <Backup backup={backup} />}
         </CardContent>
       </ScrollArea>
     </Card>

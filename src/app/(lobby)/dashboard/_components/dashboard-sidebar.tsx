@@ -3,7 +3,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { useBackupAtom } from '@/hooks/use-backup'
+import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 import { cn } from '@/lib/utils'
 import { BackupSchema } from '@/types'
 import Link from 'next/link'
@@ -18,7 +18,7 @@ export function DashboardSidebar({
   className,
   ...props
 }: DashboardSidebarProps) {
-  const { backup: backupSelected, setBackup } = useBackupAtom()
+  const { backupSelected, setBackupSelected } = useBackupSelectedAtom()
 
   return (
     <Card
@@ -46,7 +46,7 @@ export function DashboardSidebar({
                 backup.id === backupSelected &&
                   'bg-foreground/10 hover:bg-foreground/10',
               )}
-              onClick={() => setBackup(backup.id)}
+              onClick={() => setBackupSelected(backup.id)}
             >
               <Icon
                 className={cn(

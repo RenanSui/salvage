@@ -67,7 +67,7 @@ export default function Page() {
       exclusions: exclusions.map((exclusion) => exclusion.exclusion),
     }
 
-    await tauriInvoke<string>('add_salvage_item', { salvage_item })
+    await tauriInvoke<string>('add_backup', { salvage_item })
 
     queryClient.invalidateQueries({ queryKey: [`salvage-data`] })
 

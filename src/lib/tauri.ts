@@ -1,15 +1,16 @@
 import { InvokeArgs } from '@tauri-apps/api/tauri'
 
 type tauriInvokeCmdArgs =
-  | 'get_salvage_items'
-  | 'add_salvage_item'
   | 'get_file'
   | 'get_folder'
-  | 'update_salvage_item_name'
-  | 'update_salvage_item_source'
-  | 'update_salvage_item_destination'
-  | 'update_salvage_item_exclusions'
-  | 'remove_salvage_item'
+  | 'get_all_backups'
+  | 'get_backup_by_id'
+  | 'add_backup'
+  | 'update_backup_name'
+  | 'update_backup_source'
+  | 'update_backup_destination'
+  | 'update_backup_exclusions'
+  | 'remove_backup'
 
 export async function tauriWindow() {
   if (typeof window !== 'undefined') {
