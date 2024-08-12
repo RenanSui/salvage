@@ -22,7 +22,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body
         className={cn(
-          'min-h-screen font-sans antialiased',
+          'min-h-screen font-sans antialiased [box-shadow:inset_0px_0px_0px_1px_#dedede] dark:[box-shadow:inset_0px_0px_0px_1px_#27272a] ',
           GeistSans.variable,
           GeistMono.variable,
           fontHeading.variable,
