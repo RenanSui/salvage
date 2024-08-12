@@ -92,7 +92,7 @@ export default function Backup({ backup }: BackupProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <Card>
         <CardHeader className="space-y-0 p-2">
           <CardTitle className="font-semibold text-lg">

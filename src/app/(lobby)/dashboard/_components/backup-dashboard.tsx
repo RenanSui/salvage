@@ -51,11 +51,11 @@ export function BackupDashboard({ items }: BackupDashboardProps) {
         <CardHeader className="p-0 space-y-2">
           <CardTitle className="font-heading text-3xl">Dashboard</CardTitle>
           <BackupTabs />
-          <p className="font-semibold leading-none tracking-tight text-2xl">
+          <p className="font-semibold leading-none tracking-tight text-2xl pb-2">
             {backupSelected.name}
           </p>
         </CardHeader>
-        <CardContent className="p-0 py-4">
+        <CardContent className="p-0 pt-2">
           {tabSelected === 'Backup' && <Backup backup={backupSelected} />}
         </CardContent>
       </ScrollArea>
