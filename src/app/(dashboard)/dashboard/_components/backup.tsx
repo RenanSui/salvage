@@ -93,7 +93,7 @@ export default function Backup({ backup }: BackupProps) {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="dark:bg-accent/20 p-2">
         <CardHeader className="space-y-0 p-2">
           <CardTitle className="font-semibold text-lg">
             Update your backup
@@ -286,7 +286,7 @@ export default function Backup({ backup }: BackupProps) {
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full dark:bg-custom-dark-400 bg-transparent cursor-default"
+                          className="w-full cursor-default"
                           onClick={() => append({ exclusion: '' })}
                         >
                           Add new exclusion
@@ -306,7 +306,7 @@ export default function Backup({ backup }: BackupProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="dark:bg-accent/20 p-2">
         <CardHeader className="space-y-0 p-2">
           <CardTitle className="font-semibold text-lg">
             Delete your backup

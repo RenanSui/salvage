@@ -1,13 +1,14 @@
 import { Icons } from '@/components/icons'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
+import { useMounted } from '@/hooks/use-mounted'
 import { cn } from '@/lib/utils'
 import { BackupSchema } from '@/types'
 import Link from 'next/link'
 import * as React from 'react'
+import { DashboardSidebarSkeleton } from './dashboard-sidebar-skeleton'
 
 type DashboardSidebarProps = React.HTMLAttributes<HTMLDivElement> & {
   items: BackupSchema[]
@@ -18,12 +19,17 @@ export function DashboardSidebar({
   className,
   ...props
 }: DashboardSidebarProps) {
+  const mounted = useMounted()
   const { backupSelected, setBackupSelected } = useBackupSelectedAtom()
 
+  if (!mounted) {
+    return <DashboardSidebarSkeleton />
+  }
+
   return (
-    <Card
+    <div
       className={cn(
-        'w-full max-w-[200px] lg:max-w-[248px] p-2 space-y-2 shadow-none bg-transparent border-none',
+        'w-full max-w-[200px] lg:max-w-[248px] p-2 space-y-2',
         className,
       )}
       {...props}
@@ -53,9 +59,9 @@ export function DashboardSidebar({
             >
               <Icon
                 className={cn(
-                  'size-4 text-foreground/70 group-hover:text-foreground stroke-[1]',
+                  'size-4 text-foreground/70 group-hover:text-foreground stroke-[3] ',
                   backup.id === backupSelected &&
-                    'text-custom-primary-200 group-hover:text-custom-primary-200 stroke-[3]',
+                    'text-blue-500 group-hover:text-blue-500',
                 )}
               />
               <span
@@ -70,6 +76,6 @@ export function DashboardSidebar({
           )
         })}
       </ScrollArea>
-    </Card>
+    </div>
   )
 }

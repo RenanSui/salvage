@@ -21,7 +21,7 @@ export default function Lobby() {
 
   if (!mounted) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-custom-gray-100 dark:bg-transparent">
+      <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-accent dark:bg-transparent">
         <Card className="w-full max-w-[415px] p-4 flex flex-col gap-2">
           <div
             className="animate-fade-up space-y-2"
@@ -43,8 +43,8 @@ export default function Lobby() {
 
   if (salvageData.length === 0) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-custom-gray-100 dark:bg-transparent">
-        <Card className="dark:bg-custom-dark-400">
+      <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-accent dark:bg-transparent">
+        <Card className="bg-accent/20">
           <CardHeader
             className="animate-fade-up"
             style={{ animationDelay: '0.20s', animationFillMode: 'both' }}
@@ -60,12 +60,12 @@ export default function Lobby() {
           >
             <Link
               className={cn(
-                buttonVariants({ variant: 'outline', size: 'default' }),
+                buttonVariants({ variant: 'outline', size: 'sm' }),
                 'bg-transparent cursor-default',
               )}
               href="/add-new-backup"
             >
-              Add New
+              New Backup
             </Link>
           </CardFooter>
         </Card>
@@ -74,8 +74,8 @@ export default function Lobby() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-custom-gray-100 dark:bg-transparent">
-      <Card className="dark:bg-custom-dark-400">
+    <div className="flex justify-center items-center min-h-[calc(100vh-28px)] bg-accent dark:bg-transparent">
+      <Card className="bg-accent/20">
         <CardHeader
           className="animate-fade-up"
           style={{ animationDelay: '0.20s', animationFillMode: 'both' }}
@@ -84,7 +84,7 @@ export default function Lobby() {
           <CardDescription className="max-w-[26.875rem] flex flex-col">
             <span>
               You currently have a total of{' '}
-              <span className="text-custom-primary-500 dark:text-custom-primary-200 font-semibold">
+              <span className="text-blue-700 dark:text-blue-500 font-semibold">
                 {salvageData.length.toString().padStart(2, '0')} Backups{' '}
               </span>
               stored.
@@ -93,17 +93,26 @@ export default function Lobby() {
           </CardDescription>
         </CardHeader>
         <CardFooter
-          className="space-x-4 animate-fade-up"
+          className="space-x-2 animate-fade-up"
           style={{ animationDelay: '0.30s', animationFillMode: 'both' }}
         >
           <Link
             className={cn(
-              buttonVariants({ variant: 'outline', size: 'default' }),
+              buttonVariants({ variant: 'outline', size: 'sm' }),
               'bg-transparent cursor-default',
             )}
             href="/dashboard"
           >
             Dashboard
+          </Link>
+          <Link
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'bg-transparent cursor-default',
+            )}
+            href="/add-new-backup"
+          >
+            New Backup
           </Link>
         </CardFooter>
       </Card>

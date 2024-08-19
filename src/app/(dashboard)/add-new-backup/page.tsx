@@ -75,8 +75,8 @@ export default function Page() {
   }
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-28px)] p-4 bg-custom-gray-100 dark:bg-transparent">
-      <Card className="dark:bg-custom-dark-400 w-full max-w-screen-sm">
+    <div className="flex justify-center items-center h-[calc(100vh-28px)] p-4 bg-accent dark:bg-transparent">
+      <Card className="dark:bg-accent/20 w-full max-w-screen-sm">
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="font-heading text-2xl">

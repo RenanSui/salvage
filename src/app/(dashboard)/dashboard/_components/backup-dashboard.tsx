@@ -1,6 +1,5 @@
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -8,23 +7,35 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useBackupById } from '@/hooks/use-backup-by-id'
 import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
+import { useMounted } from '@/hooks/use-mounted'
 import { useTabsAtom } from '@/hooks/use-tabs'
 import { cn } from '@/lib/utils'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
 import Backup from './backup'
+import { BackupDashboardSkeleton } from './backup-dashboard-skeleton'
 import { BackupTabs } from './backup-tabs'
 
 type BackupDashboardProps = React.HTMLAttributes<HTMLDivElement>
 
 export function BackupDashboard({ className }: BackupDashboardProps) {
+  const mounted = useMounted()
   const { tabs: tabSelected } = useTabsAtom()
   const { backupSelected } = useBackupSelectedAtom()
   const { data: backup, isFetched } = useBackupById(backupSelected)
 
+  if (!mounted) {
+    return <BackupDashboardSkeleton />
+  }
+
   if (!backupSelected) {
     return (
-      <Card className={cn('w-full p-2 text-center', className)}>
+      <Card
+        className={cn(
+          'w-full p-2 text-center border-none shadow-none bg-[#ff161600]',
+          className,
+        )}
+      >
         <CardHeader
           className="animate-fade-up mt-20"
           style={{ animationDelay: '0.20s', animationFillMode: 'both' }}
@@ -45,25 +56,27 @@ export function BackupDashboard({ className }: BackupDashboardProps) {
   }
 
   return (
-    <Card
+    <div
       className={cn(
-        'w-full max-w-screen-lg pt-2 mx-auto border-none shadow-none bg-transparent',
+        'w-full max-w-screen-lg pt-2 mx-auto',
         className,
         isFetched && 'animate-fade-up',
       )}
     >
       <ScrollArea className="h-[calc(100vh-78px)]">
-        <CardHeader className="p-0 space-y-2">
-          <CardTitle className="font-heading text-3xl">Dashboard</CardTitle>
+        <div className="space-y-4 flex flex-col">
+          <h1 className="font-heading text-3xl leading-none tracking-tight">
+            Dashboard
+          </h1>
           <BackupTabs />
           <p className="font-semibold leading-none tracking-tight text-2xl pb-2">
             {backup?.name}
           </p>
-        </CardHeader>
-        <CardContent className="p-0 pt-2">
+        </div>
+        <div className="pt-4">
           {tabSelected === 'Backup' && backup && <Backup backup={backup} />}
-        </CardContent>
+        </div>
       </ScrollArea>
-    </Card>
+    </div>
   )
 }
