@@ -1,6 +1,11 @@
 import { cn } from '@/lib/utils'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Trash2, FileIcon, FolderIcon } from 'lucide-react'
+import {
+  DashboardIcon,
+  DotsHorizontalIcon,
+  GearIcon,
+  InfoCircledIcon,
+} from '@radix-ui/react-icons'
+import { FileIcon, FolderIcon, Trash2 } from 'lucide-react'
 
 export type IconProps = React.HTMLAttributes<SVGElement>
 
@@ -9,6 +14,9 @@ export const Icons = {
   delete: Trash2,
   file: FileIcon,
   folder: FolderIcon,
+  settings: GearIcon,
+  dashboard: DashboardIcon,
+  about: InfoCircledIcon,
   logo: ({
     middleStroke,
     sideStrokes,
