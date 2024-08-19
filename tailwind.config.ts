@@ -20,20 +20,6 @@ const config = {
     },
     extend: {
       colors: {
-        // custom
-        'custom-primary-500': '#08568C',
-        'custom-primary-200': '#6594B4',
-        'custom-dark-500': '#09090B',
-        'custom-dark-400': '#111113',
-        'custom-dark-300': '#27272A',
-        'custom-dark-200': '#383838',
-        'custom-dark-100': '#ADAFB1',
-        'custom-gray-500': '#505154',
-        'custom-gray-400': '#ADAFB1',
-        'custom-gray-300': '#DEDEDE',
-        'custom-gray-200': '#EBEBEA',
-        'custom-gray-100': '#F1F1F0',
-        // end of custom
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -118,8 +104,8 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-up': 'fade-up 0.5s ease-out',
-        'fade-down': 'fade-down 0.5s ease-out',
+        'fade-up': 'fade-up 0.7s ease-out',
+        'fade-down': 'fade-down 0.7s ease-out',
       },
     },
   },
