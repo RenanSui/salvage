@@ -79,7 +79,7 @@ export function TitleBarMenubar() {
           </MenubarItem>
           <Separator className="my-1" />
           <MenubarItem disabled>
-            <span>Quick Settings</span>
+            <span className="text-center w-full">Quick Settings</span>
           </MenubarItem>
           <MenubarItem role="dark-toggle" onClick={() => setTheme('light')}>
             <SunIcon className="mr-2 h-3 w-3" />
