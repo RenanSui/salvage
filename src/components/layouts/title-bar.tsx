@@ -51,7 +51,7 @@ export function TitleBarMenubar() {
     <Menubar className="bg-transparent shadow-none border-none p-0 h-7 px-1">
       <MenubarMenu>
         <MenubarTrigger className="bg-none py-0 px-2 text-muted-foreground opacity-80">
-          Lobby
+          General
         </MenubarTrigger>
         <MenubarContent>
           <Link href="/">
