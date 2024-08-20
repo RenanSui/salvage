@@ -371,8 +371,10 @@ export default function Backup({ backup }: BackupProps) {
                   onClick={async () => {
                     setBackupSelected(null)
                     await tauriInvoke('remove_backup', { ...backup })
-                    queryClient.invalidateQueries({
-                      queryKey: [`backups`],
+                    queryClient.invalidateQueries({ queryKey: [`backups`] })
+                    toast({
+                      title: 'Backup Deleted:',
+                      description: `"${backup.name}"`,
                     })
                   }}
                 >

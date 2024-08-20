@@ -28,6 +28,7 @@ import {
 } from './ui/dropdown-menu'
 import { ScrollArea } from './ui/scroll-area'
 
+import { toast } from '@/hooks/use-toast'
 import { tauriInvoke } from '@/lib/tauri'
 import { cn } from '@/lib/utils'
 import {
@@ -69,10 +70,16 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
       exclusions: exclusions.map((exclusion) => exclusion.exclusion),
     }
 
-    await tauriInvoke<string>('add_backup', { salvage_item })
+    const result = await tauriInvoke<boolean>('add_backup', { salvage_item })
+
+    if (result === true) {
+      toast({
+        title: 'Backup Added:',
+        description: `"${salvage_item.name}"`,
+      })
+    }
 
     queryClient.invalidateQueries({ queryKey: ['backups'] })
-
     setOpen(false)
   }
 
