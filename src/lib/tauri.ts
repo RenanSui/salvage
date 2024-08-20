@@ -1,16 +1,16 @@
 import { InvokeArgs } from '@tauri-apps/api/tauri'
 
 type tauriInvokeCmdArgs =
-  | 'get_file'
-  | 'get_folder'
-  | 'get_all_backups'
-  | 'get_backup_by_id'
-  | 'add_backup'
-  | 'update_backup_name'
-  | 'update_backup_source'
-  | 'update_backup_destination'
-  | 'update_backup_exclusions'
-  | 'remove_backup'
+  | 'select_file'
+  | 'select_folder'
+  | 'fetch_all_backups'
+  | 'fetch_backup_by_id'
+  | 'create_backup'
+  | 'rename_backup'
+  | 'change_backup_source'
+  | 'change_backup_destination'
+  | 'modify_backup_exclusions'
+  | 'delete_backup'
 
 export async function tauriWindow() {
   if (typeof window !== 'undefined') {
