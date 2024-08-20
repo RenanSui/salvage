@@ -7,6 +7,7 @@ import { fontHeading } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   )
