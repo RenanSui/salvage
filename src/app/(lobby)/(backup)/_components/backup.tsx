@@ -121,7 +121,7 @@ export default function Backup({ backup }: BackupProps) {
 
   return (
     <div className="space-y-4">
-      <Card className="dark:bg-accent/20 p-2">
+      <Card className="p-2">
         <CardHeader className="space-y-0 p-2">
           <CardTitle className="font-semibold text-lg">
             Update your backup
