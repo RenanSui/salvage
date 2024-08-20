@@ -36,6 +36,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 
+import { useToast } from '@/hooks/use-toast'
 import { tauriInvoke } from '@/lib/tauri'
 import { cn } from '@/lib/utils'
 import {
@@ -55,6 +56,7 @@ type BackupProps = React.HTMLAttributes<HTMLDivElement> & {
 export default function Backup({ backup }: BackupProps) {
   const { setBackupSelected } = useBackupSelectedAtom()
   const queryClient = useQueryClient()
+  const { toast } = useToast()
 
   const form = useForm<CreateBackupSchema>({
     resolver: zodResolver(createBackupSchema),
@@ -80,15 +82,41 @@ export default function Backup({ backup }: BackupProps) {
   }, [backup, form])
 
   async function onSubmit({ exclusions, ...values }: CreateBackupSchema) {
-    const salvage_item: BackupSchema = { ...backup, ...values }
-    salvage_item.exclusions = exclusions.map((exclusion) => exclusion.exclusion)
+    const backup_item: BackupSchema = { ...backup, ...values }
+    backup_item.exclusions = exclusions.map((exclusion) => exclusion.exclusion)
+    const updates: string[] = []
 
-    await tauriInvoke('update_backup_name', { ...salvage_item })
-    await tauriInvoke('update_backup_source', { ...salvage_item })
-    await tauriInvoke('update_backup_destination', { ...salvage_item })
-    await tauriInvoke('update_backup_exclusions', { ...salvage_item })
+    if (backup.name !== values.name) {
+      await tauriInvoke('update_backup_name', { ...backup_item })
+      updates.push('Name')
+    }
+
+    if (backup.source !== values.source) {
+      await tauriInvoke('update_backup_source', { ...backup_item })
+      updates.push('Source')
+    }
+
+    if (backup.destination !== values.destination) {
+      await tauriInvoke('update_backup_destination', { ...backup_item })
+      updates.push('Destination')
+    }
+
+    if (backup.exclusions.join('') !== backup_item.exclusions.join('')) {
+      await tauriInvoke('update_backup_exclusions', { ...backup_item })
+      updates.push('Exclusions')
+    }
 
     queryClient.invalidateQueries({ queryKey: [`backups`] })
+
+    toast({
+      title: 'Updated:',
+      description: updates.map((update, index) => (
+        <p className="flex gap-1 font-semibold" key={index}>
+          <Icons.check />
+          <span>{update}</span>
+        </p>
+      )),
+    })
   }
 
   return (
