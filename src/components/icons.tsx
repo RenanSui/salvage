@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import {
+  CheckIcon,
   DashboardIcon,
   DotsHorizontalIcon,
   GearIcon,
@@ -17,6 +18,7 @@ export const Icons = {
   settings: GearIcon,
   dashboard: DashboardIcon,
   about: InfoCircledIcon,
+  check: CheckIcon,
   logo: ({
     middleStroke,
     sideStrokes,
