@@ -51,140 +51,164 @@ pub mod salvage {
         }
     }
 
-    pub fn add(mut salvage_item: SalvageItem) -> std::io::Result<()> {
-        let mut salvage_data = get_all("./data.json")
+    pub fn add(mut backup_item: SalvageItem) -> std::io::Result<bool> {
+        let mut backups_list = get_all("./data.json")
             .map_err(|e| Error::new(ErrorKind::Other, format!("# Error reading data: {}", e)))?;
 
-        salvage_item.is_file = Path::new(&salvage_item.source).is_file();
-        salvage_data.push(salvage_item);
+        backup_item.is_file = Path::new(&backup_item.source).is_file();
+        backups_list.push(backup_item);
 
-        let json = serde_json::to_string(&salvage_data);
-        if let Err(error) = fs::write("./data.json", json?) {
-            println!("# Error writing json: {:?}", error)
+        let backup_string = serde_json::to_string(&backups_list);
+        let backup_added = fs::write("./data.json", backup_string?);
+
+        match backup_added {
+            Ok(_) => Ok(true),
+            Err(error) => {
+                println!("# Error adding backup: {:?}", error);
+                Ok(false)
+            }
         }
-
-        Ok(())
     }
 
-    pub fn update_name(id: &str, name: &str) -> std::io::Result<()> {
-        let mut salvage_data: Vec<SalvageItem> = Vec::new();
-        let json = get_all("./data.json");
+    pub fn update_name(id: &str, name: &str) -> std::io::Result<bool> {
+        let mut backups_list: Vec<SalvageItem> = Vec::new();
+        let backups_json = get_all("./data.json");
 
-        match json {
-            Ok(json_data) => {
-                for mut data in json_data {
-                    if data.id == id {
-                        println!("# Update {:?} name to {:?}", data.name, name);
-                        data.name = String::from(name);
+        match backups_json {
+            Ok(backups) => {
+                for mut backup in backups {
+                    if backup.id == id {
+                        println!("# Update {:?} name to {:?}", backup.name, name);
+                        backup.name = String::from(name);
                     }
-                    salvage_data.push(SalvageItem { ..data })
+                    backups_list.push(SalvageItem { ..backup })
                 }
             }
             Err(error) => println!("# Error getting app data: {:#?}", error),
         }
 
-        let json = serde_json::to_string(&salvage_data);
-        if let Err(error) = fs::write("./data.json", json?) {
-            println!("# Error writing json: {:?}", error)
-        }
+        let backup_string = serde_json::to_string(&backups_list);
+        let backup_updated = fs::write("./data.json", backup_string?);
 
-        Ok(())
+        match backup_updated {
+            Ok(_) => Ok(true),
+            Err(error) => {
+                println!("# Error updating backup: {:?}", error);
+                Ok(false)
+            }
+        }
     }
 
-    pub fn update_source(id: &str, source: &str) -> std::io::Result<()> {
-        let mut salvage_data: Vec<SalvageItem> = Vec::new();
-        let json = get_all("./data.json");
+    pub fn update_source(id: &str, source: &str) -> std::io::Result<bool> {
+        let mut backups_list: Vec<SalvageItem> = Vec::new();
+        let backups_json = get_all("./data.json");
 
-        match json {
-            Ok(json_data) => {
-                for mut data in json_data {
-                    if data.id == id {
-                        println!("# Update {:?} source", data.name);
-                        data.source = String::from(source);
-                        data.is_file = Path::new(&data.source).is_file();
+        match backups_json {
+            Ok(backups) => {
+                for mut backup in backups {
+                    if backup.id == id {
+                        println!("# Update {:?} source", backup.name);
+                        backup.source = String::from(source);
+                        backup.is_file = Path::new(&backup.source).is_file();
                     }
-                    salvage_data.push(SalvageItem { ..data })
+                    backups_list.push(SalvageItem { ..backup })
                 }
             }
             Err(error) => println!("# Error getting app data: {:#?}", error),
         }
 
-        let json = serde_json::to_string(&salvage_data);
-        if let Err(error) = fs::write("./data.json", json?) {
-            println!("# Error writing json: {:?}", error)
-        }
+        let backup_string = serde_json::to_string(&backups_list);
+        let backup_updated = fs::write("./data.json", backup_string?);
 
-        Ok(())
+        match backup_updated {
+            Ok(_) => Ok(true),
+            Err(error) => {
+                println!("# Error updating backup: {:?}", error);
+                Ok(false)
+            }
+        }
     }
 
-    pub fn update_destination(id: &str, dest: &str) -> std::io::Result<()> {
-        let mut salvage_data: Vec<SalvageItem> = Vec::new();
-        let json = get_all("./data.json");
+    pub fn update_destination(id: &str, dest: &str) -> std::io::Result<bool> {
+        let mut backups_list: Vec<SalvageItem> = Vec::new();
+        let backups_json = get_all("./data.json");
 
-        match json {
-            Ok(json_data) => {
-                for mut data in json_data {
-                    if data.id == id {
-                        println!("# Update {:?} dest", data.name);
-                        data.destination = String::from(dest);
+        match backups_json {
+            Ok(backups) => {
+                for mut backup in backups {
+                    if backup.id == id {
+                        println!("# Update {:?} dest", backup.name);
+                        backup.destination = String::from(dest);
                     }
-                    salvage_data.push(SalvageItem { ..data })
+                    backups_list.push(SalvageItem { ..backup })
                 }
             }
             Err(error) => println!("# Error getting app data: {:#?}", error),
         }
 
-        let json = serde_json::to_string(&salvage_data);
-        if let Err(error) = fs::write("./data.json", json?) {
-            println!("# Error writing json: {:?}", error)
-        }
+        let backup_string = serde_json::to_string(&backups_list);
+        let backup_updated = fs::write("./data.json", backup_string?);
 
-        Ok(())
+        match backup_updated {
+            Ok(_) => Ok(true),
+            Err(error) => {
+                println!("# Error updating backup: {:?}", error);
+                Ok(false)
+            }
+        }
     }
 
-    pub fn update_exclusions(id: &str, exclusions: &Vec<String>) -> std::io::Result<()> {
-        let mut salvage_data: Vec<SalvageItem> = Vec::new();
-        let json = get_all("./data.json");
+    pub fn update_exclusions(id: &str, exclusions: &Vec<String>) -> std::io::Result<bool> {
+        let mut backups_list: Vec<SalvageItem> = Vec::new();
+        let backups_json = get_all("./data.json");
 
-        match json {
-            Ok(json_data) => {
-                for mut data in json_data {
-                    if data.id == id {
-                        println!("# Update {:?} exclusions", data.name);
-                        data.exclusions = exclusions.to_owned();
+        match backups_json {
+            Ok(backups) => {
+                for mut backup in backups {
+                    if backup.id == id {
+                        println!("# Update {:?} exclusions", backup.name);
+                        backup.exclusions = exclusions.to_owned();
                     }
-                    salvage_data.push(SalvageItem { ..data })
+                    backups_list.push(SalvageItem { ..backup })
                 }
             }
             Err(error) => println!("# Error getting app data: {:#?}", error),
         }
 
-        let json = serde_json::to_string(&salvage_data);
-        if let Err(error) = fs::write("./data.json", json?) {
-            println!("# Error writing json: {:?}", error)
-        }
+        let backup_string = serde_json::to_string(&backups_list);
+        let backup_updated = fs::write("./data.json", backup_string?);
 
-        Ok(())
+        match backup_updated {
+            Ok(_) => Ok(true),
+            Err(error) => {
+                println!("# Error updating backup: {:?}", error);
+                Ok(false)
+            }
+        }
     }
 
-    pub fn remove(id: &str) -> std::io::Result<()> {
-        let salvage_data = get_all("./data.json")
+    pub fn remove(id: &str) -> std::io::Result<bool> {
+        let backups_list = get_all("./data.json")
             .map_err(|e| Error::new(ErrorKind::Other, format!("# Error reading data: {}", e)))?;
-        let mut new_salvage_data: Vec<&SalvageItem> = Vec::new();
+        let mut new_backups_list: Vec<&SalvageItem> = Vec::new();
 
-        for item in &salvage_data {
+        for item in &backups_list {
             if item.id != id {
-                new_salvage_data.push(item);
+                new_backups_list.push(item);
             } else {
                 println!("# Remove {:?}", item.name);
             }
         }
 
-        let json = serde_json::to_string(&new_salvage_data);
-        if let Err(error) = fs::write("./data.json", json?) {
-            println!("# Error writing json: {:?}", error)
-        }
+        let backup_string = serde_json::to_string(&new_backups_list);
+        let backup_deleted = fs::write("./data.json", backup_string?);
 
-        Ok(())
+        match backup_deleted {
+            Ok(_) => Ok(true),
+            Err(error) => {
+                println!("# Error deleting backup: {:?}", error);
+                Ok(false)
+            }
+        }
     }
 }

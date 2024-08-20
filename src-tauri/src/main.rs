@@ -68,32 +68,50 @@ fn get_backup_by_id(id: String) -> Option<Salvage::SalvageItem> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn add_backup(mut salvage_item: Salvage::SalvageItem) {
+fn add_backup(mut salvage_item: Salvage::SalvageItem) -> bool {
     salvage_item.id = Uuid::new_v4().to_string();
-    let _ = Salvage::add(salvage_item);
+    match Salvage::add(salvage_item) {
+        Ok(_) => true,
+        Err(_) => false,
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_name(id: String, name: String) {
-    let _ = Salvage::update_name(&id, &name);
+fn update_backup_name(id: String, name: String) -> bool {
+    match Salvage::update_name(&id, &name) {
+        Ok(_) => true,
+        Err(_) => false,
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_source(id: String, source: String) {
-    let _ = Salvage::update_source(&id, &source);
+fn update_backup_source(id: String, source: String) -> bool {
+    match Salvage::update_source(&id, &source) {
+        Ok(_) => true,
+        Err(_) => false,
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_destination(id: String, destination: String) {
-    let _ = Salvage::update_destination(&id, &destination);
+fn update_backup_destination(id: String, destination: String) -> bool {
+    match Salvage::update_destination(&id, &destination) {
+        Ok(_) => true,
+        Err(_) => false,
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_exclusions(id: String, exclusions: Vec<String>) {
-    let _ = Salvage::update_exclusions(&id, &exclusions);
+fn update_backup_exclusions(id: String, exclusions: Vec<String>) -> bool {
+    match Salvage::update_exclusions(&id, &exclusions) {
+        Ok(_) => true,
+        Err(_) => false,
+    }
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn remove_backup(id: String) {
-    let _ = Salvage::remove(&id);
+fn remove_backup(id: String) -> bool {
+    match Salvage::remove(&id) {
+        Ok(_) => true,
+        Err(_) => false,
+    }
 }
