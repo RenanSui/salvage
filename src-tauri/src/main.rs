@@ -1,117 +1,95 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod salvage;
+mod backup;
 
 use rfd::FileDialog;
-use salvage::salvage::{self as Salvage};
+use backup::backup::{self as Backup};
 use uuid::Uuid;
 
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            get_file,
-            get_folder,
-            get_all_backups,
-            get_backup_by_id,
-            add_backup,
-            update_backup_name,
-            update_backup_source,
-            update_backup_destination,
-            update_backup_exclusions,
-            remove_backup,
+            select_file,
+            select_folder,
+            fetch_all_backups,
+            fetch_backup_by_id,
+            create_backup,
+            rename_backup,
+            change_backup_source,
+            change_backup_destination,
+            modify_backup_exclusions,
+            delete_backup,
         ])
         .run(tauri::generate_context!())
         .expect("# Error while running tauri application");
 }
 
 #[tauri::command]
-fn get_file() -> String {
-    if let Some(file) = FileDialog::new().pick_file() {
-        println!("# Selected file: {:?}", file);
-        file.display().to_string()
-    } else {
-        println!("# No file selected.");
-        "".to_owned()
-    }
+fn select_file() -> String {
+    FileDialog::new().pick_file().map_or_else(
+        || {
+            println!("# No file selected.");
+            String::new()
+        },
+        |file| {
+            println!("# Selected file: {:?}", file);
+            file.display().to_string()
+        },
+    )
 }
 
 #[tauri::command]
-fn get_folder() -> String {
-    if let Some(folder) = FileDialog::new().pick_folder() {
-        println!("# Selected folder: {:?}", folder);
-        folder.display().to_string()
-    } else {
-        println!("# No folder selected.");
-        "".to_owned()
-    }
+fn select_folder() -> String {
+    FileDialog::new().pick_folder().map_or_else(
+        || {
+            println!("# No folder selected.");
+            String::new()
+        },
+        |folder| {
+            println!("# Selected folder: {:?}", folder);
+            folder.display().to_string()
+        },
+    )
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn get_all_backups() -> Option<Vec<Salvage::SalvageItem>> {
-    let salvage_data = Salvage::get_all("./data.json");
-
-    match salvage_data {
-        Ok(salvage_data) => Some(salvage_data),
-        Err(_) => None,
-    }
+fn fetch_all_backups() -> Option<Vec<Backup::BackupItem>> {
+    Backup::fetch_all_backups("./data.json").ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn get_backup_by_id(id: String) -> Option<Salvage::SalvageItem> {
-    let salvage_data = Salvage::get_by_id(&id);
-
-    match salvage_data {
-        Some(backup) => Some(backup),
-        None => None,
-    }
+fn fetch_backup_by_id(id: String) -> Option<Backup::BackupItem> {
+    Backup::fetch_backup_by_id(&id)
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn add_backup(mut salvage_item: Salvage::SalvageItem) -> bool {
-    salvage_item.id = Uuid::new_v4().to_string();
-    match Salvage::add(salvage_item) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+fn create_backup(mut backup: Backup::BackupItem) -> bool {
+    backup.id = Uuid::new_v4().to_string();
+    Backup::create_backup(backup).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_name(id: String, name: String) -> bool {
-    match Salvage::update_name(&id, &name) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+fn rename_backup(id: String, name: String) -> bool {
+    Backup::rename_backup(&id, &name).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_source(id: String, source: String) -> bool {
-    match Salvage::update_source(&id, &source) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+fn change_backup_source(id: String, source: String) -> bool {
+    Backup::change_backup_source(&id, &source).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_destination(id: String, destination: String) -> bool {
-    match Salvage::update_destination(&id, &destination) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+fn change_backup_destination(id: String, destination: String) -> bool {
+    Backup::change_backup_destination(&id, &destination).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn update_backup_exclusions(id: String, exclusions: Vec<String>) -> bool {
-    match Salvage::update_exclusions(&id, &exclusions) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+fn modify_backup_exclusions(id: String, exclusions: Vec<String>) -> bool {
+    Backup::modify_backup_exclusions(&id, &exclusions).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn remove_backup(id: String) -> bool {
-    match Salvage::remove(&id) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+fn delete_backup(id: String) -> bool {
+    Backup::delete_backup(&id).is_ok()
 }
