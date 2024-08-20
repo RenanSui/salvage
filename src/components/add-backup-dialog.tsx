@@ -29,7 +29,7 @@ import {
 import { ScrollArea } from './ui/scroll-area'
 
 import { toast } from '@/hooks/use-toast'
-import { tauriInvoke } from '@/lib/tauri'
+import { backupService } from '@/lib/backup/actions'
 import { cn } from '@/lib/utils'
 import {
   CreateBackupSchema,
@@ -63,19 +63,18 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
   })
 
   async function onSubmit({ exclusions, ...values }: CreateBackupSchema) {
-    const salvage_item: BackupSchema = {
+    const backup_item: BackupSchema = {
       ...values,
       id: '',
       is_file: false,
       exclusions: exclusions.map((exclusion) => exclusion.exclusion),
     }
 
-    const result = await tauriInvoke<boolean>('add_backup', { salvage_item })
-
-    if (result === true) {
+    const isCreated = await backupService.create_backup(backup_item)
+    if (isCreated === true) {
       toast({
         title: 'Backup Added:',
-        description: `"${salvage_item.name}"`,
+        description: `"${backup_item.name}"`,
       })
     }
 
@@ -152,9 +151,8 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
                             <DropdownMenuItem
                               className="space-x-1"
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_file')
-                                form.setValue('source', file || field.value)
+                                const file = await backupService.select_file()
+                                form.setValue('source', file)
                               }}
                             >
                               <Icons.file className="size-4" />
@@ -163,9 +161,9 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
                             <DropdownMenuItem
                               className="space-x-1"
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_folder')
-                                form.setValue('source', file || field.value)
+                                const folder =
+                                  await backupService.select_folder()
+                                form.setValue('source', folder)
                               }}
                             >
                               <Icons.folder className="size-4" />
@@ -207,26 +205,18 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
                               className="space-x-1"
                               disabled
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_file')
-                                form.setValue(
-                                  'destination',
-                                  file || field.value,
-                                )
+                                const file = await backupService.select_file()
+                                form.setValue('destination', file)
                               }}
                             >
                               <Icons.file className="size-4" />
                               <span>Select a File</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className="space-x-1"
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_folder')
-                                form.setValue(
-                                  'destination',
-                                  file || field.value,
-                                )
+                                const folder =
+                                  await backupService.select_folder()
+                                form.setValue('destination', folder)
                               }}
                             >
                               <Icons.folder className="size-4" />

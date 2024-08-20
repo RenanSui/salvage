@@ -37,7 +37,7 @@ import { Input } from '@/components/ui/input'
 import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 
 import { useToast } from '@/hooks/use-toast'
-import { tauriInvoke } from '@/lib/tauri'
+import { backupService } from '@/lib/backup/actions'
 import { cn } from '@/lib/utils'
 import {
   CreateBackupSchema,
@@ -87,22 +87,22 @@ export default function Backup({ backup }: BackupProps) {
     const updates: string[] = []
 
     if (backup.name !== values.name) {
-      await tauriInvoke('update_backup_name', { ...backup_item })
+      backupService.rename_backup(backup_item)
       updates.push('Name')
     }
 
     if (backup.source !== values.source) {
-      await tauriInvoke('update_backup_source', { ...backup_item })
+      backupService.change_backup_source(backup_item)
       updates.push('Source')
     }
 
     if (backup.destination !== values.destination) {
-      await tauriInvoke('update_backup_destination', { ...backup_item })
+      backupService.change_backup_destination(backup_item)
       updates.push('Destination')
     }
 
     if (backup.exclusions.join('') !== backup_item.exclusions.join('')) {
-      await tauriInvoke('update_backup_exclusions', { ...backup_item })
+      backupService.modify_backup_exclusions(backup_item)
       updates.push('Exclusions')
     }
 
@@ -176,9 +176,8 @@ export default function Backup({ backup }: BackupProps) {
                             <DropdownMenuItem
                               className="space-x-1"
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_file')
-                                form.setValue('source', file || field.value)
+                                const file = await backupService.select_file()
+                                form.setValue('source', file)
                               }}
                             >
                               <Icons.file className="size-4" />
@@ -187,9 +186,9 @@ export default function Backup({ backup }: BackupProps) {
                             <DropdownMenuItem
                               className="space-x-1"
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_folder')
-                                form.setValue('source', file || field.value)
+                                const folder =
+                                  await backupService.select_folder()
+                                form.setValue('source', folder)
                               }}
                             >
                               <Icons.folder className="size-4" />
@@ -231,12 +230,9 @@ export default function Backup({ backup }: BackupProps) {
                               className="space-x-1"
                               disabled
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_file')
-                                form.setValue(
-                                  'destination',
-                                  file || field.value,
-                                )
+                                const { value } = field
+                                const file = await backupService.select_file()
+                                form.setValue('destination', file || value)
                               }}
                             >
                               <Icons.file className="size-4" />
@@ -245,12 +241,10 @@ export default function Backup({ backup }: BackupProps) {
                             <DropdownMenuItem
                               className="space-x-1"
                               onClick={async () => {
-                                const file =
-                                  await tauriInvoke<string>('get_folder')
-                                form.setValue(
-                                  'destination',
-                                  file || field.value,
-                                )
+                                const { value } = field
+                                const folder =
+                                  await backupService.select_folder()
+                                form.setValue('destination', folder || value)
                               }}
                             >
                               <Icons.folder className="size-4" />
@@ -370,12 +364,17 @@ export default function Backup({ backup }: BackupProps) {
                   )}
                   onClick={async () => {
                     setBackupSelected(null)
-                    await tauriInvoke('remove_backup', { ...backup })
-                    queryClient.invalidateQueries({ queryKey: [`backups`] })
-                    toast({
-                      title: 'Backup Deleted:',
-                      description: `"${backup.name}"`,
-                    })
+                    const isDeleted = await backupService.delete_backup(
+                      backup.id,
+                    )
+                    if (isDeleted) {
+                      toast({
+                        title: 'Backup Deleted:',
+                        description: `"${backup.name}"`,
+                      })
+
+                      queryClient.invalidateQueries({ queryKey: [`backups`] })
+                    }
                   }}
                 >
                   Delete
