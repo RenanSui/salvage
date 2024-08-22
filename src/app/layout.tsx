@@ -3,11 +3,12 @@ import type { Metadata } from 'next'
 import '../styles/globals.css'
 
 import { Providers } from '@/components/providers/providers'
+import { Toaster } from '@/components/ui/toaster'
 import { fontHeading } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
-import { Toaster } from '@/components/ui/toaster'
+import { StartBackupWatcher } from './_components/start-backup-watcher'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -29,7 +30,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontHeading.variable,
         )}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <StartBackupWatcher>{children}</StartBackupWatcher>
+        </Providers>
         <Toaster />
       </body>
     </html>
