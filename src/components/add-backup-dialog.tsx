@@ -67,7 +67,9 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
       ...values,
       id: '',
       is_file: false,
-      exclusions: exclusions.map((exclusion) => exclusion.exclusion),
+      exclusions: exclusions.map((exclusion) =>
+        exclusion.exclusion.replace('//', '\\').replace('/', '\\'),
+      ),
     }
 
     const isCreated = await backupService.create_backup(backup_item)
@@ -79,6 +81,8 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
     }
 
     queryClient.invalidateQueries({ queryKey: ['backups'] })
+    backupService.restart_backups()
+    form.reset()
     setOpen(false)
   }
 
@@ -240,42 +244,66 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
                     <FormControl>
                       <div className="space-y-1">
                         <div className="space-y-1">
-                          {fields.map((field, index) => (
-                            <div
-                              key={`exclusion-${index}`}
-                              className="flex space-x-1"
-                            >
-                              <Input
-                                key={field.id}
-                                placeholder="Add your exclusion here"
-                                {...form.register(
-                                  `exclusions.${index}.exclusion`,
-                                )}
-                              />
-                              <DropdownMenu>
-                                <DropdownMenuTrigger
-                                  className={cn(
-                                    buttonVariants({
-                                      size: 'icon',
-                                      variant: 'outline',
-                                    }),
-                                    'cursor-default bg-transparent',
+                          {fields.map((field, index) => {
+                            // const { onChange, ...props } = form.register(
+                            //   `exclusions.${index}.exclusion`,
+                            // )
+
+                            return (
+                              <div
+                                key={`exclusion-${index}`}
+                                className="flex space-x-1"
+                              >
+                                <Input
+                                  key={field.id}
+                                  placeholder="Add your exclusion here"
+                                  // {...form.register(
+                                  //   `exclusions.${index}.exclusion`,
+                                  //   {
+                                  //     onChange: (e) =>
+                                  //       console.log(e.target.value),
+                                  //   },
+                                  // )}
+
+                                  // {...props}
+                                  // onChange={(e) => {
+                                  //   const value = e.target.value
+                                  //     .replace('/', '\\')
+                                  //     .replace('//', '\\')
+                                  //   console.log({ value })
+                                  //   onChange({ target: { value } })
+                                  // }}
+
+                                  {...form.register(
+                                    `exclusions.${index}.exclusion`,
                                   )}
-                                >
-                                  <Icons.dots />
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                  <DropdownMenuItem
-                                    className="focus:bg-destructive focus:text-white flex items-center gap-1"
-                                    onClick={() => remove(index)}
+                                  onChange={(e) => console.log(e)}
+                                />
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger
+                                    className={cn(
+                                      buttonVariants({
+                                        size: 'icon',
+                                        variant: 'outline',
+                                      }),
+                                      'cursor-default bg-transparent',
+                                    )}
                                   >
-                                    <Icons.delete className="size-4" />
-                                    Remove
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          ))}
+                                    <Icons.dots />
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent>
+                                    <DropdownMenuItem
+                                      className="focus:bg-destructive focus:text-white flex items-center gap-1"
+                                      onClick={() => remove(index)}
+                                    >
+                                      <Icons.delete className="size-4" />
+                                      Remove
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            )
+                          })}
                         </div>
                         <Button
                           type="button"
