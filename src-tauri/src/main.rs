@@ -2,94 +2,52 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod backup;
+mod commands;
+mod debouncer;
+mod file;
+mod watcher;
 
-use rfd::FileDialog;
-use backup::backup::{self as Backup};
-use uuid::Uuid;
+use crate::backup::backup::{self as Backup};
+use file::initial_copy_files;
+use std::collections::HashMap;
+use std::sync::Arc;
+use tauri::Result as TauriResult;
+use tokio::sync::Mutex;
 
-fn main() {
+#[tokio::main]
+async fn main() -> TauriResult<()> {
+    let backups = Backup::fetch_all_backups("./data.json")?;
+    for backup in backups {
+        let _ = initial_copy_files(backup.source, backup.destination, &backup.exclusions);
+    }
+
     tauri::Builder::default()
+        .manage(watcher::AppState {
+            watcher_state: Arc::new(Mutex::new(HashMap::new())),
+            tx: Arc::new(Mutex::new(HashMap::new())),
+        })
         .invoke_handler(tauri::generate_handler![
-            select_file,
-            select_folder,
-            fetch_all_backups,
-            fetch_backup_by_id,
-            create_backup,
-            rename_backup,
-            change_backup_source,
-            change_backup_destination,
-            modify_backup_exclusions,
-            delete_backup,
+            commands::select_file,
+            commands::select_folder,
+            commands::fetch_all_backups,
+            commands::fetch_backup_by_id,
+            commands::create_backup,
+            commands::rename_backup,
+            commands::change_backup_source,
+            commands::change_backup_destination,
+            commands::modify_backup_exclusions,
+            commands::delete_backup,
+            // Watcher
+            commands::load_backups,
+            commands::start_watching,
+            commands::stop_watching,
+            commands::restart_backups,
+            commands::start_individual_backup,
+            commands::stop_individual_backup,
+            commands::restart_individual_backup,
         ])
         .run(tauri::generate_context!())
         .expect("# Error while running tauri application");
-}
 
-#[tauri::command]
-fn select_file() -> String {
-    FileDialog::new().pick_file().map_or_else(
-        || {
-            println!("# No file selected.");
-            String::new()
-        },
-        |file| {
-            println!("# Selected file: {:?}", file);
-            file.display().to_string()
-        },
-    )
-}
-
-#[tauri::command]
-fn select_folder() -> String {
-    FileDialog::new().pick_folder().map_or_else(
-        || {
-            println!("# No folder selected.");
-            String::new()
-        },
-        |folder| {
-            println!("# Selected folder: {:?}", folder);
-            folder.display().to_string()
-        },
-    )
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn fetch_all_backups() -> Option<Vec<Backup::BackupItem>> {
-    Backup::fetch_all_backups("./data.json").ok()
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn fetch_backup_by_id(id: String) -> Option<Backup::BackupItem> {
-    Backup::fetch_backup_by_id(&id)
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn create_backup(mut backup: Backup::BackupItem) -> bool {
-    backup.id = Uuid::new_v4().to_string();
-    Backup::create_backup(backup).is_ok()
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn rename_backup(id: String, name: String) -> bool {
-    Backup::rename_backup(&id, &name).is_ok()
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn change_backup_source(id: String, source: String) -> bool {
-    Backup::change_backup_source(&id, &source).is_ok()
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn change_backup_destination(id: String, destination: String) -> bool {
-    Backup::change_backup_destination(&id, &destination).is_ok()
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn modify_backup_exclusions(id: String, exclusions: Vec<String>) -> bool {
-    Backup::modify_backup_exclusions(&id, &exclusions).is_ok()
-}
-
-#[tauri::command(rename_all = "snake_case")]
-fn delete_backup(id: String) -> bool {
-    Backup::delete_backup(&id).is_ok()
+    Ok(())
 }
