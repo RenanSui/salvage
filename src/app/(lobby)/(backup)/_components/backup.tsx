@@ -34,8 +34,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
+import { Switch } from '@/components/ui/switch'
 
+import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 import { useToast } from '@/hooks/use-toast'
 import { backupService } from '@/lib/backup/actions'
 import { cn } from '@/lib/utils'
@@ -54,6 +55,8 @@ type BackupProps = React.HTMLAttributes<HTMLDivElement> & {
 }
 
 export default function Backup({ backup }: BackupProps) {
+  const [switchState, setSwitchState] = React.useState(true)
+
   const { setBackupSelected } = useBackupSelectedAtom()
   const queryClient = useQueryClient()
   const { toast } = useToast()
@@ -83,7 +86,9 @@ export default function Backup({ backup }: BackupProps) {
 
   async function onSubmit({ exclusions, ...values }: CreateBackupSchema) {
     const backup_item: BackupSchema = { ...backup, ...values }
-    backup_item.exclusions = exclusions.map((exclusion) => exclusion.exclusion)
+    backup_item.exclusions = exclusions.map((exclusion) =>
+      exclusion.exclusion.replace('//', '\\').replace('/', '\\'),
+    )
     const updates: string[] = []
 
     if (backup.name !== values.name) {
@@ -107,6 +112,7 @@ export default function Backup({ backup }: BackupProps) {
     }
 
     queryClient.invalidateQueries({ queryKey: [`backups`] })
+    backupService.restart_backups()
 
     toast({
       title: 'Updated:',
@@ -119,8 +125,49 @@ export default function Backup({ backup }: BackupProps) {
     })
   }
 
+  async function onDelete() {
+    setBackupSelected(null)
+    const isDeleted = await backupService.delete_backup(backup.id)
+    if (isDeleted) {
+      toast({
+        title: 'Backup Deleted:',
+        description: `"${backup.name}"`,
+      })
+
+      queryClient.invalidateQueries({ queryKey: [`backups`] })
+      backupService.restart_backups()
+    }
+  }
+
   return (
     <div className="space-y-4">
+      <Card className="p-2 flex flex-row items-center justify-between">
+        <div className="space-y-0.5 p-2">
+          <CardTitle className="font-semibold text-lg">
+            Turn On/Off Backup Monitoring
+          </CardTitle>
+          <CardDescription>
+            Enable automatic backup monitoring and updates
+          </CardDescription>
+        </div>
+        <div>
+          <Switch
+            checked={switchState}
+            onCheckedChange={(checked) => {
+              setSwitchState(checked)
+
+              if (checked) {
+                backupService.start_individual_backup(backup.id)
+                toast({ title: 'Backup Enabled' })
+              } else {
+                backupService.stop_individual_backup(backup.id)
+                toast({ title: 'Backup Disabled' })
+              }
+            }}
+          />
+        </div>
+      </Card>
+
       <Card className="p-2">
         <CardHeader className="space-y-0 p-2">
           <CardTitle className="font-semibold text-lg">
@@ -362,20 +409,7 @@ export default function Backup({ backup }: BackupProps) {
                     buttonVariants({ variant: 'destructive' }),
                     'cursor-default',
                   )}
-                  onClick={async () => {
-                    setBackupSelected(null)
-                    const isDeleted = await backupService.delete_backup(
-                      backup.id,
-                    )
-                    if (isDeleted) {
-                      toast({
-                        title: 'Backup Deleted:',
-                        description: `"${backup.name}"`,
-                      })
-
-                      queryClient.invalidateQueries({ queryKey: [`backups`] })
-                    }
-                  }}
+                  onClick={onDelete}
                 >
                   Delete
                 </AlertDialogAction>
