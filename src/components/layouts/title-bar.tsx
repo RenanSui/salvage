@@ -5,10 +5,14 @@ import {
   MenubarContent,
   MenubarItem,
   MenubarMenu,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
   MenubarTrigger,
 } from '@/components/ui/menubar'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
 
+import { backupService } from '@/lib/backup/actions'
 import { tauriWindow } from '@/lib/tauri'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
@@ -59,12 +63,35 @@ export function TitleBarMenubar() {
           Tools
         </MenubarTrigger>
         <MenubarContent>
-          <Link href="/">
-            <MenubarItem>
-              <Icons.dashboard className="mr-2 h-3 w-3" />
+          <MenubarSub>
+            <MenubarSubTrigger>
+              <Icons.logo className="mr-2 h-3 w-3" />
               <span>Backup</span>
-            </MenubarItem>
-          </Link>
+            </MenubarSubTrigger>
+            <MenubarSubContent>
+              <Link href="/" className="cursor-pointer">
+                <MenubarItem>
+                  <Icons.dashboard className="mr-2 h-3 w-3" />
+                  <span>Dashboard</span>
+                </MenubarItem>
+              </Link>
+              <MenubarItem disabled>
+                <span className="text-center w-full">Quick Actions</span>
+              </MenubarItem>
+              <MenubarItem onClick={backupService.start_watching}>
+                <Icons.start className="mr-2 h-3 w-3" />
+                <span>Start all</span>
+              </MenubarItem>
+              <MenubarItem onClick={backupService.stop_watching}>
+                <Icons.stop className="mr-2 h-3 w-3" />
+                <span>Stop all</span>
+              </MenubarItem>
+              <MenubarItem onClick={backupService.restart_backups}>
+                <Icons.restart className="mr-2 h-3 w-3" />
+                <span>Restart all</span>
+              </MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
         </MenubarContent>
       </MenubarMenu>
 
