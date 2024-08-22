@@ -11,6 +11,14 @@ type tauriInvokeCmdArgs =
   | 'change_backup_destination'
   | 'modify_backup_exclusions'
   | 'delete_backup'
+  // Watcher
+  | 'load_backups'
+  | 'start_watching'
+  | 'stop_watching'
+  | 'restart_backups'
+  | 'start_individual_backup'
+  | 'stop_individual_backup'
+  | 'restart_individual_backup'
 
 export async function tauriWindow() {
   if (typeof window !== 'undefined') {
