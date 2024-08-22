@@ -5,6 +5,9 @@ import {
   DotsHorizontalIcon,
   GearIcon,
   InfoCircledIcon,
+  PlayIcon,
+  StopIcon,
+  UpdateIcon,
 } from '@radix-ui/react-icons'
 import { FileIcon, FolderIcon, Trash2 } from 'lucide-react'
 
@@ -19,6 +22,9 @@ export const Icons = {
   dashboard: DashboardIcon,
   about: InfoCircledIcon,
   check: CheckIcon,
+  start: PlayIcon,
+  stop: StopIcon,
+  restart: UpdateIcon,
   logo: ({
     middleStroke,
     sideStrokes,
