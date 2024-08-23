@@ -157,11 +157,9 @@ export default function Backup({ backup }: BackupProps) {
               setSwitchState(checked)
 
               if (checked) {
-                backupService.start_individual_backup(backup.id)
-                toast({ title: 'Backup Enabled' })
+                backupService.start_individual_backup(backup)
               } else {
-                backupService.stop_individual_backup(backup.id)
-                toast({ title: 'Backup Disabled' })
+                backupService.stop_individual_backup(backup)
               }
             }}
           />
