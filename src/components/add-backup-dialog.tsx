@@ -28,7 +28,6 @@ import {
 } from './ui/dropdown-menu'
 import { ScrollArea } from './ui/scroll-area'
 
-import { toast } from '@/hooks/use-toast'
 import { backupService } from '@/lib/backup/actions'
 import { cn } from '@/lib/utils'
 import {
@@ -72,13 +71,7 @@ export default function AddBackupDialog({ children }: AddBackupDialogProps) {
       ),
     }
 
-    const isCreated = await backupService.create_backup(backup_item)
-    if (isCreated === true) {
-      toast({
-        title: 'Backup Added:',
-        description: `"${backup_item.name}"`,
-      })
-    }
+    await backupService.create_backup(backup_item)
 
     queryClient.invalidateQueries({ queryKey: ['backups'] })
     backupService.restart_backups()
