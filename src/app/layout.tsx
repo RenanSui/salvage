@@ -30,10 +30,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontHeading.variable,
         )}
       >
-        <Providers>
-          <StartBackupWatcher>{children}</StartBackupWatcher>
-        </Providers>
+        <Providers>{children}</Providers>
         <Toaster />
+        <StartBackupWatcher />
       </body>
     </html>
   )
