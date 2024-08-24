@@ -21,7 +21,7 @@ export function BackupTabs() {
     {
       title: 'Logs',
       isActive: tabSelected === 'Logs',
-      disabled: true,
+      disabled: false,
     },
   ]
 
