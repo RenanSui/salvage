@@ -15,6 +15,7 @@ import * as React from 'react'
 import Backup from './backup'
 import { BackupDashboardSkeleton } from './backup-dashboard-skeleton'
 import { BackupTabs } from './backup-tabs'
+import Logs from './logs'
 
 type BackupDashboardProps = React.HTMLAttributes<HTMLDivElement>
 
@@ -75,6 +76,7 @@ export function BackupDashboard({ className }: BackupDashboardProps) {
         </div>
         <div className="pt-4">
           {tabSelected === 'Backup' && backup && <Backup backup={backup} />}
+          {tabSelected === 'Logs' && backup && <Logs backup={backup} />}
         </div>
       </ScrollArea>
     </div>
