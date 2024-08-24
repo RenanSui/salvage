@@ -1,4 +1,5 @@
 pub mod backup {
+    use crate::logger::{log_event, LogEventType};
     use serde::{Deserialize, Serialize};
     use std::fs;
     use std::io::{BufReader, Write};
@@ -33,14 +34,9 @@ pub mod backup {
     pub fn fetch_backup_by_id(id: &str) -> Option<BackupItem> {
         let json_data = fetch_all_backups("./data.json").ok()?;
 
-        json_data.into_iter().find(|data| {
-            if data.id == id {
-                println!("# Get {:?} item", data.name);
-                true
-            } else {
-                false
-            }
-        })
+        json_data
+            .into_iter()
+            .find(|data| if data.id == id { true } else { false })
     }
 
     pub fn create_backup(mut backup_item: BackupItem) -> std::io::Result<bool> {
@@ -53,13 +49,20 @@ pub mod backup {
         Ok(true)
     }
 
-    pub fn rename_backup(id: &str, name: &str) -> std::io::Result<bool> {
+    pub fn rename_backup(window: tauri::Window, id: &str, name: &str) -> std::io::Result<bool> {
         let backups_json = fetch_all_backups("./data.json")?;
         let mut backups_list: Vec<BackupItem> = Vec::new();
 
         for mut backup in backups_json {
             if backup.id == id {
-                println!("# Update {:?} name to {:?}", backup.name, name);
+                // println!("# Update {:?} name to {:?}", backup.name, name);
+                log_event(
+                    &window,
+                    backup.id.clone(),
+                    // format!("Update {:?}'s name to {:?}", backup.name, name),
+                    format!("Name: {:?} > {:?}", backup.name, name),
+                    LogEventType::Update,
+                );
                 backup.name = name.to_string();
             }
             backups_list.push(backup);
@@ -69,12 +72,24 @@ pub mod backup {
         Ok(true)
     }
 
-    pub fn change_backup_source(id: &str, source: &str) -> std::io::Result<bool> {
+    pub fn change_backup_source(
+        window: tauri::Window,
+        id: &str,
+        source: &str,
+    ) -> std::io::Result<bool> {
         let mut backups_json = fetch_all_backups("./data.json")?;
 
         backups_json.iter_mut().for_each(|backup| {
             if backup.id == id {
-                println!("# Update {:?} source", backup.name);
+                // println!("# Update {:?} source", backup.name);
+                log_event(
+                    &window,
+                    backup.id.clone(),
+                    // format!("Update {:?}'s source", backup.name),
+                    // format!("> {:?}", source.to_string()),
+                    format!("Source: {:?}", source.to_string()),
+                    LogEventType::Update,
+                );
                 backup.source = source.to_string();
                 backup.is_file = Path::new(&backup.source).is_file();
             }
@@ -84,12 +99,24 @@ pub mod backup {
         Ok(true)
     }
 
-    pub fn change_backup_destination(id: &str, dest: &str) -> std::io::Result<bool> {
+    pub fn change_backup_destination(
+        window: tauri::Window,
+        id: &str,
+        dest: &str,
+    ) -> std::io::Result<bool> {
         let mut backups_json = fetch_all_backups("./data.json")?;
 
         backups_json.iter_mut().for_each(|backup| {
             if backup.id == id {
-                println!("# Update {:?} dest", backup.name);
+                // println!("# Update {:?} dest", backup.name);
+                log_event(
+                    &window,
+                    backup.id.clone(),
+                    // format!("Update {:?}'s destination", backup.name),
+                    // format!("> {:?}", dest),
+                    format!("Destination: {:?}", dest),
+                    LogEventType::Update,
+                );
                 backup.destination = dest.to_string();
             }
         });
@@ -98,12 +125,23 @@ pub mod backup {
         Ok(true)
     }
 
-    pub fn modify_backup_exclusions(id: &str, exclusions: &[String]) -> std::io::Result<bool> {
+    pub fn modify_backup_exclusions(
+        window: tauri::Window,
+        id: &str,
+        exclusions: &[String],
+    ) -> std::io::Result<bool> {
         let mut backups_json = fetch_all_backups("./data.json")?;
 
         backups_json.iter_mut().for_each(|backup| {
             if backup.id == id {
-                println!("# Update {:?} exclusions", backup.name);
+                // println!("# Update {:?} exclusions", backup.name);
+                log_event(
+                    &window,
+                    backup.id.clone(),
+                    // format!("Update {:?}'s exclusions", backup.name),
+                    format!("Exclusions: {:#?}", exclusions.join(", ")),
+                    LogEventType::Update,
+                );
                 backup.exclusions = exclusions.to_owned();
             }
         });

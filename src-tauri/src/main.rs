@@ -5,26 +5,37 @@ mod backup;
 mod commands;
 mod debouncer;
 mod file;
+mod logger;
 mod watcher;
 
 use crate::backup::backup::{self as Backup};
 use file::initial_copy_files;
 use std::collections::HashMap;
 use std::sync::Arc;
-use tauri::Result as TauriResult;
+use tauri::{Manager, Result as TauriResult};
 use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() -> TauriResult<()> {
-    let backups = Backup::fetch_all_backups("./data.json")?;
-    for backup in backups {
-        let _ = initial_copy_files(backup.source, backup.destination, &backup.exclusions);
-    }
-
     tauri::Builder::default()
         .manage(watcher::AppState {
             watcher_state: Arc::new(Mutex::new(HashMap::new())),
             tx: Arc::new(Mutex::new(HashMap::new())),
+        })
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+
+            let backups = Backup::fetch_all_backups("./data.json")?;
+            for backup in backups {
+                let _ = initial_copy_files(
+                    backup.source,
+                    backup.destination,
+                    &backup.exclusions,
+                    backup.id,
+                    window.clone(),
+                );
+            }
+            Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             commands::select_file,

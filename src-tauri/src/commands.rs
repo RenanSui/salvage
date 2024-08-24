@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use crate::backup::backup::{self as Backup};
+use crate::logger::{log_event, LogEventType};
 use crate::watcher::{async_watcher, handle_events, AppState};
 use anyhow::Result;
 use notify::{RecursiveMode, Watcher};
@@ -55,23 +56,27 @@ pub fn create_backup(mut backup: Backup::BackupItem) -> bool {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn rename_backup(id: String, name: String) -> bool {
-    Backup::rename_backup(&id, &name).is_ok()
+pub fn rename_backup(window: tauri::Window, id: String, name: String) -> bool {
+    Backup::rename_backup(window, &id, &name).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn change_backup_source(id: String, source: String) -> bool {
-    Backup::change_backup_source(&id, &source).is_ok()
+pub fn change_backup_source(window: tauri::Window, id: String, source: String) -> bool {
+    Backup::change_backup_source(window, &id, &source).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn change_backup_destination(id: String, destination: String) -> bool {
-    Backup::change_backup_destination(&id, &destination).is_ok()
+pub fn change_backup_destination(window: tauri::Window, id: String, destination: String) -> bool {
+    Backup::change_backup_destination(window, &id, &destination).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn modify_backup_exclusions(id: String, exclusions: Vec<String>) -> bool {
-    Backup::modify_backup_exclusions(&id, &exclusions).is_ok()
+pub fn modify_backup_exclusions(
+    window: tauri::Window,
+    id: String,
+    exclusions: Vec<String>,
+) -> bool {
+    Backup::modify_backup_exclusions(window, &id, &exclusions).is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -86,12 +91,18 @@ pub async fn load_backups() -> Result<Vec<Backup::BackupItem>, tauri::Error> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn start_watching(state: State<'_, AppState>) -> TauriResult<()> {
+pub async fn start_watching(state: State<'_, AppState>, window: tauri::Window) -> TauriResult<()> {
     let backups = Backup::fetch_all_backups("./data.json")?;
-    println!("# Start watching all backups.");
 
     for backup in backups {
-        println!("# Start watching: {}", backup.name);
+        // println!("# Start watching: {}", backup.name);
+        log_event(
+            &window,
+            backup.id.clone(),
+            // format!("Start watching: {:?}", backup.name),
+            format!("{:?}", backup.name),
+            LogEventType::Start,
+        );
         let src = backup.source;
         let dst = backup.destination;
         let exclusions = backup.exclusions;
@@ -109,7 +120,14 @@ pub async fn start_watching(state: State<'_, AppState>) -> TauriResult<()> {
                 tx_state.insert(backup.id.clone(), tx);
             }
 
-            tokio::spawn(handle_events(src, dst, exclusions, rx));
+            tokio::spawn(handle_events(
+                src,
+                dst,
+                exclusions,
+                rx,
+                window.clone(),
+                backup.id,
+            ));
         }
     }
 
@@ -117,12 +135,18 @@ pub async fn start_watching(state: State<'_, AppState>) -> TauriResult<()> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn stop_watching(state: State<'_, AppState>) -> TauriResult<()> {
+pub async fn stop_watching(state: State<'_, AppState>, window: tauri::Window) -> TauriResult<()> {
     let backups = Backup::fetch_all_backups("./data.json")?;
-    println!("# Stop watching all backups.");
 
     for backup in backups {
-      println!("# Stop watching: {}", backup.name);
+        // println!("# Stop watching: {}", backup.name);
+        log_event(
+            &window,
+            backup.id.clone(),
+            // format!("Stop watching: {:?}", backup.name),
+            format!("{:?}", backup.name),
+            LogEventType::Stop,
+        );
         let path = PathBuf::from(backup.source);
 
         {
@@ -142,16 +166,27 @@ pub async fn stop_watching(state: State<'_, AppState>) -> TauriResult<()> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn restart_backups(state: State<'_, AppState>) -> TauriResult<()> {
-    let _ = stop_watching(state.clone()).await;
-    let _ = start_watching(state).await;
+pub async fn restart_backups(state: State<'_, AppState>, window: tauri::Window) -> TauriResult<()> {
+    let _ = stop_watching(state.clone(), window.clone()).await;
+    let _ = start_watching(state, window).await;
     Ok(())
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn start_individual_backup(state: State<'_, AppState>, id: String) -> TauriResult<()> {
+pub async fn start_individual_backup(
+    state: State<'_, AppState>,
+    window: tauri::Window,
+    id: String,
+) -> TauriResult<()> {
     if let Some(backup) = Backup::fetch_backup_by_id(&id) {
-        println!("# Start watching: {}", backup.name);
+        // println!("# Start watching: {}", backup.name);
+        log_event(
+            &window,
+            backup.id.clone(),
+            // format!("Start watching: {:?}", backup.name),
+            format!("{:?}", backup.name),
+            LogEventType::Start,
+        );
         let src = backup.source;
         let dst = backup.destination;
         let exclusions = backup.exclusions;
@@ -169,7 +204,7 @@ pub async fn start_individual_backup(state: State<'_, AppState>, id: String) -> 
                 tx_state.insert(id.clone(), tx); // Store Arc<Mutex<Sender>>
             }
 
-            tokio::spawn(handle_events(src, dst, exclusions, rx));
+            tokio::spawn(handle_events(src, dst, exclusions, rx, window, backup.id));
         }
     } else {
         println!("Backup with ID {} not found.", id);
@@ -179,9 +214,20 @@ pub async fn start_individual_backup(state: State<'_, AppState>, id: String) -> 
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn stop_individual_backup(state: State<'_, AppState>, id: String) -> TauriResult<()> {
+pub async fn stop_individual_backup(
+    state: State<'_, AppState>,
+    window: tauri::Window,
+    id: String,
+) -> TauriResult<()> {
     if let Some(backup) = Backup::fetch_backup_by_id(&id) {
-        println!("# Stop watching: {}", backup.name);
+        // println!("# Stop watching: {}", backup.name);
+        log_event(
+            &window,
+            backup.id,
+            // format!("Stop watching: {:?}", backup.name),
+            format!("{:?}", backup.name),
+            LogEventType::Stop,
+        );
         let path = PathBuf::from(backup.source);
 
         {
@@ -204,7 +250,11 @@ pub async fn stop_individual_backup(state: State<'_, AppState>, id: String) -> T
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn restart_individual_backup(state: State<'_, AppState>, id: String) -> TauriResult<()> {
-    let _ = stop_individual_backup(state.clone(), id.clone()).await;
-    start_individual_backup(state, id).await
+pub async fn restart_individual_backup(
+    state: State<'_, AppState>,
+    window: tauri::Window,
+    id: String,
+) -> TauriResult<()> {
+    let _ = stop_individual_backup(state.clone(), window.clone(), id.clone()).await;
+    start_individual_backup(state, window.clone(), id).await
 }

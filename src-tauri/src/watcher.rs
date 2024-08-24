@@ -39,45 +39,25 @@ pub async fn async_watcher() -> Result<(
         Config::default(),
     )?;
 
-    println!("# Watcher initialized.");
+    // println!("# Watcher initialized.");
 
     Ok((watcher, rx, tx))
 }
-// pub async fn async_watcher() -> Result<(
-//     RecommendedWatcher,
-//     Receiver<notify::Result<Event>>,
-//     Arc<Mutex<Sender<notify::Result<Event>>>>,
-// )> {
-//     let (tx, rx) = mpsc::channel(1);
-//     let tx = Arc::new(Mutex::new(tx)); // Use tokio::sync::Mutex
-
-//     let watcher = RecommendedWatcher::new(
-//         {
-//             let tx = Arc::clone(&tx); // Clone the Arc<Mutex<Sender>>
-//             move |res| {
-//                 let tx = Arc::clone(&tx); // Clone the Arc<Mutex<Sender>> again for the closure
-//                 tokio::spawn(async move {
-//                     let tx = tx.lock().await; // Use async lock
-//                     tx.send(res).await.unwrap();
-//                 });
-//             }
-//         },
-//         Config::default(),
-//     )?;
-
-//     Ok((watcher, rx, tx))
-// }
 
 pub async fn handle_events<P: AsRef<Path>, Q: AsRef<Path>>(
     src: P,
     dst: Q,
     exclusions: Vec<String>,
     mut rx: Receiver<notify::Result<Event>>,
+    window: tauri::Window,
+    id: String,
 ) -> notify::Result<()> {
     let debouncer = debouncer();
     let src = Arc::new(src.as_ref().to_path_buf());
     let dst = Arc::new(dst.as_ref().to_path_buf());
     let exclusions = Arc::new(exclusions);
+    let window = Arc::new(window); // Wrap in Arc
+    let id = Arc::new(id); // Wrap in Arc
 
     while let Some(res) = rx.recv().await {
         match res {
@@ -87,6 +67,8 @@ pub async fn handle_events<P: AsRef<Path>, Q: AsRef<Path>>(
                     let src = Arc::clone(&src);
                     let dst = Arc::clone(&dst);
                     let exclusions = Arc::clone(&exclusions);
+                    let window = Arc::clone(&window); // Clone Arc
+                    let id = Arc::clone(&id); // Clone Arc
 
                     debouncer.put(Debouncer {
                         id: 1,
@@ -98,7 +80,10 @@ pub async fn handle_events<P: AsRef<Path>, Q: AsRef<Path>>(
                                 let source = src.to_path_buf();
                                 let dest = dst.to_path_buf();
                                 let exclusions = exclusions.to_vec();
-                                handle_file_modified(path, source, dest, exclusions);
+                                let window = (*window.clone()).clone();
+                                let id = (*id.clone()).clone();
+
+                                let _ = handle_file_modified(path, source, dest, exclusions, id, window);
                             }
                         }),
                     });
