@@ -4,7 +4,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useBackupById } from '@/hooks/use-backup-by-id'
 import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 import { useMounted } from '@/hooks/use-mounted'
-import { useTabsAtom } from '@/hooks/use-tabs'
 import { cn } from '@/lib/utils'
 import { BackupSchema } from '@/types'
 import { ChevronRight } from 'lucide-react'
@@ -22,7 +21,6 @@ type BackupDashboardProps = React.HTMLAttributes<HTMLDivElement> & {
 
 export function BackupDashboard({ items, className }: BackupDashboardProps) {
   const mounted = useMounted()
-  const { tabs: tabSelected } = useTabsAtom()
   const { backupSelected, setBackupSelected } = useBackupSelectedAtom()
   const { data: backup, isFetched } = useBackupById(backupSelected)
 
