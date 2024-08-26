@@ -5,3 +5,12 @@ export type BackupSchema = Omit<CreateBackupSchema, 'exclusions'> & {
   exclusions: string[]
   is_file: boolean
 }
+
+export type Unit = 'Kb' | 'Mb' | 'Gb' | 'Tb'
+
+export type StatisticsSchema = {
+  source: string
+  file: string
+  size: string
+  unit: Unit
+}
