@@ -73,8 +73,8 @@ async function start_individual_backup({ id, name }: BackupSchema) {
   toast({
     description: (
       <p>
-        Backup <span className="font-semibold text-blue-500">{name}</span>{' '}
-        Successfully Initialized.
+        Backup <span className="font-semibold">{name}</span> Successfully{' '}
+        <span className="font-semibold text-blue-500">Initialized</span>.
       </p>
     ),
   })
@@ -83,11 +83,10 @@ async function start_individual_backup({ id, name }: BackupSchema) {
 async function stop_individual_backup({ id, name }: BackupSchema) {
   await tauriInvoke('stop_individual_backup', { id })
   toast({
-    variant: 'destructive',
     description: (
       <p>
-        Backup <span className="font-semibold">{name}</span> Successfully
-        Stopped.
+        Backup <span className="font-semibold">{name}</span> Successfully{' '}
+        <span className="font-semibold text-destructive">Stopped</span>.
       </p>
     ),
   })
