@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/menubar'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
 
+import { useSidebar } from '@/hooks/use-sidebar'
 import { backupService } from '@/lib/backup/actions'
 import { tauriWindow } from '@/lib/tauri'
 import { useTheme } from 'next-themes'
@@ -55,6 +56,7 @@ export default function TitleBar() {
 
 export function TitleBarMenubar() {
   const { setTheme } = useTheme()
+  const { sidebar, setSidebar } = useSidebar()
 
   return (
     <Menubar className="bg-transparent shadow-none border-none p-0 h-7 px-1">
@@ -115,6 +117,25 @@ export function TitleBarMenubar() {
           <MenubarItem role="dark-toggle" onClick={() => setTheme('dark')}>
             <MoonIcon className="mr-2 h-3 w-3" />
             <span>Dark</span>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+
+      <MenubarMenu>
+        <MenubarTrigger className="bg-none py-0 px-2 text-muted-foreground opacity-80">
+          View
+        </MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem
+            role="sidebar-toggle"
+            onClick={() => setSidebar((state) => !state)}
+          >
+            {sidebar ? (
+              <Icons.check className="mr-2 h-3 w-3" />
+            ) : (
+              <Icons.cross className="mr-2 h-3 w-3" />
+            )}
+            <span>Sidebar</span>
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>

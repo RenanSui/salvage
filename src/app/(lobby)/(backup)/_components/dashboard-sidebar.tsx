@@ -1,10 +1,10 @@
-import AddBackupDialog from '@/components/add-backup-dialog'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useBackupSelectedAtom } from '@/hooks/use-backup-selected'
 import { useMounted } from '@/hooks/use-mounted'
+import { useSidebar } from '@/hooks/use-sidebar'
 import { cn } from '@/lib/utils'
 import { BackupSchema } from '@/types'
 import * as React from 'react'
@@ -19,8 +19,13 @@ export function DashboardSidebar({
   className,
   ...props
 }: DashboardSidebarProps) {
-  const mounted = useMounted()
   const { backupSelected, setBackupSelected } = useBackupSelectedAtom()
+  const { sidebar } = useSidebar()
+  const mounted = useMounted()
+
+  if (!sidebar) {
+    return null
+  }
 
   if (!mounted) {
     return <DashboardSidebarSkeleton />
@@ -34,11 +39,14 @@ export function DashboardSidebar({
       )}
       {...props}
     >
-      <AddBackupDialog>
-        <Button size="sm" className={cn('w-full cursor-default')}>
-          New Backup
-        </Button>
-      </AddBackupDialog>
+      <Button
+        size="sm"
+        variant="outline"
+        className={cn('w-full cursor-default')}
+        onClick={() => setBackupSelected(null)}
+      >
+        New Backup
+      </Button>
       <Separator />
       <ScrollArea className="h-[calc(100vh-127px)]">
         {items.map((backup, index) => {
