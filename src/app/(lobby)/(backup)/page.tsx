@@ -8,9 +8,9 @@ export default function Page() {
   const { data: backupList } = useBackups()
 
   return (
-    <div className="flex min-h-[calc(100vh-28px)] p-4 gap-4 bg-accent dark:bg-transparent">
+    <div className="flex min-h-[calc(100vh-28px)] p-4 bg-accent dark:bg-transparent">
       <DashboardSidebar items={backupList || []} />
-      <BackupDashboard />
+      <BackupDashboard items={backupList || []} />
     </div>
   )
 }
