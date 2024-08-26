@@ -1,5 +1,5 @@
 pub mod backup {
-    use crate::logger::{log_event, LogEventType};
+    use crate::logger::logger::{self as Logger};
     use serde::{Deserialize, Serialize};
     use std::fs;
     use std::io::{BufReader, Write};
@@ -56,12 +56,12 @@ pub mod backup {
         for mut backup in backups_json {
             if backup.id == id {
                 // println!("# Update {:?} name to {:?}", backup.name, name);
-                log_event(
+                Logger::log_event(
                     &window,
                     backup.id.clone(),
                     // format!("Update {:?}'s name to {:?}", backup.name, name),
                     format!("Name: {:?} > {:?}", backup.name, name),
-                    LogEventType::Update,
+                    Logger::LogEventType::Update,
                 );
                 backup.name = name.to_string();
             }
@@ -82,13 +82,13 @@ pub mod backup {
         backups_json.iter_mut().for_each(|backup| {
             if backup.id == id {
                 // println!("# Update {:?} source", backup.name);
-                log_event(
+                Logger::log_event(
                     &window,
                     backup.id.clone(),
                     // format!("Update {:?}'s source", backup.name),
                     // format!("> {:?}", source.to_string()),
                     format!("Source: {:?}", source.to_string()),
-                    LogEventType::Update,
+                    Logger::LogEventType::Update,
                 );
                 backup.source = source.to_string();
                 backup.is_file = Path::new(&backup.source).is_file();
@@ -109,13 +109,13 @@ pub mod backup {
         backups_json.iter_mut().for_each(|backup| {
             if backup.id == id {
                 // println!("# Update {:?} dest", backup.name);
-                log_event(
+                Logger::log_event(
                     &window,
                     backup.id.clone(),
                     // format!("Update {:?}'s destination", backup.name),
                     // format!("> {:?}", dest),
                     format!("Destination: {:?}", dest),
-                    LogEventType::Update,
+                    Logger::LogEventType::Update,
                 );
                 backup.destination = dest.to_string();
             }
@@ -135,12 +135,12 @@ pub mod backup {
         backups_json.iter_mut().for_each(|backup| {
             if backup.id == id {
                 // println!("# Update {:?} exclusions", backup.name);
-                log_event(
+                Logger::log_event(
                     &window,
                     backup.id.clone(),
                     // format!("Update {:?}'s exclusions", backup.name),
                     format!("Exclusions: {:#?}", exclusions.join(", ")),
-                    LogEventType::Update,
+                    Logger::LogEventType::Update,
                 );
                 backup.exclusions = exclusions.to_owned();
             }

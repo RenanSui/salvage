@@ -1,7 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use crate::backup::backup::{self as Backup};
-use crate::logger::{log_event, LogEventType};
+use crate::logger::logger::{self as Logger};
 use crate::watcher::{async_watcher, handle_events, AppState};
 use anyhow::Result;
 use notify::{RecursiveMode, Watcher};
@@ -96,12 +96,12 @@ pub async fn start_watching(state: State<'_, AppState>, window: tauri::Window) -
 
     for backup in backups {
         // println!("# Start watching: {}", backup.name);
-        log_event(
+        Logger::log_event(
             &window,
             backup.id.clone(),
             // format!("Start watching: {:?}", backup.name),
             format!("{:?}", backup.name),
-            LogEventType::Start,
+            Logger::LogEventType::Start,
         );
         let src = backup.source;
         let dst = backup.destination;
@@ -140,12 +140,12 @@ pub async fn stop_watching(state: State<'_, AppState>, window: tauri::Window) ->
 
     for backup in backups {
         // println!("# Stop watching: {}", backup.name);
-        log_event(
+        Logger::log_event(
             &window,
             backup.id.clone(),
             // format!("Stop watching: {:?}", backup.name),
             format!("{:?}", backup.name),
-            LogEventType::Stop,
+            Logger::LogEventType::Stop,
         );
         let path = PathBuf::from(backup.source);
 
@@ -180,12 +180,12 @@ pub async fn start_individual_backup(
 ) -> TauriResult<()> {
     if let Some(backup) = Backup::fetch_backup_by_id(&id) {
         // println!("# Start watching: {}", backup.name);
-        log_event(
+        Logger::log_event(
             &window,
             backup.id.clone(),
             // format!("Start watching: {:?}", backup.name),
             format!("{:?}", backup.name),
-            LogEventType::Start,
+            Logger::LogEventType::Start,
         );
         let src = backup.source;
         let dst = backup.destination;
@@ -221,12 +221,12 @@ pub async fn stop_individual_backup(
 ) -> TauriResult<()> {
     if let Some(backup) = Backup::fetch_backup_by_id(&id) {
         // println!("# Stop watching: {}", backup.name);
-        log_event(
+        Logger::log_event(
             &window,
             backup.id,
             // format!("Stop watching: {:?}", backup.name),
             format!("{:?}", backup.name),
-            LogEventType::Stop,
+            Logger::LogEventType::Stop,
         );
         let path = PathBuf::from(backup.source);
 

@@ -1,4 +1,4 @@
-use crate::logger::{log_event, LogEventType};
+use crate::logger::logger::{self as Logger};
 use std::fs;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
@@ -66,22 +66,22 @@ pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
             let dir_creation_result = std::fs::create_dir_all(&dest_dir_path);
             match dir_creation_result {
                 Ok(_) => {
-                    log_event(
+                    Logger::log_event(
                         &window,
                         id.clone(),
                         // format!("Directory created: ...{:?}", dest_dir_path),
                         format!("{:?}", dest_dir_path),
-                        LogEventType::Create,
+                        Logger::LogEventType::Create,
                     );
                     // println!("# Directory created: {:?}", dest_dir_path);
                 }
                 Err(error) => {
-                    log_event(
+                    Logger::log_event(
                         &window,
                         id.clone(),
                         // format!("Error creating directory: ...{:?}", error),
                         format!("{:?}", error),
-                        LogEventType::Error,
+                        Logger::LogEventType::Error,
                     );
                     // println!("# Error creating directory: {:?}", error)
                 }
@@ -110,7 +110,7 @@ pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
             let dir_creation_result = std::fs::create_dir_all(parent_dir);
             match dir_creation_result {
                 Ok(_) => {
-                    // log_event(
+                    // Logger::log_event(
                     //     &window,
                     //     id.clone(),
                     //     format!("Directory created: {:?}", parent_dir),
@@ -118,12 +118,12 @@ pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
                     // println!("# Directory created: {:?}", parent_dir);
                 }
                 Err(error) => {
-                    log_event(
+                    Logger::log_event(
                         &window,
                         id.clone(),
                         // format!("Error creating directory: ...{:?}", error),
                         format!("{:?}", error),
-                        LogEventType::Error,
+                        Logger::LogEventType::Error,
                     );
                     // println!("# Error creating directory: {:?}", error);
                 }
@@ -157,12 +157,12 @@ pub fn path_have_exclusions(
             .contains(&exclusion.replace("/", "\\"));
         if result {
             // println!("# Path Excluded: {:?}", path);
-            log_event(
+            Logger::log_event(
                 &window,
                 id.clone(),
                 // format!("Path Excluded: ...{:?}", path),
                 format!("{:?}", path),
-                LogEventType::Excluded,
+                Logger::LogEventType::Excluded,
             );
             contain_exclusion = result
         }
@@ -185,33 +185,33 @@ pub fn copy_modified_file(window: tauri::Window, path: PathBuf, copy_to: &String
             Ok(is_modified) => {
                 if is_modified {
                     // println!("# Path modified: {:?}", path);
-                    log_event(
+                    Logger::log_event(
                         &window,
                         id.clone(),
                         // format!("Path modified: ...{:?}", path),
                         format!("{:?}", path),
-                        LogEventType::Modified,
+                        Logger::LogEventType::Modified,
                     );
                     create_file_dir(&copy_to, id.clone(), window.clone());
                     copy_file_to_dir(path, copy_to, id, window);
                 } else {
-                    log_event(
+                    Logger::log_event(
                         &window,
                         id.clone(),
                         // format!("Path NOT modified: ...{:?}", path),
                         format!("{:?}", path),
-                        LogEventType::NotModified,
+                        Logger::LogEventType::NotModified,
                     );
                     // println!("# Path NOT modified: {:?}", path);
                 }
             }
             Err(error) => {
-                log_event(
+                Logger::log_event(
                     &window,
                     id.clone(),
                     // format!("Error file modified: ...{:?}", error),
                     format!("{:?}", error),
-                    LogEventType::Error,
+                    Logger::LogEventType::Error,
                 );
                 // println!("# Error file modified: {:?}", error)
             }
@@ -229,22 +229,22 @@ pub fn create_file_dir<P: AsRef<Path>>(dir: P, id: String, window: tauri::Window
     match !dir_parent.exists() {
         true => match fs::create_dir_all(dir_parent) {
             Ok(_) => {
-                log_event(
+                Logger::log_event(
                     &window,
                     id.clone(),
                     // format!("Directory created: ...{:?}", dir_parent),
                     format!("{:?}", dir_parent),
-                    LogEventType::Create,
+                    Logger::LogEventType::Create,
                 );
                 // println!("# Dir created: {:?}", dir_parent)
             }
             Err(error) => {
-                log_event(
+                Logger::log_event(
                     &window,
                     id.clone(),
                     // format!("Error creating Directory: ...{:?}", error),
                     format!("{:?}", error),
-                    LogEventType::Error,
+                    Logger::LogEventType::Error,
                 );
                 // println!("# Error creating Dir: {:?}", error)
             }
@@ -268,22 +268,22 @@ pub fn copy_file_to_dir<P: AsRef<Path>, Q: AsRef<Path>>(
 
     match copy_result {
         Ok(_) => {
-            log_event(
+            Logger::log_event(
                 &window,
                 id.clone(),
                 // format!("File copied: ...{:?}", dir.as_ref()),
                 format!("{:?}", dir.as_ref()),
-                LogEventType::Copy,
+                Logger::LogEventType::Copy,
             );
             // println!("# File copied: {:?}", dir.as_ref())
         }
         Err(error) => {
-            log_event(
+            Logger::log_event(
                 &window,
                 id.clone(),
                 // format!("Error copying file: ...{:?}", error),
                 format!("{:?}", error),
-                LogEventType::Error,
+                Logger::LogEventType::Error,
             );
             // println!("# Error copying file: {:?}", error)
         }
