@@ -19,6 +19,8 @@ type tauriInvokeCmdArgs =
   | 'start_individual_backup'
   | 'stop_individual_backup'
   | 'restart_individual_backup'
+  // Statistics
+  | 'fetch_file_sizes_by_id'
 
 export async function tauriWindow() {
   if (typeof window !== 'undefined') {
