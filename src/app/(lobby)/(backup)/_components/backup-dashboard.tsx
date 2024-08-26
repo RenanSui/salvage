@@ -14,6 +14,7 @@ import DeleteBackup from './delete-backup'
 import LogBackup from './log-backup'
 import MonitorBackup from './monitor-backup'
 import UpdateBackupForm from './update-backup-form'
+import StatisticsBackup from './statistics-backup'
 
 type BackupDashboardProps = React.HTMLAttributes<HTMLDivElement> & {
   items: BackupSchema[]
@@ -105,10 +106,11 @@ export function BackupDashboard({ items, className }: BackupDashboardProps) {
           <div className="pt-4 px-4 space-y-8">
             <MonitorBackup backup={backup} />
             <div className="space-y-1.5">
-              <CardTitle className="font-semibold text-sm">Actions</CardTitle>
+              <CardTitle className="font-semibold text-sm">Edit</CardTitle>
               <UpdateBackupForm backup={backup} />
               <DeleteBackup backup={backup} />
             </div>
+            <StatisticsBackup backup={backup} />
             <LogBackup backup={backup} />
           </div>
         </ScrollArea>
