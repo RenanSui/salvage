@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
 import { toast } from '@/hooks/use-toast'
-import { BackupSchema } from '@/types'
+import { BackupSchema, StatisticsSchema } from '@/types'
 import { tauriInvoke } from '../tauri'
+import { sizeInBytes } from '../utils'
 
 async function select_file() {
   return (await tauriInvoke<string>('select_file')) || ''
@@ -104,6 +105,15 @@ async function restart_individual_backup({ id, name }: BackupSchema) {
   })
 }
 
+async function fetch_file_sizes_by_id(id: BackupSchema['id']) {
+  const files = await tauriInvoke<StatisticsSchema[]>(
+    'fetch_file_sizes_by_id',
+    { id },
+  )
+  const sortedFiles = files?.sort((a, b) => sizeInBytes(b) - sizeInBytes(a))
+  return sortedFiles || []
+}
+
 export const backupService = {
   select_file,
   select_folder,
@@ -123,4 +133,6 @@ export const backupService = {
   start_individual_backup,
   stop_individual_backup,
   restart_individual_backup,
+  // Statistics
+  fetch_file_sizes_by_id,
 }
