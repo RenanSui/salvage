@@ -6,6 +6,7 @@ mod commands;
 mod debouncer;
 mod file;
 mod logger;
+mod statistics;
 mod watcher;
 
 use crate::backup::backup::{self as Backup};
@@ -56,6 +57,8 @@ async fn main() -> TauriResult<()> {
             commands::start_individual_backup,
             commands::stop_individual_backup,
             commands::restart_individual_backup,
+            // Statistics
+            commands::fetch_file_sizes_by_id,
         ])
         .run(tauri::generate_context!())
         .expect("# Error while running tauri application");
