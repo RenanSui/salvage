@@ -2,6 +2,7 @@
 
 use crate::backup::backup::{self as Backup};
 use crate::logger::logger::{self as Logger};
+use crate::statistics::statistics::{self as Statistics};
 use crate::watcher::{async_watcher, handle_events, AppState};
 use anyhow::Result;
 use notify::{RecursiveMode, Watcher};
@@ -257,4 +258,9 @@ pub async fn restart_individual_backup(
 ) -> TauriResult<()> {
     let _ = stop_individual_backup(state.clone(), window.clone(), id.clone()).await;
     start_individual_backup(state, window.clone(), id).await
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub fn fetch_file_sizes_by_id(id: &str) -> Option<Vec<Statistics::StatisticsItem>> {
+    Statistics::fetch_file_sizes_by_id(id)
 }
