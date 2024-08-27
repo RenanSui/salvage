@@ -24,7 +24,13 @@ pub fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
     for entry in WalkDir::new(source_path) {
         let path = entry?.into_path();
         if !path.is_dir()
-            && !path_have_exclusions(window.clone(), &path, exclusions.to_owned(), id.clone())
+            && !path_have_exclusions(
+                window.clone(),
+                &path,
+                exclusions.to_owned(),
+                id.clone(),
+                Some(true),
+            )
         {
             if let Ok(relative_path) = path.strip_prefix(source_path) {
                 let dest_file_path = dest_path.join(relative_path);
@@ -54,7 +60,13 @@ pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
     let dest = dest.as_ref();
 
     // Check if the path should be excluded
-    if path_have_exclusions(window.clone(), &path.to_path_buf(), exclusions, id.clone()) {
+    if path_have_exclusions(
+        window.clone(),
+        &path.to_path_buf(),
+        exclusions,
+        id.clone(),
+        Some(true),
+    ) {
         return Ok(());
     }
 
@@ -147,6 +159,7 @@ pub fn path_have_exclusions(
     path: &PathBuf,
     exclusions: Vec<String>,
     id: String,
+    log: Option<bool>,
 ) -> bool {
     let mut contain_exclusion = false;
 
@@ -156,14 +169,16 @@ pub fn path_have_exclusions(
             .to_string()
             .contains(&exclusion.replace("/", "\\"));
         if result {
-            // println!("# Path Excluded: {:?}", path);
-            Logger::log_event(
-                &window,
-                id.clone(),
-                // format!("Path Excluded: ...{:?}", path),
-                format!("{:?}", path),
-                Logger::LogEventType::Excluded,
-            );
+            match log {
+                Some(_) => Logger::log_event(
+                    &window,
+                    id.clone(),
+                    format!("{:?}", path),
+                    Logger::LogEventType::Excluded,
+                ),
+                None => (),
+            }
+
             contain_exclusion = result
         }
     }
