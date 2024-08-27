@@ -71,9 +71,9 @@
         "resizable": true,
         "title": "Salvage",
         "width": 800,
-        "height": 600,
+        "height": 690,
         "minWidth": 800,
-        "minHeight": 600
+        "minHeight": 690
       }
     ]
   }
