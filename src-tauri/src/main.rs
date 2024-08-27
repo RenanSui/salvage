@@ -36,6 +36,7 @@ async fn main() -> TauriResult<()> {
                     window.clone(),
                 );
             }
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -49,6 +50,7 @@ async fn main() -> TauriResult<()> {
             commands::change_backup_destination,
             commands::modify_backup_exclusions,
             commands::delete_backup,
+            commands::open_in_explorer,
             // Watcher
             commands::load_backups,
             commands::start_watching,
