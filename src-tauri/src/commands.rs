@@ -268,3 +268,23 @@ pub async fn fetch_file_sizes_by_id(window: tauri::Window, id: &str) -> Result<V
         None => Err("Failed to fetch file sizes.".to_string()),
     }
 }
+
+#[tauri::command(rename_all = "snake_case")]
+pub fn open_in_explorer(path: String) -> Result<(), String> {
+    let path_buf = PathBuf::from(&path);
+
+    if path_buf.exists() {
+        let target_path = if path_buf.is_file() {
+            path_buf
+                .parent()
+                .ok_or("Failed to find parent directory")?
+                .to_path_buf()
+        } else {
+            path_buf
+        };
+
+        that(&target_path).map_err(|e| format!("Failed to open path: {}", e))
+    } else {
+        Err(format!("Path does not exist: {}", path))
+    }
+}
