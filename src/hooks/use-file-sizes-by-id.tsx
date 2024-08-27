@@ -7,6 +7,5 @@ export function useFileSizesById(id: string | null) {
     queryFn: async () => await backupService.fetch_file_sizes_by_id(id || ''),
     initialData: [],
     refetchOnWindowFocus: false,
-    gcTime: 0,
   })
 }
