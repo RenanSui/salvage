@@ -11,6 +11,7 @@ type tauriInvokeCmdArgs =
   | 'change_backup_destination'
   | 'modify_backup_exclusions'
   | 'delete_backup'
+  | 'open_in_explorer'
   // Watcher
   | 'load_backups'
   | 'start_watching'

@@ -114,6 +114,10 @@ async function fetch_file_sizes_by_id(id: BackupSchema['id']) {
   return sortedFiles || []
 }
 
+async function open_in_explorer(path: string) {
+  await tauriInvoke('open_in_explorer', { path })
+}
+
 export const backupService = {
   select_file,
   select_folder,
@@ -125,6 +129,7 @@ export const backupService = {
   change_backup_destination,
   modify_backup_exclusions,
   delete_backup,
+  open_in_explorer,
   // Watcher
   load_backups,
   start_watching,
