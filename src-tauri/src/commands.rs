@@ -6,6 +6,7 @@ use crate::statistics::statistics::{self as Statistics};
 use crate::watcher::{async_watcher, handle_events, AppState};
 use anyhow::Result;
 use notify::{RecursiveMode, Watcher};
+use open::that;
 use rfd::FileDialog;
 use std::path::PathBuf;
 use tauri::Result as TauriResult;
@@ -261,6 +262,9 @@ pub async fn restart_individual_backup(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn fetch_file_sizes_by_id(id: &str) -> Option<Vec<Statistics::StatisticsItem>> {
-    Statistics::fetch_file_sizes_by_id(id)
+pub async fn fetch_file_sizes_by_id(window: tauri::Window, id: &str) -> Result<Vec<Statistics::StatisticsItem>, String> {
+    match Statistics::fetch_file_sizes_by_id(window, id).await {
+        Some(statistics) => Ok(statistics),
+        None => Err("Failed to fetch file sizes.".to_string()),
+    }
 }
