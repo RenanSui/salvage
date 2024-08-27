@@ -19,7 +19,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
@@ -34,102 +33,16 @@ import { BackupSchema } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
 import { useQueryClient } from '@tanstack/react-query'
-import { LucideIcon } from 'lucide-react'
 import * as React from 'react'
-import { Control, useFieldArray, useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { BackupInputField, dropdownActions } from './backup-input-field'
 
 type UpdateBackupFormProps = React.HTMLAttributes<HTMLDivElement> & {
   backup: BackupSchema
 }
 
-interface DropdownOption {
-  icon: LucideIcon
-  text: string
-  action: () => void
-  disabled?: boolean
-}
-
-interface BackupInputFieldProps {
-  name: keyof CreateBackupSchema
-  label: string
-  placeholder: string
-  control: Control<CreateBackupSchema>
-  isDisabled?: boolean
-  dropdownOptions?: DropdownOption[]
-}
-
-type DropdownActionsType = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setValue: (name: keyof CreateBackupSchema, value: any) => void,
-  field: keyof CreateBackupSchema,
-) => DropdownOption[]
-
-function BackupInputField({
-  name,
-  label,
-  placeholder,
-  control,
-  isDisabled = false,
-  dropdownOptions,
-}: BackupInputFieldProps) {
-  return (
-    <FormField
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <FormItem className="py-2 pb-4 px-4">
-          <FormLabel className="font-heading">{label}</FormLabel>
-          <FormControl>
-            <div className="flex space-x-1">
-              <Input
-                className="border-border/50"
-                placeholder={placeholder}
-                disabled={isDisabled}
-                {...field}
-                value={
-                  Array.isArray(field.value)
-                    ? field.value.map((item) => item.exclusion).join(', ')
-                    : field.value
-                }
-              />
-              {dropdownOptions && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    className={cn(
-                      buttonVariants({ variant: 'outline' }),
-                      'px-2 bg-transparent cursor-default',
-                    )}
-                  >
-                    <Icons.computerUpload />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {dropdownOptions.map(
-                      ({ icon: Icon, text, action, disabled }, index) => (
-                        <DropdownMenuItem
-                          key={index}
-                          className="space-x-1"
-                          onClick={action}
-                          disabled={disabled}
-                        >
-                          <Icon className="size-4" />
-                          <span>{text}</span>
-                        </DropdownMenuItem>
-                      ),
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  )
-}
-
 export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
-  const [collapsable, setCollapsable] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const { toast } = useToast()
 
@@ -149,41 +62,42 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
   })
 
   React.useEffect(() => {
-    const exclusions = backup.exclusions.map((exclusion) => ({ exclusion }))
-    form.setValue('name', backup.name)
-    form.setValue('source', backup.source)
-    form.setValue('destination', backup.destination)
-    form.setValue('exclusions', exclusions)
+    form.reset({
+      name: backup.name,
+      source: backup.source,
+      destination: backup.destination,
+      exclusions: backup.exclusions.map((exclusion) => ({ exclusion })),
+    })
   }, [backup, form])
 
-  async function onSubmit({ exclusions, ...values }: CreateBackupSchema) {
-    const backup_item: BackupSchema = { ...backup, ...values }
-    backup_item.exclusions = exclusions.map((exclusion) =>
-      exclusion.exclusion.replace('//', '\\').replace('/', '\\'),
-    )
-    const updates: string[] = []
+  const onSubmit = async ({ exclusions, ...values }: CreateBackupSchema) => {
+    const updatedBackup: BackupSchema = {
+      ...backup,
+      ...values,
+      exclusions: exclusions.map((exclusion) =>
+        exclusion.exclusion.replace('//', '\\').replace('/', '\\'),
+      ),
+    }
 
+    const updates: string[] = []
     if (backup.name !== values.name) {
-      backupService.rename_backup(backup_item)
+      await backupService.rename_backup(updatedBackup)
       updates.push('Name')
     }
-
     if (backup.source !== values.source) {
-      backupService.change_backup_source(backup_item)
+      await backupService.change_backup_source(updatedBackup)
       updates.push('Source')
     }
-
     if (backup.destination !== values.destination) {
-      backupService.change_backup_destination(backup_item)
+      await backupService.change_backup_destination(updatedBackup)
       updates.push('Destination')
     }
-
-    if (backup.exclusions.join('') !== backup_item.exclusions.join('')) {
-      backupService.modify_backup_exclusions(backup_item)
+    if (backup.exclusions.join('') !== updatedBackup.exclusions.join('')) {
+      await backupService.modify_backup_exclusions(updatedBackup)
       updates.push('Exclusions')
     }
 
-    queryClient.invalidateQueries({ queryKey: [`backups`] })
+    queryClient.invalidateQueries({ queryKey: ['backups'] })
     backupService.restart_backups()
 
     toast({
@@ -196,7 +110,7 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
       )),
     })
 
-    setCollapsable(false)
+    setIsOpen(false)
   }
 
   React.useEffect(() => {
@@ -207,31 +121,15 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
     form.setValue('exclusions', exclusions)
   }, [backup, form])
 
-  const Icon = collapsable ? ChevronUpIcon : ChevronDownIcon
-
-  const dropdownActions: DropdownActionsType = (setValue, field) => [
-    {
-      icon: Icons.file,
-      text: 'Select a File',
-      action: async () => setValue(field, await backupService.select_file()),
-      disabled: field === 'destination', // Disable for "destination" field
-    },
-    {
-      icon: Icons.folder,
-      text: 'Select a Folder',
-      action: async () => setValue(field, await backupService.select_folder()),
-      disabled: false,
-    },
-  ]
+  const Icon = isOpen ? ChevronUpIcon : ChevronDownIcon
 
   return (
     <div className="space-y-1.5">
-      {/* <CardTitle className="font-semibold text-sm">Update</CardTitle> */}
-      <Collapsible open={collapsable} onOpenChange={setCollapsable}>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger
           className={cn(
             'text-start bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 border w-full p-2 cursor-default flex items-center justify-between transition-colors',
-            collapsable ? 'rounded-t' : 'rounded',
+            isOpen ? 'rounded-t' : 'rounded',
           )}
         >
           <div className="p-2">
@@ -255,7 +153,6 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
                 placeholder="Type the name of your backup here"
                 control={form.control}
               />
-
               <BackupInputField
                 name="source"
                 label="Source"
@@ -263,7 +160,6 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
                 control={form.control}
                 dropdownOptions={dropdownActions(form.setValue, 'source')}
               />
-
               <BackupInputField
                 name="destination"
                 label="Destination"
@@ -272,7 +168,6 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
                 isDisabled
                 dropdownOptions={dropdownActions(form.setValue, 'destination')}
               />
-
               <FormField
                 control={form.control}
                 name="exclusions"
@@ -317,24 +212,22 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
                             </DropdownMenu>
                           </div>
                         ))}
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-full bg-transparent cursor-default"
-                          onClick={() => append({ exclusion: '' })}
-                        >
-                          Add new exclusion
-                        </Button>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <Button
+                      type="button"
+                      className="mt-4 w-full bg-transparent cursor-default"
+                      variant="outline"
+                      onClick={() => append({ exclusion: '' })}
+                    >
+                      Add New Exclusion
+                    </Button>
                   </FormItem>
                 )}
               />
-
-              <div className="py-4 px-4">
-                <Button type="submit" className="cursor-default">
-                  Update
+              <div className="p-4">
+                <Button type="submit" size="sm">
+                  Update Backup
                 </Button>
               </div>
             </form>

@@ -31,95 +31,10 @@ import {
 import { BackupSchema } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronDownIcon, ChevronUpIcon, LucideIcon } from 'lucide-react'
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 import * as React from 'react'
-import { Control, useFieldArray, useForm } from 'react-hook-form'
-
-interface DropdownOption {
-  icon: LucideIcon
-  text: string
-  action: () => void
-  disabled?: boolean
-}
-
-interface BackupInputFieldProps {
-  name: keyof CreateBackupSchema
-  label: string
-  placeholder: string
-  control: Control<CreateBackupSchema>
-  isDisabled?: boolean
-  dropdownOptions?: DropdownOption[]
-}
-
-type DropdownActionsType = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setValue: (name: keyof CreateBackupSchema, value: any) => void,
-  field: keyof CreateBackupSchema,
-) => DropdownOption[]
-
-function BackupInputField({
-  name,
-  label,
-  placeholder,
-  control,
-  isDisabled = false,
-  dropdownOptions,
-}: BackupInputFieldProps) {
-  return (
-    <FormField
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <FormItem className="py-2 pb-4 px-4">
-          <FormLabel className="font-heading">{label}</FormLabel>
-          <FormControl>
-            <div className="flex space-x-1">
-              <Input
-                className="border-border/50"
-                placeholder={placeholder}
-                disabled={isDisabled}
-                {...field}
-                value={
-                  Array.isArray(field.value)
-                    ? field.value.map((item) => item.exclusion).join(', ')
-                    : field.value
-                }
-              />
-              {dropdownOptions && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    className={cn(
-                      buttonVariants({ variant: 'outline' }),
-                      'px-2 bg-transparent cursor-default',
-                    )}
-                  >
-                    <Icons.computerUpload />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {dropdownOptions.map(
-                      ({ icon: Icon, text, action, disabled }, index) => (
-                        <DropdownMenuItem
-                          key={index}
-                          className="space-x-1"
-                          onClick={action}
-                          disabled={disabled}
-                        >
-                          <Icon className="size-4" />
-                          <span>{text}</span>
-                        </DropdownMenuItem>
-                      ),
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  )
-}
+import { useFieldArray, useForm } from 'react-hook-form'
+import { BackupInputField, dropdownActions } from './backup-input-field'
 
 export default function CreateBackupForm() {
   const [collapsable, setCollapsable] = React.useState(false)
@@ -127,12 +42,7 @@ export default function CreateBackupForm() {
 
   const form = useForm<CreateBackupSchema>({
     resolver: zodResolver(createBackupSchema),
-    defaultValues: {
-      name: '',
-      source: '',
-      destination: '',
-      exclusions: [],
-    },
+    defaultValues: { name: '', source: '', destination: '', exclusions: [] },
   })
 
   const { fields, append, remove } = useFieldArray<CreateBackupSchema>({
@@ -141,17 +51,16 @@ export default function CreateBackupForm() {
   })
 
   async function onSubmit({ exclusions, ...values }: CreateBackupSchema) {
-    const backup_item: BackupSchema = {
+    const backup_item = {
       ...values,
       id: '',
       is_file: false,
       exclusions: exclusions.map((exclusion) =>
         exclusion.exclusion.replace('//', '\\').replace('/', '\\'),
       ),
-    }
+    } satisfies BackupSchema
 
     await backupService.create_backup(backup_item)
-
     queryClient.invalidateQueries({ queryKey: ['backups'] })
     backupService.restart_backups()
     form.reset()
@@ -159,21 +68,6 @@ export default function CreateBackupForm() {
   }
 
   const Icon = collapsable ? ChevronUpIcon : ChevronDownIcon
-
-  const dropdownActions: DropdownActionsType = (setValue, field) => [
-    {
-      icon: Icons.file,
-      text: 'Select a File',
-      action: async () => setValue(field, await backupService.select_file()),
-      disabled: field === 'destination', // Disable for "destination" field
-    },
-    {
-      icon: Icons.folder,
-      text: 'Select a Folder',
-      action: async () => setValue(field, await backupService.select_folder()),
-      disabled: false,
-    },
-  ]
 
   return (
     <div className="space-y-1.5">
@@ -191,9 +85,7 @@ export default function CreateBackupForm() {
               Create a new backup to manage your data
             </CardDescription>
           </div>
-          <div className="flex items-center gap-2 p-2">
-            <Icon className="size-4" />
-          </div>
+          <Icon className="size-4" />
         </CollapsibleTrigger>
         <CollapsibleContent className="pt-1 bg-white/60 dark:bg-accent/20 rounded-b border-t-0 border">
           <Form {...form}>
@@ -207,7 +99,6 @@ export default function CreateBackupForm() {
                 placeholder="Type the name of your backup here"
                 control={form.control}
               />
-
               <BackupInputField
                 name="source"
                 label="Source"
@@ -215,7 +106,6 @@ export default function CreateBackupForm() {
                 control={form.control}
                 dropdownOptions={dropdownActions(form.setValue, 'source')}
               />
-
               <BackupInputField
                 name="destination"
                 label="Destination"
@@ -224,7 +114,6 @@ export default function CreateBackupForm() {
                 isDisabled
                 dropdownOptions={dropdownActions(form.setValue, 'destination')}
               />
-
               <FormField
                 control={form.control}
                 name="exclusions"
@@ -234,10 +123,7 @@ export default function CreateBackupForm() {
                     <FormControl>
                       <div className="space-y-1.5">
                         {fields.map((field, index) => (
-                          <div
-                            key={`exclusion-${index}`}
-                            className="flex space-x-1"
-                          >
+                          <div key={index} className="flex space-x-1">
                             <Input
                               className="border-border/50"
                               placeholder="Add your exclusion here"
@@ -283,7 +169,6 @@ export default function CreateBackupForm() {
                   </FormItem>
                 )}
               />
-
               <div className="py-4 px-4">
                 <Button type="submit" className="cursor-default">
                   Create

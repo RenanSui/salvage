@@ -17,7 +17,8 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { BackupSchema } from '@/types'
-import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon } from 'lucide-react'
+import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
+import { ChevronRightIcon } from 'lucide-react'
 import * as React from 'react'
 
 type LogBackupProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -25,33 +26,30 @@ type LogBackupProps = React.HTMLAttributes<HTMLDivElement> & {
 }
 
 export default function LogBackup({ backup }: LogBackupProps) {
-  const [collapsable, setCollapsable] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
   const { logs } = React.useContext(LoggerContext)
-
-  const backupLogs = logs[backup.id]
-  const Icon = collapsable ? ChevronUpIcon : ChevronDownIcon
+  const backupLogs = logs[backup.id] || []
+  const Icon = isOpen ? ChevronUpIcon : ChevronDownIcon
 
   return (
     <div className="space-y-1.5">
-      <CardTitle className="font-semibold text-sm">
-        Logs {`(${backupLogs.length})`}
-      </CardTitle>
-      <Collapsible open={collapsable} onOpenChange={setCollapsable}>
+      <CardTitle className="font-semibold text-sm">Logs</CardTitle>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger
           className={cn(
             'text-start bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 border w-full p-2 cursor-default flex items-center justify-between transition-colors',
-            collapsable ? 'rounded-t' : 'rounded',
+            isOpen ? 'rounded-t' : 'rounded',
           )}
         >
           <div className="p-2">
-            <CardTitle>{backup.name} Logs</CardTitle>
+            <CardTitle>Logs ({backupLogs.length})</CardTitle>
             <CardDescription>A list of your recent logs</CardDescription>
           </div>
-          <div className="flex items-center gap-2 p-2">
-            <Icon className="size-4" />
+          <div className="p-2">
+            <Icon className="size-4 shrink-0" />
           </div>
         </CollapsibleTrigger>
-        <CollapsibleContent className="pt-1 bg-white/60 dark:bg-accent/20 rounded-b border-t-0 border">
+        <CollapsibleContent className="pt-1 bg-white/60 dark:bg-accent/20 rounded-b border-t-0">
           <ScrollArea className="h-[calc(100vh-11.5rem)]">
             <Table className="bg-neutral-50 dark:bg-neutral-900/30">
               <TableCaption>A list of your recent logs</TableCaption>
@@ -63,9 +61,9 @@ export default function LogBackup({ backup }: LogBackupProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {backupLogs?.map((log, index) => (
+                {backupLogs.map((log, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium flex items-center ">
+                    <TableCell className="flex items-center font-medium">
                       <ChevronRightIcon
                         className={cn(
                           'inline size-5 text-foreground',
@@ -77,7 +75,7 @@ export default function LogBackup({ backup }: LogBackupProps) {
                     <TableCell className="uppercase">
                       {log.event_type}
                     </TableCell>
-                    <TableCell className="">
+                    <TableCell>
                       {log.message
                         .replaceAll(/\\\\/g, '\\')
                         .replaceAll('"', '')

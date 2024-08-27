@@ -23,13 +23,8 @@ export function DashboardSidebar({
   const { sidebar } = useSidebar()
   const mounted = useMounted()
 
-  if (!sidebar) {
-    return null
-  }
-
-  if (!mounted) {
-    return <DashboardSidebarSkeleton />
-  }
+  if (!sidebar) return null
+  if (!mounted) return <DashboardSidebarSkeleton />
 
   return (
     <div
@@ -41,40 +36,44 @@ export function DashboardSidebar({
     >
       <Button
         size="sm"
-        variant="outline"
-        className={cn('w-full cursor-default')}
+        variant="ghost"
+        className={cn(
+          'w-full justify-start items-center gap-1 font-normal bg-transparent cursor-default',
+          !backupSelected && 'bg-black/5 dark:bg-accent hover:bg-foreground/10',
+        )}
         onClick={() => setBackupSelected(null)}
       >
-        New Backup
+        <Icons.home className="size-4" />
+        <span className="text-sm">Dashboard</span>
       </Button>
       <Separator />
       <ScrollArea className="h-[calc(100vh-127px)]">
-        {items.map((backup, index) => {
+        {items.map((backup) => {
           const Icon = backup.is_file ? Icons.file : Icons.folder
+          const isSelected = backup.id === backupSelected
 
           return (
             <Button
-              key={index}
+              key={backup.id}
               variant="ghost"
               size="sm"
               className={cn(
                 'group w-full justify-start items-center gap-1 mb-1 font-normal bg-transparent cursor-default',
-                backup.id === backupSelected &&
-                  'bg-foreground/10 hover:bg-foreground/10',
+                isSelected &&
+                  'bg-black/5 dark:bg-accent hover:bg-foreground/10',
               )}
               onClick={() => setBackupSelected(backup.id)}
             >
               <Icon
                 className={cn(
-                  'size-4 text-foreground/70 group-hover:text-foreground stroke-[3] ',
-                  backup.id === backupSelected &&
-                    'text-blue-500 group-hover:text-blue-500',
+                  'size-4 text-foreground/70 group-hover:text-foreground',
+                  isSelected && 'text-blue-500 group-hover:text-blue-500',
                 )}
               />
               <span
                 className={cn(
                   'text-sm text-foreground/70 group-hover:text-foreground',
-                  backup.id === backupSelected && 'font-semibold',
+                  isSelected && 'font-semibold',
                 )}
               >
                 {backup.name}

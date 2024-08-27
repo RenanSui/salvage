@@ -11,15 +11,19 @@ type MonitorBackupProps = React.HTMLAttributes<HTMLDivElement> & {
 }
 
 export default function MonitorBackup({ backup }: MonitorBackupProps) {
-  const [switchState, setSwitchState] = React.useState(true)
+  const [isMonitoring, setIsMonitoring] = React.useState(true)
+
+  const handleSwitchChange = (checked: boolean) => {
+    setIsMonitoring(checked)
+    checked
+      ? backupService.start_individual_backup(backup)
+      : backupService.stop_individual_backup(backup)
+  }
 
   return (
     <div className="space-y-1.5">
       <CardTitle className="font-semibold text-sm">Monitoring</CardTitle>
-      <div
-        className="p-2 flex flex-row items-center border justify-between bg-neutral-50
-dark:bg-neutral-900 rounded-md"
-      >
+      <div className="flex justify-between items-center p-2 border rounded-md bg-neutral-50 dark:bg-neutral-900">
         <div className="space-y-0.5 p-2">
           <CardTitle>Backup Monitoring</CardTitle>
           <CardDescription>
@@ -27,19 +31,11 @@ dark:bg-neutral-900 rounded-md"
           </CardDescription>
         </div>
         <div className="flex items-center gap-2">
-          {switchState ? 'On' : 'Off'}
+          {isMonitoring ? 'On' : 'Off'}
           <Switch
             className="cursor-default"
-            checked={switchState}
-            onCheckedChange={(checked) => {
-              setSwitchState(checked)
-
-              if (checked) {
-                backupService.start_individual_backup(backup)
-              } else {
-                backupService.stop_individual_backup(backup)
-              }
-            }}
+            checked={isMonitoring}
+            onCheckedChange={handleSwitchChange}
           />
         </div>
       </div>
