@@ -43,42 +43,42 @@ pub mod statistics {
         }
     }
 
-    pub async fn fetch_file_sizes_by_id(
-        window: tauri::Window,
-        id: &str,
-    ) -> Option<Vec<StatisticsItem>> {
-        let backup = Backup::fetch_backup_by_id(id)?;
-        let mut statistics = Vec::new();
+    // pub async fn fetch_file_sizes_by_id(
+    //     window: tauri::Window,
+    //     id: &str,
+    // ) -> Option<Vec<StatisticsItem>> {
+    //     let backup = Backup::fetch_backup_by_id(id)?;
+    //     let mut statistics = Vec::new();
 
-        let walker = WalkDir::new(&backup.source)
-            .into_iter()
-            .filter_map(Result::ok)
-            .filter(|e| e.path().is_file());
+    //     let walker = WalkDir::new(&backup.source)
+    //         .into_iter()
+    //         .filter_map(Result::ok)
+    //         .filter(|e| e.path().is_file());
 
-        for entry in walker {
-            let path = entry.path();
+    //     for entry in walker {
+    //         let path = entry.path();
 
-            if !path_have_exclusions(
-                window.clone(),
-                &path.to_path_buf(),
-                backup.exclusions.to_owned(),
-                backup.id.clone(),
-                None,
-            ) {
-                if let Some(file_name) = path.file_name().and_then(|f| f.to_str()) {
-                    if let Some((size, unit)) = get_file_size_readable(path).await {
-                        println!("{:?} {:?}", &size, &unit);
-                        statistics.push(StatisticsItem {
-                            source: backup.source.clone(),
-                            file: file_name.to_string(),
-                            size,
-                            unit,
-                        });
-                    }
-                }
-            }
-        }
+    //         if !path_have_exclusions(
+    //             window.clone(),
+    //             &path.to_path_buf(),
+    //             backup.exclusions.to_owned(),
+    //             backup.id.clone(),
+    //             None,
+    //         ) {
+    //             if let Some(file_name) = path.file_name().and_then(|f| f.to_str()) {
+    //                 if let Some((size, unit)) = get_file_size_readable(path).await {
+    //                     println!("{:?} {:?}", &size, &unit);
+    //                     statistics.push(StatisticsItem {
+    //                         source: backup.source.clone(),
+    //                         file: file_name.to_string(),
+    //                         size,
+    //                         unit,
+    //                     });
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        Some(statistics)
-    }
+    //     Some(statistics)
+    // }
 }

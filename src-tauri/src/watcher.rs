@@ -1,4 +1,3 @@
-use crate::debouncer::{debouncer, Debouncer};
 use crate::file::handle_file_modified;
 use notify::{Config, Event, RecommendedWatcher, Result, Watcher};
 use std::collections::HashMap;
@@ -52,12 +51,11 @@ pub async fn handle_events<P: AsRef<Path>, Q: AsRef<Path>>(
     window: tauri::Window,
     id: String,
 ) -> notify::Result<()> {
-    let debouncer = debouncer();
     let src = Arc::new(src.as_ref().to_path_buf());
     let dst = Arc::new(dst.as_ref().to_path_buf());
     let exclusions = Arc::new(exclusions);
-    let window = Arc::new(window); // Wrap in Arc
-    let id = Arc::new(id); // Wrap in Arc
+    let window = Arc::new(window);
+    let id = Arc::new(id);
 
     while let Some(res) = rx.recv().await {
         match res {
@@ -67,29 +65,23 @@ pub async fn handle_events<P: AsRef<Path>, Q: AsRef<Path>>(
                     let src = Arc::clone(&src);
                     let dst = Arc::clone(&dst);
                     let exclusions = Arc::clone(&exclusions);
-                    let window = Arc::clone(&window); // Clone Arc
-                    let id = Arc::clone(&id); // Clone Arc
+                    let window = (*Arc::clone(&window)).clone();
+                    let id = (*Arc::clone(&id)).clone();
 
-                    debouncer.put(Debouncer {
-                        id: 1,
-                        function: Arc::new({
-                            let path = Arc::clone(&path);
-
-                            move || {
-                                let path = path.to_path_buf();
-                                let source = src.to_path_buf();
-                                let dest = dst.to_path_buf();
-                                let exclusions = exclusions.to_vec();
-                                let window = (*window.clone()).clone();
-                                let id = (*id.clone()).clone();
-
-                                let _ = handle_file_modified(path, source, dest, exclusions, id, window);
-                            }
-                        }),
+                    tokio::spawn(async move {
+                        let _ = handle_file_modified(
+                            path.to_path_buf(),
+                            src.to_path_buf(),
+                            dst.to_path_buf(),
+                            exclusions.to_vec(),
+                            id.clone().to_string(),
+                            window.clone(),
+                        )
+                        .await;
                     });
                 }
             }
-            Err(error) => println!("# Watch error: {:?}", error),
+            Err(error) => eprintln!("# Watch error: {:?}", error),
         }
     }
 

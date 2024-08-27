@@ -1,9 +1,9 @@
 use crate::logger::logger::{self as Logger};
-use std::fs;
 use std::path::{Path, PathBuf};
+use tokio::fs;
 use walkdir::WalkDir;
 
-pub fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
+pub async fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
     source: P,
     dest: Q,
     exclusions: &Vec<String>,
@@ -16,7 +16,7 @@ pub fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
     if source_path.is_file() {
         let file_name = source_path.file_name().unwrap();
         let dest_file_path = dest_path.join(file_name).display().to_string();
-        copy_modified_file(window, source_path.to_path_buf(), &dest_file_path, id);
+        copy_modified_file(window, source_path.to_path_buf(), &dest_file_path, id).await;
         return Ok(());
     }
 
@@ -31,6 +31,7 @@ pub fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
                 id.clone(),
                 Some(true),
             )
+            .await
         {
             if let Ok(relative_path) = path.strip_prefix(source_path) {
                 let dest_file_path = dest_path.join(relative_path);
@@ -39,7 +40,8 @@ pub fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
                     path,
                     &dest_file_path.display().to_string(),
                     id.clone(),
-                );
+                )
+                .await;
             }
         }
     }
@@ -47,7 +49,7 @@ pub fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
     Ok(())
 }
 
-pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
+pub async fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
     path: P,
     source: P,
     dest: Q,
@@ -66,7 +68,9 @@ pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
         exclusions,
         id.clone(),
         Some(true),
-    ) {
+    )
+    .await
+    {
         return Ok(());
     }
 
@@ -78,6 +82,7 @@ pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
             let dir_creation_result = std::fs::create_dir_all(&dest_dir_path);
             match dir_creation_result {
                 Ok(_) => {
+                    println!("log: {:?}", &dest_dir_path);
                     Logger::log_event(
                         &window,
                         id.clone(),
@@ -148,13 +153,14 @@ pub fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
             path.to_path_buf(),
             &dest_file_path.display().to_string(),
             id,
-        );
+        )
+        .await;
     }
 
     Ok(())
 }
 
-pub fn path_have_exclusions(
+pub async fn path_have_exclusions(
     window: tauri::Window,
     path: &PathBuf,
     exclusions: Vec<String>,
@@ -186,7 +192,10 @@ pub fn path_have_exclusions(
     contain_exclusion
 }
 
-pub fn is_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dir: Q) -> std::io::Result<bool> {
+pub async fn is_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
+    src: P,
+    dir: Q,
+) -> std::io::Result<bool> {
     let src_modified_time = src.as_ref().metadata()?.modified()?;
     let dir_modified_time = dir.as_ref().metadata()?.modified()?;
 
@@ -194,74 +203,73 @@ pub fn is_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dir: Q) -> std::
     Ok(is_modified)
 }
 
-pub fn copy_modified_file(window: tauri::Window, path: PathBuf, copy_to: &String, id: String) {
+pub async fn copy_modified_file(
+    window: tauri::Window,
+    path: PathBuf,
+    copy_to: &String,
+    id: String,
+) {
     match path.exists() && Path::new(&copy_to).exists() {
-        true => match is_file_modified(&path, &copy_to) {
+        true => match is_file_modified(&path, &copy_to).await {
             Ok(is_modified) => {
                 if is_modified {
-                    // println!("# Path modified: {:?}", path);
                     Logger::log_event(
                         &window,
                         id.clone(),
-                        // format!("Path modified: ...{:?}", path),
                         format!("{:?}", path),
                         Logger::LogEventType::Modified,
                     );
-                    create_file_dir(&copy_to, id.clone(), window.clone());
-                    copy_file_to_dir(path, copy_to, id, window);
+                    create_file_dir(&copy_to, id.clone(), window.clone()).await;
+                    copy_file_to_dir(path, copy_to, id, window).await;
                 } else {
                     Logger::log_event(
                         &window,
                         id.clone(),
-                        // format!("Path NOT modified: ...{:?}", path),
                         format!("{:?}", path),
                         Logger::LogEventType::NotModified,
                     );
-                    // println!("# Path NOT modified: {:?}", path);
                 }
             }
             Err(error) => {
                 Logger::log_event(
                     &window,
                     id.clone(),
-                    // format!("Error file modified: ...{:?}", error),
                     format!("{:?}", error),
                     Logger::LogEventType::Error,
                 );
-                // println!("# Error file modified: {:?}", error)
             }
         },
         false => {
-            create_file_dir(&copy_to, id.clone(), window.clone());
-            copy_file_to_dir(path, copy_to, id, window);
+            create_file_dir(&copy_to, id.clone(), window.clone()).await;
+            copy_file_to_dir(path, copy_to, id, window).await;
         }
     }
 }
 
-pub fn create_file_dir<P: AsRef<Path>>(dir: P, id: String, window: tauri::Window) -> Option<()> {
+pub async fn create_file_dir<P: AsRef<Path>>(
+    dir: P,
+    id: String,
+    window: tauri::Window,
+) -> Option<()> {
     let dir_parent = dir.as_ref().parent()?;
 
     match !dir_parent.exists() {
-        true => match fs::create_dir_all(dir_parent) {
+        true => match fs::create_dir_all(dir_parent).await {
             Ok(_) => {
                 Logger::log_event(
                     &window,
                     id.clone(),
-                    // format!("Directory created: ...{:?}", dir_parent),
                     format!("{:?}", dir_parent),
                     Logger::LogEventType::Create,
                 );
-                // println!("# Dir created: {:?}", dir_parent)
             }
             Err(error) => {
                 Logger::log_event(
                     &window,
                     id.clone(),
-                    // format!("Error creating Directory: ...{:?}", error),
                     format!("{:?}", error),
                     Logger::LogEventType::Error,
                 );
-                // println!("# Error creating Dir: {:?}", error)
             }
         },
         false => (),
@@ -270,37 +278,28 @@ pub fn create_file_dir<P: AsRef<Path>>(dir: P, id: String, window: tauri::Window
     Some(())
 }
 
-pub fn copy_file_to_dir<P: AsRef<Path>, Q: AsRef<Path>>(
+pub async fn copy_file_to_dir<P: AsRef<Path>, Q: AsRef<Path>>(
     src: P,
     dir: Q,
     id: String,
     window: tauri::Window,
 ) -> Option<()> {
-    // println!("src: {:?}", &src.as_ref());
-    // println!("dir: {:?}", &dir.as_ref());
-
-    let copy_result = fs::copy(src.as_ref(), dir.as_ref());
-
-    match copy_result {
+    match fs::copy(src.as_ref(), dir.as_ref()).await {
         Ok(_) => {
             Logger::log_event(
                 &window,
                 id.clone(),
-                // format!("File copied: ...{:?}", dir.as_ref()),
                 format!("{:?}", dir.as_ref()),
                 Logger::LogEventType::Copy,
             );
-            // println!("# File copied: {:?}", dir.as_ref())
         }
         Err(error) => {
             Logger::log_event(
                 &window,
                 id.clone(),
-                // format!("Error copying file: ...{:?}", error),
                 format!("{:?}", error),
                 Logger::LogEventType::Error,
             );
-            // println!("# Error copying file: {:?}", error)
         }
     }
 

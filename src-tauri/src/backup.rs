@@ -1,8 +1,8 @@
 pub mod backup {
     use crate::logger::logger::{self as Logger};
     use serde::{Deserialize, Serialize};
-    use std::fs;
-    use std::io::{BufReader, Write};
+    use tokio::fs;
+    use tokio::io::{AsyncReadExt, AsyncWriteExt, BufReader};
     use std::path::Path;
 
     #[derive(Serialize, Deserialize, Debug)]
@@ -15,157 +15,161 @@ pub mod backup {
         pub is_file: bool,
     }
 
-    pub fn fetch_all_backups<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<BackupItem>> {
+    pub async fn fetch_all_backups<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<BackupItem>> {
         let path = path.as_ref();
 
         if !path.exists() {
-            let mut file = fs::File::create(path)?;
-            let _ = fs::File::write(&mut file, b"[]");
+            let mut file = fs::File::create(path).await?;
+            file.write_all(b"[]").await?;
         }
 
-        let file = fs::File::open(path)?;
-        let reader = BufReader::new(file);
-        let json: Vec<BackupItem> = serde_json::from_reader(reader)
+        let file = fs::File::open(path).await?;
+        let mut reader = BufReader::new(file);
+        let mut content = String::new();
+        reader.read_to_string(&mut content).await?;
+
+        let json: Vec<BackupItem> = serde_json::from_str(&content)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string()))?;
 
         Ok(json)
     }
 
-    pub fn fetch_backup_by_id(id: &str) -> Option<BackupItem> {
-        let json_data = fetch_all_backups("./data.json").ok()?;
 
-        json_data
-            .into_iter()
-            .find(|data| if data.id == id { true } else { false })
-    }
+    // pub fn fetch_backup_by_id(id: &str) -> Option<BackupItem> {
+    //     let json_data = fetch_all_backups("./data.json").ok()?;
 
-    pub fn create_backup(mut backup_item: BackupItem) -> std::io::Result<bool> {
-        let mut backups_list = fetch_all_backups("./data.json")?;
+    //     json_data
+    //         .into_iter()
+    //         .find(|data| if data.id == id { true } else { false })
+    // }
 
-        backup_item.is_file = Path::new(&backup_item.source).is_file();
-        backups_list.push(backup_item);
+    // pub fn create_backup(mut backup_item: BackupItem) -> std::io::Result<bool> {
+    //     let mut backups_list = fetch_all_backups("./data.json")?;
 
-        fs::write("./data.json", serde_json::to_string(&backups_list)?)?;
-        Ok(true)
-    }
+    //     backup_item.is_file = Path::new(&backup_item.source).is_file();
+    //     backups_list.push(backup_item);
 
-    pub fn rename_backup(window: tauri::Window, id: &str, name: &str) -> std::io::Result<bool> {
-        let backups_json = fetch_all_backups("./data.json")?;
-        let mut backups_list: Vec<BackupItem> = Vec::new();
+    //     fs::write("./data.json", serde_json::to_string(&backups_list)?)?;
+    //     Ok(true)
+    // }
 
-        for mut backup in backups_json {
-            if backup.id == id {
-                // println!("# Update {:?} name to {:?}", backup.name, name);
-                Logger::log_event(
-                    &window,
-                    backup.id.clone(),
-                    // format!("Update {:?}'s name to {:?}", backup.name, name),
-                    format!("Name: {:?} > {:?}", backup.name, name),
-                    Logger::LogEventType::Update,
-                );
-                backup.name = name.to_string();
-            }
-            backups_list.push(backup);
-        }
+    // pub fn rename_backup(window: tauri::Window, id: &str, name: &str) -> std::io::Result<bool> {
+    //     let backups_json = fetch_all_backups("./data.json")?;
+    //     let mut backups_list: Vec<BackupItem> = Vec::new();
 
-        fs::write("./data.json", serde_json::to_string(&backups_list)?)?;
-        Ok(true)
-    }
+    //     for mut backup in backups_json {
+    //         if backup.id == id {
+    //             // println!("# Update {:?} name to {:?}", backup.name, name);
+    //             Logger::log_event(
+    //                 &window,
+    //                 backup.id.clone(),
+    //                 // format!("Update {:?}'s name to {:?}", backup.name, name),
+    //                 format!("Name: {:?} > {:?}", backup.name, name),
+    //                 Logger::LogEventType::Update,
+    //             );
+    //             backup.name = name.to_string();
+    //         }
+    //         backups_list.push(backup);
+    //     }
 
-    pub fn change_backup_source(
-        window: tauri::Window,
-        id: &str,
-        source: &str,
-    ) -> std::io::Result<bool> {
-        let mut backups_json = fetch_all_backups("./data.json")?;
+    //     fs::write("./data.json", serde_json::to_string(&backups_list)?)?;
+    //     Ok(true)
+    // }
 
-        backups_json.iter_mut().for_each(|backup| {
-            if backup.id == id {
-                // println!("# Update {:?} source", backup.name);
-                Logger::log_event(
-                    &window,
-                    backup.id.clone(),
-                    // format!("Update {:?}'s source", backup.name),
-                    // format!("> {:?}", source.to_string()),
-                    format!("Source: {:?}", source.to_string()),
-                    Logger::LogEventType::Update,
-                );
-                backup.source = source.to_string();
-                backup.is_file = Path::new(&backup.source).is_file();
-            }
-        });
+    // pub fn change_backup_source(
+    //     window: tauri::Window,
+    //     id: &str,
+    //     source: &str,
+    // ) -> std::io::Result<bool> {
+    //     let mut backups_json = fetch_all_backups("./data.json")?;
 
-        fs::write("./data.json", serde_json::to_string(&backups_json)?)?;
-        Ok(true)
-    }
+    //     backups_json.iter_mut().for_each(|backup| {
+    //         if backup.id == id {
+    //             // println!("# Update {:?} source", backup.name);
+    //             Logger::log_event(
+    //                 &window,
+    //                 backup.id.clone(),
+    //                 // format!("Update {:?}'s source", backup.name),
+    //                 // format!("> {:?}", source.to_string()),
+    //                 format!("Source: {:?}", source.to_string()),
+    //                 Logger::LogEventType::Update,
+    //             );
+    //             backup.source = source.to_string();
+    //             backup.is_file = Path::new(&backup.source).is_file();
+    //         }
+    //     });
 
-    pub fn change_backup_destination(
-        window: tauri::Window,
-        id: &str,
-        dest: &str,
-    ) -> std::io::Result<bool> {
-        let mut backups_json = fetch_all_backups("./data.json")?;
+    //     fs::write("./data.json", serde_json::to_string(&backups_json)?)?;
+    //     Ok(true)
+    // }
 
-        backups_json.iter_mut().for_each(|backup| {
-            if backup.id == id {
-                // println!("# Update {:?} dest", backup.name);
-                Logger::log_event(
-                    &window,
-                    backup.id.clone(),
-                    // format!("Update {:?}'s destination", backup.name),
-                    // format!("> {:?}", dest),
-                    format!("Destination: {:?}", dest),
-                    Logger::LogEventType::Update,
-                );
-                backup.destination = dest.to_string();
-            }
-        });
+    // pub fn change_backup_destination(
+    //     window: tauri::Window,
+    //     id: &str,
+    //     dest: &str,
+    // ) -> std::io::Result<bool> {
+    //     let mut backups_json = fetch_all_backups("./data.json")?;
 
-        fs::write("./data.json", serde_json::to_string(&backups_json)?)?;
-        Ok(true)
-    }
+    //     backups_json.iter_mut().for_each(|backup| {
+    //         if backup.id == id {
+    //             // println!("# Update {:?} dest", backup.name);
+    //             Logger::log_event(
+    //                 &window,
+    //                 backup.id.clone(),
+    //                 // format!("Update {:?}'s destination", backup.name),
+    //                 // format!("> {:?}", dest),
+    //                 format!("Destination: {:?}", dest),
+    //                 Logger::LogEventType::Update,
+    //             );
+    //             backup.destination = dest.to_string();
+    //         }
+    //     });
 
-    pub fn modify_backup_exclusions(
-        window: tauri::Window,
-        id: &str,
-        exclusions: &[String],
-    ) -> std::io::Result<bool> {
-        let mut backups_json = fetch_all_backups("./data.json")?;
+    //     fs::write("./data.json", serde_json::to_string(&backups_json)?)?;
+    //     Ok(true)
+    // }
 
-        backups_json.iter_mut().for_each(|backup| {
-            if backup.id == id {
-                // println!("# Update {:?} exclusions", backup.name);
-                Logger::log_event(
-                    &window,
-                    backup.id.clone(),
-                    // format!("Update {:?}'s exclusions", backup.name),
-                    format!("Exclusions: {:#?}", exclusions.join(", ")),
-                    Logger::LogEventType::Update,
-                );
-                backup.exclusions = exclusions.to_owned();
-            }
-        });
+    // pub fn modify_backup_exclusions(
+    //     window: tauri::Window,
+    //     id: &str,
+    //     exclusions: &[String],
+    // ) -> std::io::Result<bool> {
+    //     let mut backups_json = fetch_all_backups("./data.json")?;
 
-        fs::write("./data.json", serde_json::to_string(&backups_json)?)?;
-        Ok(true)
-    }
+    //     backups_json.iter_mut().for_each(|backup| {
+    //         if backup.id == id {
+    //             // println!("# Update {:?} exclusions", backup.name);
+    //             Logger::log_event(
+    //                 &window,
+    //                 backup.id.clone(),
+    //                 // format!("Update {:?}'s exclusions", backup.name),
+    //                 format!("Exclusions: {:#?}", exclusions.join(", ")),
+    //                 Logger::LogEventType::Update,
+    //             );
+    //             backup.exclusions = exclusions.to_owned();
+    //         }
+    //     });
 
-    pub fn delete_backup(id: &str) -> std::io::Result<bool> {
-        let backups_list = fetch_all_backups("./data.json")?;
+    //     fs::write("./data.json", serde_json::to_string(&backups_json)?)?;
+    //     Ok(true)
+    // }
 
-        let new_backups_list: Vec<_> = backups_list
-            .into_iter()
-            .filter(|item| {
-                if item.id == id {
-                    println!("# Remove {:?}", item.name);
-                    false
-                } else {
-                    true
-                }
-            })
-            .collect();
+    // pub fn delete_backup(id: &str) -> std::io::Result<bool> {
+    //     let backups_list = fetch_all_backups("./data.json")?;
 
-        fs::write("./data.json", serde_json::to_string(&new_backups_list)?)?;
-        Ok(true)
-    }
+    //     let new_backups_list: Vec<_> = backups_list
+    //         .into_iter()
+    //         .filter(|item| {
+    //             if item.id == id {
+    //                 println!("# Remove {:?}", item.name);
+    //                 false
+    //             } else {
+    //                 true
+    //             }
+    //         })
+    //         .collect();
+
+    //     fs::write("./data.json", serde_json::to_string(&new_backups_list)?)?;
+    //     Ok(true)
+    // }
 }
