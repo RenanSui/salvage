@@ -56,6 +56,32 @@ export const LoggerProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [])
 
+  // Reset Logs
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      const totalLogs = Object.values(logs).reduce(
+        (acc, logArray) => acc + logArray.length,
+        0,
+      )
+
+      if (totalLogs >= 1000) {
+        setLogs({})
+      }
+    }, 5000) // Check every 5 seconds (adjust the interval as needed)
+
+    return () => clearInterval(interval) // Cleanup on unmount
+  }, [logs])
+  // React.useEffect(() => {
+  //   const totalLogs = Object.values(logs).reduce(
+  //     (acc, logArray) => acc + logArray.length,
+  //     0,
+  //   )
+
+  //   if (totalLogs >= 1000) {
+  //     setLogs({})
+  //   }
+  // }, [logs])
+
   return (
     <LoggerContext.Provider value={{ logs, createLog }}>
       {children}
