@@ -1,5 +1,3 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
 use crate::backup::backup::{self as Backup};
 use crate::logger::logger::{self as Logger};
 use crate::statistics::statistics::{self as Statistics};
