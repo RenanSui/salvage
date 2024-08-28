@@ -1,9 +1,11 @@
 import TitleBar from '@/components/layouts/title-bar'
 import * as React from 'react'
 
-type LobbyLayoutProps = React.HTMLAttributes<HTMLDivElement>
-
-export default async function LobbyLayout({ children }: LobbyLayoutProps) {
+export default async function BackupLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <div className="relative flex min-h-screen flex-col">
       <TitleBar />
