@@ -71,8 +71,8 @@ export function LogsBackup({ backup }: LogBackupProps) {
           )}
         >
           <div className="p-2">
-            <CardTitle>Files ({backupLogs.length})</CardTitle>
-            <CardDescription>A list of your files</CardDescription>
+            <CardTitle>Logs ({backupLogs.length})</CardTitle>
+            <CardDescription>A list of your logs</CardDescription>
           </div>
           <div className="flex items-center gap-2 p-2 text-sm">
             {backup.name}
