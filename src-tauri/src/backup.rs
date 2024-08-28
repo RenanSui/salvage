@@ -67,6 +67,7 @@ pub mod backup {
                     backup.id.clone(),
                     format!("Name: {:?} > {:?}", backup.name, name),
                     Logger::LogEventType::Update,
+                    Some(true),
                 );
                 backup.name = name.to_string();
             }
@@ -91,6 +92,7 @@ pub mod backup {
                     backup.id.clone(),
                     format!("Source: {:?}", source),
                     Logger::LogEventType::Update,
+                    Some(true),
                 );
                 backup.source = source.to_string();
                 backup.is_file = Path::new(&backup.source).is_file();
@@ -115,6 +117,7 @@ pub mod backup {
                     backup.id.clone(),
                     format!("Destination: {:?}", dest),
                     Logger::LogEventType::Update,
+                    Some(true),
                 );
                 backup.destination = dest.to_string();
             }
@@ -138,6 +141,7 @@ pub mod backup {
                     backup.id.clone(),
                     format!("Exclusions: {:#?}", exclusions.join(", ")),
                     Logger::LogEventType::Update,
+                    Some(true),
                 );
                 backup.exclusions = exclusions.to_owned();
             }

@@ -9,6 +9,7 @@ pub async fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
     exclusions: &Vec<String>,
     id: String,
     window: tauri::Window,
+    show_logs: Option<bool>,
 ) -> std::io::Result<()> {
     let source_path = source.as_ref();
     let dest_path = dest.as_ref();
@@ -16,7 +17,14 @@ pub async fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
     if source_path.is_file() {
         let file_name = source_path.file_name().unwrap();
         let dest_file_path = dest_path.join(file_name).display().to_string();
-        copy_modified_file(window, source_path.to_path_buf(), &dest_file_path, id).await;
+        copy_modified_file(
+            window,
+            source_path.to_path_buf(),
+            &dest_file_path,
+            id,
+            show_logs,
+        )
+        .await;
         return Ok(());
     }
 
@@ -29,20 +37,21 @@ pub async fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
                 &path,
                 exclusions.to_owned(),
                 id.clone(),
-                Some(true),
+                show_logs,
             )
             .await
         {
-            if let Ok(relative_path) = path.strip_prefix(source_path) {
-                let dest_file_path = dest_path.join(relative_path);
-                copy_modified_file(
-                    window.clone(),
-                    path,
-                    &dest_file_path.display().to_string(),
-                    id.clone(),
-                )
-                .await;
-            }
+            // if let Ok(relative_path) = path.strip_prefix(source_path) {
+            //     let dest_file_path = dest_path.join(relative_path);
+            //     copy_modified_file(
+            //         window.clone(),
+            //         path,
+            //         &dest_file_path.display().to_string(),
+            //         id.clone(),
+            //         show_logs,
+            //     )
+            //     .await;
+            // }
         }
     }
 
@@ -89,6 +98,7 @@ pub async fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
                         // format!("Directory created: ...{:?}", dest_dir_path),
                         format!("{:?}", dest_dir_path),
                         Logger::LogEventType::Create,
+                        Some(true),
                     );
                     // println!("# Directory created: {:?}", dest_dir_path);
                 }
@@ -99,6 +109,7 @@ pub async fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
                         // format!("Error creating directory: ...{:?}", error),
                         format!("{:?}", error),
                         Logger::LogEventType::Error,
+                        Some(true),
                     );
                     // println!("# Error creating directory: {:?}", error)
                 }
@@ -141,6 +152,7 @@ pub async fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
                         // format!("Error creating directory: ...{:?}", error),
                         format!("{:?}", error),
                         Logger::LogEventType::Error,
+                        Some(true),
                     );
                     // println!("# Error creating directory: {:?}", error);
                 }
@@ -153,6 +165,7 @@ pub async fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
             path.to_path_buf(),
             &dest_file_path.display().to_string(),
             id,
+            Some(true),
         )
         .await;
     }
@@ -165,29 +178,52 @@ pub async fn path_have_exclusions(
     path: &PathBuf,
     exclusions: Vec<String>,
     id: String,
-    log: Option<bool>,
+    show_logs: Option<bool>,
 ) -> bool {
     let mut contain_exclusion = false;
 
+    if exclusions.is_empty() {
+        return false;
+    }
+
+    let path_string = match path.display().to_string().replace("/", "\\") {
+        s => s,
+    };
+
     for exclusion in exclusions {
-        let result = path
-            .display()
-            .to_string()
-            .contains(&exclusion.replace("/", "\\"));
-        if result {
-            match log {
-                Some(_) => Logger::log_event(
+        if path_string.contains(&exclusion) {
+            if show_logs.unwrap_or(false) {
+                // Uncomment and ensure that Logger does not panic
+                Logger::log_event(
                     &window,
                     id.clone(),
                     format!("{:?}", path),
                     Logger::LogEventType::Excluded,
-                ),
-                None => (),
+                    show_logs,
+                );
             }
-
-            contain_exclusion = result
+            contain_exclusion = true;
+            break;
         }
     }
+    // for exclusion in exclusions {
+    //     let result = path
+    //         .display()
+    //         .to_string()
+    //         .contains(&exclusion.replace("/", "\\"));
+    //     if result {
+    //         if let Some(_) = show_logs {
+    //             // Logger::log_event(
+    //             //     &window,
+    //             //     id.clone(),
+    //             //     format!("{:?}", path),
+    //             //     Logger::LogEventType::Excluded,
+    //             //     show_logs,
+    //             // );
+    //         }
+    //         contain_exclusion = result
+    //     }
+    // }
 
     contain_exclusion
 }
@@ -208,40 +244,48 @@ pub async fn copy_modified_file(
     path: PathBuf,
     copy_to: &String,
     id: String,
+    show_logs: Option<bool>,
 ) {
     match path.exists() && Path::new(&copy_to).exists() {
         true => match is_file_modified(&path, &copy_to).await {
             Ok(is_modified) => {
                 if is_modified {
-                    Logger::log_event(
-                        &window,
-                        id.clone(),
-                        format!("{:?}", path),
-                        Logger::LogEventType::Modified,
-                    );
-                    create_file_dir(&copy_to, id.clone(), window.clone()).await;
-                    copy_file_to_dir(path, copy_to, id, window).await;
+                    if let Some(_) = show_logs {
+                        Logger::log_event(
+                            &window,
+                            id.clone(),
+                            format!("{:?}", path),
+                            Logger::LogEventType::Modified,
+                            show_logs,
+                        );
+                    }
+                    create_file_dir(&copy_to, id.clone(), window.clone(), show_logs).await;
+                    copy_file_to_dir(path, copy_to, id, window, show_logs).await;
                 } else {
                     Logger::log_event(
                         &window,
                         id.clone(),
                         format!("{:?}", path),
                         Logger::LogEventType::NotModified,
+                        show_logs,
                     );
                 }
             }
             Err(error) => {
-                Logger::log_event(
-                    &window,
-                    id.clone(),
-                    format!("{:?}", error),
-                    Logger::LogEventType::Error,
-                );
+                if let Some(_) = show_logs {
+                    Logger::log_event(
+                        &window,
+                        id.clone(),
+                        format!("{:?}", error),
+                        Logger::LogEventType::Error,
+                        show_logs,
+                    );
+                }
             }
         },
         false => {
-            create_file_dir(&copy_to, id.clone(), window.clone()).await;
-            copy_file_to_dir(path, copy_to, id, window).await;
+            create_file_dir(&copy_to, id.clone(), window.clone(), show_logs).await;
+            copy_file_to_dir(path, copy_to, id, window, show_logs).await;
         }
     }
 }
@@ -250,26 +294,33 @@ pub async fn create_file_dir<P: AsRef<Path>>(
     dir: P,
     id: String,
     window: tauri::Window,
+    show_logs: Option<bool>,
 ) -> Option<()> {
     let dir_parent = dir.as_ref().parent()?;
 
     match !dir_parent.exists() {
         true => match fs::create_dir_all(dir_parent).await {
             Ok(_) => {
-                Logger::log_event(
-                    &window,
-                    id.clone(),
-                    format!("{:?}", dir_parent),
-                    Logger::LogEventType::Create,
-                );
+                if let Some(_) = show_logs {
+                    Logger::log_event(
+                        &window,
+                        id.clone(),
+                        format!("{:?}", dir_parent),
+                        Logger::LogEventType::Create,
+                        show_logs,
+                    );
+                }
             }
             Err(error) => {
-                Logger::log_event(
-                    &window,
-                    id.clone(),
-                    format!("{:?}", error),
-                    Logger::LogEventType::Error,
-                );
+                if let Some(_) = show_logs {
+                    Logger::log_event(
+                        &window,
+                        id.clone(),
+                        format!("{:?}", error),
+                        Logger::LogEventType::Error,
+                        show_logs,
+                    );
+                }
             }
         },
         false => (),
@@ -283,23 +334,30 @@ pub async fn copy_file_to_dir<P: AsRef<Path>, Q: AsRef<Path>>(
     dir: Q,
     id: String,
     window: tauri::Window,
+    show_logs: Option<bool>,
 ) -> Option<()> {
     match fs::copy(src.as_ref(), dir.as_ref()).await {
         Ok(_) => {
-            Logger::log_event(
-                &window,
-                id.clone(),
-                format!("{:?}", dir.as_ref()),
-                Logger::LogEventType::Copy,
-            );
+            if let Some(_) = show_logs {
+                Logger::log_event(
+                    &window,
+                    id.clone(),
+                    format!("{:?}", dir.as_ref()),
+                    Logger::LogEventType::Copy,
+                    show_logs,
+                );
+            }
         }
         Err(error) => {
-            Logger::log_event(
-                &window,
-                id.clone(),
-                format!("{:?}", error),
-                Logger::LogEventType::Error,
-            );
+            if let Some(_) = show_logs {
+                Logger::log_event(
+                    &window,
+                    id.clone(),
+                    format!("{:?}", error),
+                    Logger::LogEventType::Error,
+                    show_logs,
+                );
+            }
         }
     }
 

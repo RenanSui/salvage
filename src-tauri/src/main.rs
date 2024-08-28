@@ -25,21 +25,22 @@ async fn main() -> TauriResult<()> {
         .setup(|app| {
             let window = app.get_window("main").unwrap();
 
-            tauri::async_runtime::spawn(async move {
-                if let Ok(backups) = Backup::fetch_all_backups("./data.json").await {
-                    for backup in backups {
-                        let window_clone = window.clone();
-                        let _ = initial_copy_files(
-                            backup.source,
-                            backup.destination,
-                            &backup.exclusions,
-                            backup.id,
-                            window_clone,
-                        )
-                        .await;
-                    }
-                }
-            });
+            // tauri::async_runtime::spawn(async move {
+            //     if let Ok(backups) = Backup::fetch_all_backups("./data.json").await {
+            //         for backup in backups {
+            //             let window_clone = window.clone();
+            //             let _ = initial_copy_files(
+            //                 backup.source,
+            //                 backup.destination,
+            //                 &backup.exclusions,
+            //                 backup.id,
+            //                 window_clone,
+            //                 Some(true)
+            //             )
+            //             .await;
+            //         }
+            //     }
+            // });
 
             Ok(())
         })

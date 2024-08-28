@@ -64,12 +64,20 @@ pub async fn rename_backup(window: tauri::Window, id: String, name: String) -> b
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn change_backup_source(window: tauri::Window, id: String, source: String) -> bool {
-    Backup::change_backup_source(window, &id, &source).await.is_ok()
+    Backup::change_backup_source(window, &id, &source)
+        .await
+        .is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn change_backup_destination(window: tauri::Window, id: String, destination: String) -> bool {
-    Backup::change_backup_destination(window, &id, &destination).await.is_ok()
+pub async fn change_backup_destination(
+    window: tauri::Window,
+    id: String,
+    destination: String,
+) -> bool {
+    Backup::change_backup_destination(window, &id, &destination)
+        .await
+        .is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -78,7 +86,9 @@ pub async fn modify_backup_exclusions(
     id: String,
     exclusions: Vec<String>,
 ) -> bool {
-    Backup::modify_backup_exclusions(window, &id, &exclusions).await.is_ok()
+    Backup::modify_backup_exclusions(window, &id, &exclusions)
+        .await
+        .is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -104,6 +114,7 @@ pub async fn start_watching(state: State<'_, AppState>, window: tauri::Window) -
             // format!("Start watching: {:?}", backup.name),
             format!("{:?}", backup.name),
             Logger::LogEventType::Start,
+            Some(true),
         );
         let src = backup.source;
         let dst = backup.destination;
@@ -151,6 +162,7 @@ pub async fn stop_watching(state: State<'_, AppState>, window: tauri::Window) ->
             // format!("Stop watching: {:?}", backup.name),
             format!("{:?}", backup.name),
             Logger::LogEventType::Stop,
+            Some(true),
         );
         let path = PathBuf::from(backup.source);
 
@@ -191,6 +203,7 @@ pub async fn start_individual_backup(
             // format!("Start watching: {:?}", backup.name),
             format!("{:?}", backup.name),
             Logger::LogEventType::Start,
+            Some(true),
         );
         let src = backup.source;
         let dst = backup.destination;
@@ -232,6 +245,7 @@ pub async fn stop_individual_backup(
             // format!("Stop watching: {:?}", backup.name),
             format!("{:?}", backup.name),
             Logger::LogEventType::Stop,
+            Some(true),
         );
         let path = PathBuf::from(backup.source);
 
@@ -265,7 +279,10 @@ pub async fn restart_individual_backup(
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn fetch_file_sizes_by_id(window: tauri::Window, id: &str) -> Result<Vec<Statistics::StatisticsItem>, String> {
+pub async fn fetch_file_sizes_by_id(
+    window: tauri::Window,
+    id: &str,
+) -> Result<Vec<Statistics::StatisticsItem>, String> {
     match Statistics::fetch_file_sizes_by_id(window, id).await {
         Some(statistics) => Ok(statistics),
         None => Err("Failed to fetch file sizes.".to_string()),
