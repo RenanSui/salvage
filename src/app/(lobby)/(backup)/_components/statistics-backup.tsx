@@ -4,84 +4,88 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useFileSizesById } from '@/hooks/use-file-sizes-by-id'
+import { backupService } from '@/lib/backup/actions'
 import { cn } from '@/lib/utils'
-import { BackupSchema } from '@/types'
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
+import { BackupSchema, StatisticsSchema } from '@/types'
+import { ColumnDef } from '@tanstack/react-table'
+import { ChevronDownIcon, ChevronUpIcon, LoaderCircleIcon } from 'lucide-react'
 import * as React from 'react'
+import { DataTable } from './data-table'
 
 type StatisticsBackupProps = React.HTMLAttributes<HTMLDivElement> & {
   backup: BackupSchema
 }
 
-export default function StatisticsBackup({ backup }: StatisticsBackupProps) {
-  const [collapsable, setCollapsable] = React.useState(false)
-  const { data: fileSizes } = useFileSizesById(backup.id)
+export const columns: ColumnDef<StatisticsSchema, unknown>[] = [
+  {
+    header: 'File',
+    accessorKey: 'file',
+    cell: ({ row }) => {
+      return (
+        <div
+          className="w-full max-w-screen-sm"
+          onClick={() => backupService.open_in_explorer(row.original.source)}
+        >
+          {row.original.file}
+        </div>
+      )
+    },
+  },
+  {
+    header: () => <div>Size</div>,
+    accessorKey: 'size',
+    cell: ({ row }) => (
+      <div
+        className="space-x-2"
+        onClick={() => backupService.open_in_explorer(row.original.source)}
+      >
+        <span>{String(row.getValue('size'))}</span>
+        <span>{row.original.unit.toUpperCase()}</span>
+      </div>
+    ),
+  },
+]
 
-  console.log(backup.id)
-  console.log(fileSizes)
-
-  const Icon = collapsable ? ChevronUpIcon : ChevronDownIcon
+export function StatisticsBackup({ backup }: StatisticsBackupProps) {
+  const [isOpen, setIsOpen] = React.useState(false)
+  const { data: fileSizes, isFetched } = useFileSizesById(backup.id)
+  const Icon = isOpen ? ChevronUpIcon : ChevronDownIcon
 
   return (
     <div className="space-y-1.5">
-      <CardTitle className="font-semibold text-sm">
-        Statistics
-        {/* Logs {`(${backupLogs.length})`} */}
-      </CardTitle>
-      <Collapsible open={collapsable} onOpenChange={setCollapsable}>
+      <CardTitle className="font-semibold text-sm">Stats</CardTitle>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger
           className={cn(
             'text-start bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 border w-full p-2 cursor-default flex items-center justify-between transition-colors',
-            collapsable ? 'rounded-t' : 'rounded',
+            isOpen ? 'rounded-t' : 'rounded',
           )}
         >
           <div className="p-2">
-            <CardTitle>{backup.name} Statistics</CardTitle>
+            <CardTitle>Files ({fileSizes.length})</CardTitle>
             <CardDescription>A list of your files</CardDescription>
           </div>
-          <div className="flex items-center gap-2 p-2">
+          <div className="flex items-center gap-2 p-2 text-sm">
+            {backup.name}
             <Icon className="size-4" />
           </div>
         </CollapsibleTrigger>
-        <CollapsibleContent className="pt-1 bg-white/60 dark:bg-accent/20 rounded-b border-t-0 border">
-          <ScrollArea className="h-[calc(100vh-11.5rem)]">
-            <Table className="bg-neutral-50 dark:bg-neutral-900/30">
-              <TableCaption>A list of your files</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-72">File</TableHead>
-                  <TableHead>
-                    <div className="w-28 text-end">Size</div>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {fileSizes?.map((file, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{file.file}</TableCell>
-                    <TableCell>
-                      <div className="w-28 gap-2 flex justify-end">
-                        <span>{file.size}</span>
-                        <span>{file.unit.toUpperCase()}</span>
-                        {/* {file.size} {file.unit.toUpperCase()} */}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
+        <CollapsibleContent className="bg-white/60 dark:bg-accent/20 rounded-b border-t-0 border">
+          {isFetched ? (
+            <DataTable columns={columns} data={fileSizes} />
+          ) : (
+            Array.from({ length: 10 }).map((_, index) => (
+              <div
+                key={index}
+                className="relative flex justify-center items-center w-full h-12"
+              >
+                <Skeleton className="w-full h-12 absolute top-0 left-0 rounded-none border-foreground/10 border-b" />
+                <LoaderCircleIcon className="animate-spin text-muted-foreground opacity-20 size-8" />
+              </div>
+            ))
+          )}
         </CollapsibleContent>
       </Collapsible>
     </div>

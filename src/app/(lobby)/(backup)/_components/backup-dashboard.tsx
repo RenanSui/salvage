@@ -11,9 +11,9 @@ import * as React from 'react'
 import { BackupDashboardSkeleton } from './backup-dashboard-skeleton'
 import CreateBackupForm from './create-backup-form'
 import DeleteBackup from './delete-backup'
-import LogBackup from './log-backup'
+import { LogsBackup } from './logs-backup'
 import MonitorBackup from './monitor-backup'
-import StatisticsBackup from './statistics-backup'
+import { StatisticsBackup } from './statistics-backup'
 import UpdateBackupForm from './update-backup-form'
 
 type BackupDashboardProps = {
@@ -42,7 +42,7 @@ export function BackupDashboard({ items, className }: BackupDashboardProps) {
               <CardTitle>{backup.name}</CardTitle>
               <CardDescription>Source: {backup.source}</CardDescription>
             </div>
-            <Icon className="size-4 text-foreground/40 group-hover:text-foreground stroke-[2]" />
+            <Icon className="transition-colors size-4 text-foreground/40 group-hover:text-foreground stroke-[2]" />
           </div>
         )
       })}
@@ -52,16 +52,21 @@ export function BackupDashboard({ items, className }: BackupDashboardProps) {
   return (
     <div
       className={cn(
-        'w-full max-w-screen-lg pt-2 mx-auto',
+        'w-full max-w-screen-lg mx-auto',
         className,
         isFetched && 'animate-fade-up',
       )}
     >
       <ScrollArea className="h-[calc(100vh-78px)]">
-        <div className="space-y-2 flex flex-col px-4">
+        <div className="space-y-2 flex flex-col px-4 py-2 sticky top-0 z-50 w-full bg-accent/60 backdrop-blur">
           <p className="text-foreground font-heading text-2xl leading-none tracking-tight flex gap-4 items-center cursor-default">
             <span
-              className={backupSelected ? 'hover:text-foreground' : ''}
+              className={cn(
+                'transition-colors',
+                backupSelected
+                  ? 'hover:text-foreground text-muted-foreground/50'
+                  : '',
+              )}
               onClick={() => backupSelected && setBackupSelected(null)}
             >
               Dashboard
@@ -89,7 +94,7 @@ export function BackupDashboard({ items, className }: BackupDashboardProps) {
                 <DeleteBackup backup={backup} />
               </div>
               <StatisticsBackup backup={backup} />
-              <LogBackup backup={backup} />
+              <LogsBackup backup={backup} />
             </>
           )}
         </div>

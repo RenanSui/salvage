@@ -136,7 +136,7 @@ export default function UpdateBackupForm({ backup }: UpdateBackupFormProps) {
             <CardTitle>Update your backup</CardTitle>
             <CardDescription>Update one or all backup info</CardDescription>
           </div>
-          <div className="flex items-center gap-2 p-2">
+          <div className="flex items-center gap-2 p-2 text-sm">
             {backup.name}
             <Icon className="size-4" />
           </div>
