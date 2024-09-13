@@ -58,7 +58,7 @@ export function BackupDashboard({ items, className }: BackupDashboardProps) {
       )}
     >
       <ScrollArea className="h-[calc(100vh-78px)]">
-        <div className="space-y-2 flex flex-col px-4 py-2 sticky top-0 z-50 w-full from-accent bg-gradient-to-b to-accent/30 backdrop-blur">
+        <div className="space-y-2 flex flex-col px-4 py-2 sticky top-0 z-50 w-full">
           <p className="text-foreground font-heading text-2xl leading-none tracking-tight flex gap-4 items-center cursor-default">
             <span
               className={cn(
