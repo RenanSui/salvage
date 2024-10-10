@@ -40,7 +40,9 @@ export function BackupDashboard({ items, className }: BackupDashboardProps) {
           >
             <div className="space-y-0.5 p-2">
               <CardTitle>{backup.name}</CardTitle>
-              <CardDescription>Source: {backup.source}</CardDescription>
+              <CardDescription className="truncate max-w-[450px] lg:max-w-screen-xl">
+                Source: {backup.source}
+              </CardDescription>
             </div>
             <Icon className="transition-colors size-4 text-foreground/40 group-hover:text-foreground stroke-[2]" />
           </div>
