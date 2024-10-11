@@ -31,7 +31,8 @@ import {
 import { BackupSchema } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
+import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon } from 'lucide-react'
+import Link from 'next/link'
 import * as React from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { BackupInputField, dropdownActions } from './backup-input-field'
@@ -72,6 +73,21 @@ export default function CreateBackupForm() {
   return (
     <div className="space-y-1.5">
       <CardTitle className="font-semibold text-sm">Create</CardTitle>
+      <Link
+        className={cn(
+          buttonVariants({}),
+          'text-start bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 border w-full p-2 cursor-default flex items-center justify-between transition-colors py-8 pl-4 rounded-sm',
+        )}
+        href="/create"
+      >
+        <div className="flex flex-col">
+          <span className="text-foreground">Create a new backup</span>
+          <span className="text-muted-foreground">
+            Create a new backup to manage your data
+          </span>
+        </div>
+        <ChevronRightIcon className="size-4 text-neutral-100" />
+      </Link>
       <Collapsible open={collapsable} onOpenChange={setCollapsable}>
         <CollapsibleTrigger
           className={cn(
