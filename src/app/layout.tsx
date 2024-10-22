@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import '../styles/globals.css'
 
 import { Providers } from '@/components/providers/providers'
@@ -24,7 +23,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body
         className={cn(
-          'min-h-screen font-sans antialiased [box-shadow:inset_0px_0px_0px_1px_#dedede] dark:[box-shadow:inset_0px_0px_0px_1px_#171717] ',
+          'min-h-screen bg-transparent font-sans antialiased',
           GeistSans.variable,
           GeistMono.variable,
           fontHeading.variable,
