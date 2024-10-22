@@ -1,4 +1,4 @@
-import { InvokeArgs } from '@tauri-apps/api/tauri'
+import { type InvokeArgs } from '@tauri-apps/api/tauri'
 
 type tauriInvokeCmdArgs =
   | 'select_file'
@@ -31,10 +31,7 @@ export async function tauriWindow() {
   return null
 }
 
-export async function tauriInvoke<T>(
-  cmd: tauriInvokeCmdArgs,
-  args?: InvokeArgs | undefined,
-): Promise<T | null> {
+export async function tauriInvoke<T>(cmd: tauriInvokeCmdArgs, args?: InvokeArgs | undefined): Promise<T | null> {
   if (typeof window !== 'undefined') {
     const tauriAppsApi = await import('@tauri-apps/api')
     const tauriInvoke = tauriAppsApi.invoke
