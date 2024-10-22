@@ -33,24 +33,14 @@ export const Icons = {
     middleStroke?: React.HTMLAttributes<SVGElement>['className']
     sideStrokes?: React.HTMLAttributes<SVGElement>['className']
   }) => (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M3 10H18"
         // stroke="#505154"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={cn(
-          'stroke-[#505154] dark:stroke-[#ADAFB1] transition-all',
-          middleStroke,
-        )}
+        className={cn('stroke-[#505154] transition-all dark:stroke-[#ADAFB1]', middleStroke)}
       />
       <path
         d="M3 5H13M8 15H18"
@@ -58,10 +48,7 @@ export const Icons = {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={cn(
-          'stroke-[#ADAFB1] transition-all duration-500',
-          sideStrokes,
-        )}
+        className={cn('stroke-[#ADAFB1] transition-all duration-500', sideStrokes)}
       />
     </svg>
   ),
@@ -84,14 +71,7 @@ export const Icons = {
     </svg>
   ),
   minus: ({ ...props }: IconProps) => (
-    <svg
-      width="12"
-      height="3"
-      viewBox="0 0 12 3"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="12" height="3" viewBox="0 0 12 3" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M1.33337 1.2963H10.6667"
         stroke="#ADAFB1"
@@ -120,13 +100,7 @@ export const Icons = {
     </svg>
   ),
   home: ({ ...props }: IconProps) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       <path
         fill="currentColor"
         d="M11.03 2.59a1.5 1.5 0 0 1 1.94 0l7.5 6.363a1.5 1.5 0 0 1 .53 1.144V19.5a1.5 1.5 0 0 1-1.5 1.5h-5.75a.75.75 0 0 1-.75-.75V14h-2v6.25a.75.75 0 0 1-.75.75H4.5A1.5 1.5 0 0 1 3 19.5v-9.403c0-.44.194-.859.53-1.144ZM12 3.734l-7.5 6.363V19.5h5v-6.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v6.25h5v-9.403Z"

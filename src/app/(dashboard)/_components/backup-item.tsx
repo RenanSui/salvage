@@ -1,4 +1,3 @@
-/* eslint-disable tailwindcss/classnames-order */
 import { Icons } from '@/components/icons'
 import { type BackupSchema } from '@/types'
 import { ChevronRightIcon } from '@radix-ui/react-icons'

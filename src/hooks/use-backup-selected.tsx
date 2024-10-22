@@ -1,4 +1,4 @@
-import { BackupSchema } from '@/types'
+import { type BackupSchema } from '@/types'
 import { atom, useAtom } from 'jotai'
 
 export const backupSelectedAtom = atom<BackupSchema['id'] | null>(null)

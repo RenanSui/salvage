@@ -1,4 +1,3 @@
-/* eslint-disable tailwindcss/classnames-order */
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 
 type CardMessageProps = {
