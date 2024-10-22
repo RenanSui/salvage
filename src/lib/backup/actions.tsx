@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { toast } from '@/hooks/use-toast'
-import { BackupSchema, StatisticsSchema } from '@/types'
+import { type BackupSchema, type FilesSchema } from '@/types'
 import { tauriInvoke } from '../tauri'
 import { sizeInBytes } from '../utils'
 
@@ -34,9 +34,7 @@ async function change_backup_source(backup: BackupSchema) {
 }
 
 async function change_backup_destination(backup: BackupSchema) {
-  return (
-    (await tauriInvoke('change_backup_destination', { ...backup })) || false
-  )
+  return (await tauriInvoke('change_backup_destination', { ...backup })) || false
 }
 
 async function modify_backup_exclusions(backup: BackupSchema) {
@@ -53,7 +51,10 @@ async function load_backups() {
 
 async function start_watching() {
   await tauriInvoke('start_watching')
-  toast({ title: 'Backup Monitoring Successfully Initialized.' })
+  toast({
+    title: 'Backup Monitoring Successfully Initialized.',
+    description: 'Your backup monitoring process has started successfully and will notify you of any changes.',
+  })
 }
 
 async function stop_watching() {
@@ -61,12 +62,16 @@ async function stop_watching() {
   toast({
     variant: 'destructive',
     title: 'Backup Monitoring Successfully Stopped.',
+    description: 'The backup monitoring process has been stopped. No further changes will be tracked.',
   })
 }
 
 async function restart_backups() {
   await tauriInvoke('restart_backups')
-  toast({ title: 'Backup Monitoring Restarted Successfully.' })
+  toast({
+    title: 'Backup Monitoring Restarted Successfully.',
+    description: 'The backup monitoring process has been successfully restarted and will resume tracking changes.',
+  })
 }
 
 async function start_individual_backup({ id, name }: BackupSchema) {
@@ -74,8 +79,8 @@ async function start_individual_backup({ id, name }: BackupSchema) {
   toast({
     description: (
       <p>
-        Backup <span className="font-semibold">{name}</span> Successfully{' '}
-        <span className="font-semibold text-blue-500">Initialized</span>.
+        Backup <span className="font-semibold">{name}</span> successfully{' '}
+        <span className="font-semibold text-blue-500">initialized</span>.
       </p>
     ),
   })
@@ -86,8 +91,8 @@ async function stop_individual_backup({ id, name }: BackupSchema) {
   toast({
     description: (
       <p>
-        Backup <span className="font-semibold">{name}</span> Successfully{' '}
-        <span className="font-semibold text-destructive">Stopped</span>.
+        Backup <span className="font-semibold">{name}</span> successfully{' '}
+        <span className="font-semibold text-destructive">stopped</span>.
       </p>
     ),
   })
@@ -98,18 +103,14 @@ async function restart_individual_backup({ id, name }: BackupSchema) {
   toast({
     description: (
       <p>
-        Backup <span className="font-semibold text-blue-500">{name}</span>{' '}
-        Successfully Restarted.
+        Backup <span className="font-semibold text-blue-500">{name}</span> successfully restarted.
       </p>
     ),
   })
 }
 
 async function fetch_file_sizes_by_id(id: BackupSchema['id']) {
-  const files = await tauriInvoke<StatisticsSchema[]>(
-    'fetch_file_sizes_by_id',
-    { id },
-  )
+  const files = await tauriInvoke<FilesSchema[]>('fetch_file_sizes_by_id', { id })
   const sortedFiles = files?.sort((a, b) => sizeInBytes(b) - sizeInBytes(a))
   return sortedFiles || []
 }
@@ -119,8 +120,10 @@ async function open_in_explorer(path: string) {
 }
 
 export const backupService = {
+  // File/Folder Selection
   select_file,
   select_folder,
+  // Backup Management
   fetch_all_backups,
   fetch_backup_by_id,
   create_backup,
@@ -135,6 +138,7 @@ export const backupService = {
   start_watching,
   stop_watching,
   restart_backups,
+  // Individual Backup Actions
   start_individual_backup,
   stop_individual_backup,
   restart_individual_backup,
