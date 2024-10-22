@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { toast } from '@/hooks/use-toast'
 import { type BackupSchema, type FilesSchema } from '@/types'
 import { tauriInvoke } from '../tauri'
