@@ -3,6 +3,7 @@
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { tauriWindow } from '@/lib/tauri'
+import { ThemeToggle } from './theme-toggle'
 
 type TitleBarProps = {
   title?: string
@@ -11,13 +12,16 @@ type TitleBarProps = {
 
 export function TitleBar({ title = 'Dashboard', customBreadcrumb: CustomBreadcrumb }: TitleBarProps) {
   return (
-    <header className="flex items-center justify-between p-4" data-tauri-drag-region>
+    <header className="flex items-center justify-between gap-1 p-4" data-tauri-drag-region>
       {CustomBreadcrumb ? (
         <CustomBreadcrumb defaultBreadcrumb={title} />
       ) : (
         <h1 className="text-xl font-medium">{title}</h1>
       )}
       <div className="ml-auto flex items-center rounded-md border border-border p-1 dark:bg-neutral-950">
+        <ThemeToggle />
+      </div>
+      <div className="flex items-center rounded-md border border-border p-1 dark:bg-neutral-950">
         <Button
           variant="ghost"
           size="sm"
