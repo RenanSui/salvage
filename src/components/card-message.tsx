@@ -8,8 +8,8 @@ type CardMessageProps = {
 
 export function CardMessage({ Icon = ExclamationTriangleIcon, description, title }: CardMessageProps) {
   return (
-    <div className="hover:bg-app-card group relative flex cursor-default items-center gap-2 rounded-md border border-transparent px-4 py-3 transition-colors duration-150 ease-in-out hover:border-border">
-      <div className="bg-app-background flex size-8 items-center justify-center rounded-lg transition-colors duration-150 ease-in-out hover:!bg-foreground/20 group-hover:bg-foreground/10">
+    <div className="group relative flex cursor-default items-center gap-2 rounded-md border border-transparent px-4 py-3 transition-colors duration-150 ease-in-out hover:border-border hover:bg-app-card">
+      <div className="flex size-8 items-center justify-center rounded-lg bg-app-background transition-colors duration-150 ease-in-out hover:!bg-foreground/20 group-hover:bg-foreground/10">
         <Icon className="size-4" />
       </div>
       <div className="space-y-1">

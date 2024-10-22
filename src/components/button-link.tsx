@@ -29,7 +29,7 @@ export const ButtonLink: React.FC<ButtonLinkProps> = ({
         className,
       )}
     >
-      <div className="bg-app-muted flex size-8 items-center justify-center rounded-lg transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10">
+      <div className="flex size-8 items-center justify-center rounded-lg bg-app-muted transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10">
         <Icon className="size-4" />
       </div>
       <div className="flex flex-col">

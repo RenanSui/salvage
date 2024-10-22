@@ -42,7 +42,7 @@ export const ButtonAction: React.FC<ButtonActionProps> = ({
         className,
       )}
     >
-      <div className="bg-app-muted flex size-8 items-center justify-center rounded-lg transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10">
+      <div className="flex size-8 items-center justify-center rounded-lg bg-app-muted transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10">
         <Icon className="size-4" />
       </div>
       <div className="flex flex-col">
@@ -56,7 +56,7 @@ export const ButtonAction: React.FC<ButtonActionProps> = ({
           CustomButton
         ) : (
           <button
-            className="bg-app-muted rounded-sm p-2 px-6 text-sm transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10"
+            className="rounded-sm bg-app-muted p-2 px-6 text-sm transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10"
             onClick={buttonTitleAction}
           >
             {buttonTitle}
