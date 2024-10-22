@@ -49,10 +49,13 @@ const config = {
           foreground: 'hsl(var(--card-foreground))',
         },
         // App Colors
-        'app-background': 'hsl(var(--app-background))',
-        'app-shell': 'hsl(var(--app-shell))',
-        'app-card': 'hsl(var(--app-card))',
-        'app-muted': 'hsl(var(--app-muted))',
+        app: {
+          DEFAULT: 'hsl(var(--app-background))',
+          background: 'hsl(var(--app-background))',
+          shell: 'hsl(var(--app-shell))',
+          card: 'hsl(var(--app-card))',
+          muted: 'hsl(var(--app-muted))',
+        },
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
