@@ -48,17 +48,24 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // App Colors
+        'app-background': 'hsl(var(--app-background))',
+        'app-shell': 'hsl(var(--app-shell))',
+        'app-card': 'hsl(var(--app-card))',
+        'app-muted': 'hsl(var(--app-muted))',
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
         mono: ['var(--font-geist-mono)', ...fontFamily.mono],
         heading: ['var(--font-heading)', ...fontFamily.sans],
       },
-
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      boxShadow: {
+        border: 'inset 0px 0px 0px 1px hsl(var(--border))', // Customize as needed
       },
       keyframes: {
         'accordion-down': {
