@@ -25,6 +25,7 @@ const config = {
         endOfLine: 'auto',
       },
     ],
+    'tailwindcss/classnames-order': 'off',
     'jsx-a11y/alt-text': [
       'warn',
       {
