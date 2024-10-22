@@ -3,12 +3,7 @@ import { fontFamily } from 'tailwindcss/defaultTheme'
 
 const config = {
   darkMode: ['class'],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
+  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   prefix: '',
   theme: {
     container: {
@@ -77,7 +72,7 @@ const config = {
         'fade-up': {
           '0%': {
             opacity: '0',
-            transform: 'translateY(10px)',
+            transform: 'translateY(25px)',
           },
           '75%': {
             opacity: '0.6',
@@ -104,8 +99,8 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-up': 'fade-up 0.7s ease-out',
-        'fade-down': 'fade-down 0.7s ease-out',
+        'fade-up': 'fade-up 0.4s ease-out',
+        'fade-down': 'fade-down 0.4s ease-out',
       },
     },
   },
