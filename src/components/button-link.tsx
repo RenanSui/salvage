@@ -1,5 +1,7 @@
+/* eslint-disable tailwindcss/classnames-order */
 'use client'
 
+import { cn } from '@/lib/utils'
 import { ChevronRightIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import React from 'react'
@@ -22,9 +24,13 @@ export const ButtonLink: React.FC<ButtonLinkProps> = ({
   return (
     <Link
       href={href}
-      className={`group flex w-full cursor-default items-center gap-4 rounded-sm border p-4 text-start transition-colors dark:bg-neutral-900 dark:hover:bg-neutral-800 ${className}`}
+      className={cn(
+        'group flex w-full cursor-default items-center gap-4 rounded-sm border p-4 text-start transition-colors',
+        'bg-app-card hover:bg-app-muted/70',
+        className,
+      )}
     >
-      <div className="flex size-8 items-center justify-center rounded-lg bg-neutral-800 transition-colors hover:!bg-[rgb(72_72_72)] group-hover:bg-neutral-700">
+      <div className="bg-app-muted flex size-8 items-center justify-center rounded-lg transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10">
         <Icon className="size-4" />
       </div>
       <div className="flex flex-col">
@@ -33,7 +39,7 @@ export const ButtonLink: React.FC<ButtonLinkProps> = ({
           <p className="max-w-[450px] truncate text-xs text-stone-400 lg:max-w-screen-xl">{description}</p>
         )}
       </div>
-      <ChevronRightIcon className="ml-auto size-4 text-neutral-100" />
+      <ChevronRightIcon className="ml-auto size-4 text-foreground" />
     </Link>
   )
 }

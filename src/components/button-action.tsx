@@ -1,5 +1,7 @@
+/* eslint-disable tailwindcss/classnames-order */
 'use client'
 
+import { cn } from '@/lib/utils'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
 
@@ -35,9 +37,13 @@ export const ButtonAction: React.FC<ButtonActionProps> = ({
 }) => {
   return (
     <div
-      className={`group flex w-full cursor-default items-center gap-4 rounded-sm border bg-neutral-900 p-4 text-start transition-colors hover:bg-neutral-800 hover:opacity-80 ${className}`}
+      className={cn(
+        'group flex w-full cursor-default items-center gap-4 rounded-sm border p-4 text-start transition-colors',
+        'bg-app-card hover:bg-app-muted/70',
+        className,
+      )}
     >
-      <div className="flex size-8 items-center justify-center rounded-lg bg-neutral-800 transition-colors hover:!bg-[rgb(72_72_72)] group-hover:bg-neutral-700">
+      <div className="bg-app-muted flex size-8 items-center justify-center rounded-lg transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10">
         <Icon className="size-4" />
       </div>
       <div className="flex flex-col">
@@ -51,7 +57,7 @@ export const ButtonAction: React.FC<ButtonActionProps> = ({
           CustomButton
         ) : (
           <button
-            className="rounded-sm bg-neutral-800 p-2 px-6 text-sm transition-colors hover:!bg-[rgb(72_72_72)] group-hover:bg-neutral-700"
+            className="bg-app-muted rounded-sm p-2 px-6 text-sm transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10"
             onClick={buttonTitleAction}
           >
             {buttonTitle}

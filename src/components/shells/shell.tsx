@@ -25,7 +25,7 @@ const Shell = ({ variant, className, children, as: Shell = 'div', ...props }: Sh
 type ShellCardProps = React.HTMLAttributes<HTMLDivElement> &
   VariantProps<typeof shellCardVariants> & { as?: React.ElementType }
 
-const shellCardVariants = cva('rounded-md bg-[#1D1D1D]', {
+const shellCardVariants = cva('rounded-md border bg-app-shell', {
   variants: {
     variant: {
       default: '',

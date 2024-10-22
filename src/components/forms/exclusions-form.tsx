@@ -37,7 +37,7 @@ export const ExclusionsForm = ({
                           size: 'icon',
                           variant: 'outline',
                         }),
-                        'cursor-default bg-black',
+                        'cursor-default bg-background',
                       )}
                     >
                       <Icons.dots />

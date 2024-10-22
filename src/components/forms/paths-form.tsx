@@ -1,7 +1,6 @@
 import { type CreateBackupSchema } from '@/lib/validations/backup'
 import { type UseFormReturn } from 'react-hook-form'
 import { BackupInputField, dropdownActions } from './backup-input-field'
-import { Separator } from '../ui/separator'
 
 export const PathsForm = ({ form }: { form: UseFormReturn<CreateBackupSchema> }) => {
   return (
@@ -12,7 +11,6 @@ export const PathsForm = ({ form }: { form: UseFormReturn<CreateBackupSchema> })
         placeholder="Type the name of your backup here"
         control={form.control}
       />
-      <Separator />
       <BackupInputField
         name="source"
         label="Source path"

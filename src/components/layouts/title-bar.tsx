@@ -16,12 +16,14 @@ export function TitleBar({ title = 'Dashboard', customBreadcrumb: CustomBreadcru
       {CustomBreadcrumb ? (
         <CustomBreadcrumb defaultBreadcrumb={title} />
       ) : (
-        <h1 className="text-xl font-medium">{title}</h1>
+        <h1 className="max-w-40 truncate text-lg font-medium text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline">
+          {title}
+        </h1>
       )}
-      <div className="ml-auto flex items-center rounded-md border border-border p-1 dark:bg-neutral-950">
+      <div className="ml-auto flex items-center rounded-md border border-border bg-neutral-50 p-1 dark:bg-neutral-950">
         <ThemeToggle />
       </div>
-      <div className="flex items-center rounded-md border border-border p-1 dark:bg-neutral-950">
+      <div className="flex items-center rounded-md border border-border bg-neutral-50 p-1 dark:bg-neutral-950">
         <Button
           variant="ghost"
           size="sm"

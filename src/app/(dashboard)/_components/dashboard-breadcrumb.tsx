@@ -73,7 +73,7 @@ export const BreadcrumbItemComponent: React.FC<BreadcrumbItemProps> = ({
           <Link
             href={index === 0 ? '/' : `/${pathSegments.slice(0, index + 1).join('/')}`}
             className={cn(
-              'max-w-40 truncate font-medium underline-offset-4 transition-colors hover:text-foreground hover:underline',
+              'max-w-40 truncate font-medium text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline',
               index === 0 && 'text-lg',
             )}
           >

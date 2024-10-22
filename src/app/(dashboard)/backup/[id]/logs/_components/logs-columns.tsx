@@ -7,7 +7,7 @@ export const logsColumns = (source: string) =>
       header: 'Timestamp',
       accessorKey: 'timestamp',
       cell: ({ row }) => (
-        <span className="font-light text-stone-300">
+        <span className="font-light text-stone-400">
           {row.original.day} {row.original.month} {row.original.timestamp.padEnd(12, '0')}
         </span>
       ),
@@ -21,7 +21,7 @@ export const logsColumns = (source: string) =>
       header: 'Message',
       accessorKey: 'message',
       cell: ({ row }) => (
-        <span className="block max-w-[200px] truncate font-light text-stone-300">
+        <span className="block max-w-[200px] truncate font-light text-stone-400">
           {row.original.message
             .replace(source.replaceAll(/\\/g, '\\\\'), '')
             .replaceAll('"', '')

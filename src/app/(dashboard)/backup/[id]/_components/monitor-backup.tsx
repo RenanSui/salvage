@@ -19,7 +19,7 @@ export const MonitorBackup = ({ backup }: { backup: BackupSchema }) => {
 
   return (
     <>
-      <div className="flex items-center gap-2 text-sm text-stone-200">
+      <div className="flex items-center gap-2 text-sm text-stone-400">
         {isMonitoring ? 'On' : 'Off'}
         <Switch className="cursor-default" checked={isMonitoring} onCheckedChange={handleSwitchChange} />
       </div>
