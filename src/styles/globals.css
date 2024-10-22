@@ -70,6 +70,10 @@
 
   body {
     @apply bg-background text-foreground;
+  } 
+
+  h1, p, button, a {
+    @apply cursor-default
   }
 }
 
