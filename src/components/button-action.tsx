@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
+import { ButtonCard } from './ui/button-card'
 
 type BaseProps = {
   title: string
@@ -35,34 +35,17 @@ export const ButtonAction: React.FC<ButtonActionProps> = ({
   CustomButton, // Optional custom button prop
 }) => {
   return (
-    <div
-      className={cn(
-        'group flex w-full cursor-default items-center gap-4 rounded-sm border p-4 text-start transition-colors',
-        'bg-app-card hover:bg-app-muted/70',
-        className,
-      )}
-    >
-      <div className="flex size-8 items-center justify-center rounded-lg bg-app-muted transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10">
+    <ButtonCard className={className}>
+      <ButtonCard.Icon>
         <Icon className="size-4" />
-      </div>
-      <div className="flex flex-col">
-        <p className="text-sm font-medium">{title}</p>
-        {description && (
-          <p className="max-w-[450px] truncate text-xs text-stone-400 lg:max-w-screen-xl">{description}</p>
-        )}
-      </div>
-      <div className="ml-auto">
-        {CustomButton ? (
-          CustomButton
-        ) : (
-          <button
-            className="rounded-sm bg-app-muted p-2 px-6 text-sm transition-colors hover:!bg-foreground/20 group-hover:bg-foreground/10"
-            onClick={buttonTitleAction}
-          >
-            {buttonTitle}
-          </button>
-        )}
-      </div>
-    </div>
+      </ButtonCard.Icon>
+      <ButtonCard.Header>
+        <ButtonCard.Title>{title}</ButtonCard.Title>
+        {description && <ButtonCard.Description>{description}</ButtonCard.Description>}
+      </ButtonCard.Header>
+      <ButtonCard.Content>
+        {CustomButton ? CustomButton : <ButtonCard.Action onClick={buttonTitleAction}>{buttonTitle}</ButtonCard.Action>}
+      </ButtonCard.Content>
+    </ButtonCard>
   )
 }

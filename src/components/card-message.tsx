@@ -1,23 +1,28 @@
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { ButtonCard, type ButtonCardProps } from './ui/button-card'
 
 type CardMessageProps = {
   title: string
   description?: string
   Icon?: React.ElementType // Use ElementType to allow passing any valid JSX component as an icon
+  variant?: ButtonCardProps['variant']
 }
 
-export function CardMessage({ Icon = ExclamationTriangleIcon, description, title }: CardMessageProps) {
+export function CardMessage({
+  Icon = ExclamationTriangleIcon,
+  variant = 'ghost',
+  description,
+  title,
+}: CardMessageProps) {
   return (
-    <div className="group relative flex cursor-default items-center gap-2 rounded-md border border-transparent px-4 py-3 transition-colors duration-150 ease-in-out hover:border-border hover:bg-app-card">
-      <div className="flex size-8 items-center justify-center rounded-lg bg-app-background transition-colors duration-150 ease-in-out hover:!bg-foreground/20 group-hover:bg-foreground/10">
+    <ButtonCard variant={variant}>
+      <ButtonCard.Icon variant={variant}>
         <Icon className="size-4" />
-      </div>
-      <div className="space-y-1">
-        <p className="text-sm font-medium">{title}</p>
-        {description && (
-          <p className="max-w-[450px] truncate text-xs text-stone-400 lg:max-w-screen-xl">{description}</p>
-        )}
-      </div>
-    </div>
+      </ButtonCard.Icon>
+      <ButtonCard.Header>
+        <ButtonCard.Title>{title}</ButtonCard.Title>
+        {description && <ButtonCard.Description>{description}</ButtonCard.Description>}
+      </ButtonCard.Header>
+    </ButtonCard>
   )
 }
