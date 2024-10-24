@@ -17,16 +17,20 @@ import { ExclusionsForm } from '@/components/forms/exclusions-form'
 import { FormActionButtons, type FormState } from '@/components/forms/form-action-buttons'
 import { OverviewForm } from '@/components/forms/overview-form'
 import { PathsForm } from '@/components/forms/paths-form'
+import { Loadings } from '@/components/loadings'
 import { Shell, ShellCard } from '@/components/shells/shell'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useBackupForm } from '@/hooks/use-backup-form'
+import { useMounted } from '@/hooks/use-mounted'
 import { useTauriSize } from '@/hooks/use-tauri-size'
 
 export default function CreatePage() {
-  useTauriSize({ width: 600, height: 446 })
+  useTauriSize({ width: 600, height: 434 })
   const [formState, setFormState] = React.useState<FormState>('paths')
   const { form, formArray, isPathsValid } = useBackupForm()
   const queryClient = useQueryClient()
   const router = useRouter()
+  const mounted = useMounted()
 
   const createBackup = React.useCallback(
     async (data: CreateBackupSchema) => {
@@ -80,19 +84,47 @@ export default function CreatePage() {
     }
   }, [createBackup, formState, form, isPathsValid])
 
-  return (
-    <Shell>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(createBackup)} className="flex min-h-[calc(100vh-86px)] flex-col space-y-4">
-          <ShellCard size="auto">{currentForm}</ShellCard>
-          <div className="flex items-center justify-between">
-            <Link className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))} href="/">
-              Cancel
-            </Link>
-            {currentButtons}
+  if (!mounted) {
+    return (
+      <Shell className="space-y-4">
+        <ShellCard className="flex min-h-[calc(100vh-134px)] flex-col justify-between">
+          <section className="animate-fade-up p-4 pb-0" style={{ animationDelay: '0.10s', animationFillMode: 'both' }}>
+            <Skeleton className="mb-1 h-6 w-40 rounded" />
+            <Loadings length={1} className="h-11" />
+          </section>
+          <section className="animate-fade-up p-4 pb-0" style={{ animationDelay: '0.20s', animationFillMode: 'both' }}>
+            <Skeleton className="mb-1 h-6 w-40 rounded" />
+            <Loadings length={1} className="h-10" />
+          </section>
+          <section className="animate-fade-up p-4" style={{ animationDelay: '0.30s', animationFillMode: 'both' }}>
+            <Skeleton className="mb-1 h-6 w-40 rounded" />
+            <Loadings length={1} className="h-10" />
+          </section>
+        </ShellCard>
+        <div className="flex items-center justify-between">
+          <Skeleton className="mb-1 h-8 w-16 rounded" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="mb-1 size-8 rounded" />
+            <Skeleton className="mb-1 h-8 w-[72px] rounded" />
           </div>
-        </form>
-      </Form>
+        </div>
+      </Shell>
+    )
+  }
+
+  return (
+    <Shell className="space-y-4">
+      <ShellCard className="min-h-[calc(100vh-134px)]">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(createBackup)}>{currentForm}</form>
+        </Form>
+      </ShellCard>
+      <div className="flex items-center justify-between">
+        <Link className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))} href="/">
+          Cancel
+        </Link>
+        {currentButtons}
+      </div>
     </Shell>
   )
 }

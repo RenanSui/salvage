@@ -2,9 +2,12 @@
 
 import { ButtonAction } from '@/components/button-action'
 import { ButtonLink } from '@/components/button-link'
+import { Loadings } from '@/components/loadings'
 import { Shell, ShellCard } from '@/components/shells/shell'
 import { CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useBackupById } from '@/hooks/use-backup-by-id'
+import { useMounted } from '@/hooks/use-mounted'
 import { useTauriSize } from '@/hooks/use-tauri-size'
 import { ActivityLogIcon, Pencil2Icon } from '@radix-ui/react-icons'
 import { FilesIcon, Plug2Icon } from 'lucide-react'
@@ -12,8 +15,26 @@ import { DeleteBackup } from './delete-backup'
 import { MonitorBackup } from './monitor-backup'
 
 export default function Backup({ id }: { id: string }) {
-  useTauriSize({ width: 600, height: 570 })
+  useTauriSize({ width: 600, height: 590 })
   const { data: backup } = useBackupById(id)
+  const mounted = useMounted()
+
+  if (!mounted) {
+    return (
+      <Shell>
+        <ShellCard>
+          <section className="animate-fade-up p-4" style={{ animationDelay: '0.10s', animationFillMode: 'both' }}>
+            <Skeleton className="mb-1 h-6 w-40 rounded" />
+            <Loadings length={3} />
+          </section>
+          <section className="animate-fade-up p-4" style={{ animationDelay: '0.20s', animationFillMode: 'both' }}>
+            <Skeleton className="mb-1 h-6 w-40 rounded" />
+            <Loadings length={2} />
+          </section>
+        </ShellCard>
+      </Shell>
+    )
+  }
 
   if (!backup) {
     return (

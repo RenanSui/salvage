@@ -10,10 +10,30 @@ import { useBackups } from '@/hooks/use-backups'
 import { useTauriSize } from '@/hooks/use-tauri-size'
 import { FilePlusIcon } from '@radix-ui/react-icons'
 import { BackupItem } from './backup-item'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useMounted } from '@/hooks/use-mounted'
 
 export function Dashboard() {
   useTauriSize({ width: 600, height: 600 })
   const { data: backups, isLoading, isFetching, isError, refetch } = useBackups()
+  const mounted = useMounted()
+
+  if (!mounted) {
+    return (
+      <Shell>
+        <ShellCard>
+          <section className="animate-fade-up p-4" style={{ animationDelay: '0.10s', animationFillMode: 'both' }}>
+            <Skeleton className="mb-1 h-6 w-40 rounded" />
+            <Loadings length={1} />
+          </section>
+          <section className="animate-fade-up p-4" style={{ animationDelay: '0.20s', animationFillMode: 'both' }}>
+            <Skeleton className="mb-1 h-6 w-40 rounded" />
+            <Loadings length={4} />
+          </section>
+        </ShellCard>
+      </Shell>
+    )
+  }
 
   return (
     <Shell>

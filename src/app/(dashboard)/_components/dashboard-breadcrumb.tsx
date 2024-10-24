@@ -11,12 +11,25 @@ import { backupService } from '@/lib/backup/actions'
 import { cn } from '@/lib/utils'
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useMounted } from '@/hooks/use-mounted'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
 export const DashboardBreadcrumb = ({ defaultBreadcrumb = 'Dashboard' }: { defaultBreadcrumb?: string }) => {
   const { displayedBreadcrumbs, hiddenBreadcrumbs, pathSegments } = useBreadcrumbs(defaultBreadcrumb)
+  const mounted = useMounted()
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center gap-4">
+        <Skeleton className="h-6 w-32 rounded" />
+        <Skeleton className="h-5 w-20 rounded" />
+        <Skeleton className="h-5 w-20 rounded" />
+      </div>
+    )
+  }
 
   return (
     <Breadcrumb>

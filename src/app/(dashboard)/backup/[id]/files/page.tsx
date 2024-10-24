@@ -8,12 +8,14 @@ import { useFileSizesById } from '@/hooks/use-file-sizes-by-id'
 import { useTauriSize } from '@/hooks/use-tauri-size'
 import { filesColumns } from './_components/files-columns'
 import { FilesDataTable } from './_components/files-data-table'
+import { useMounted } from '@/hooks/use-mounted'
 
 export default function FilesPage({ params }: { params: { id: string } }) {
   useTauriSize({ width: 600, height: 636 })
   const { data: fileSizes, isFetched, isLoading, isFetching, error, refetch } = useFileSizesById(params.id)
+  const mounted = useMounted()
 
-  if (!isFetched || isLoading || isFetching) {
+  if (!isFetched || isLoading || isFetching || !mounted) {
     return (
       <Shell>
         <CardTitle className="pb-2 text-sm font-semibold">Files</CardTitle>
