@@ -6,15 +6,15 @@ import { CardMessage } from '@/components/card-message'
 import { Loadings } from '@/components/loadings'
 import { Shell, ShellCard } from '@/components/shells/shell'
 import { CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useBackups } from '@/hooks/use-backups'
+import { useMounted } from '@/hooks/use-mounted'
 import { useTauriSize } from '@/hooks/use-tauri-size'
 import { FilePlusIcon } from '@radix-ui/react-icons'
 import { BackupItem } from './backup-item'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useMounted } from '@/hooks/use-mounted'
 
 export function Dashboard() {
-  useTauriSize({ width: 600, height: 600 })
+  useTauriSize({ width: 600, height: 580 })
   const { data: backups, isLoading, isFetching, isError, refetch } = useBackups()
   const mounted = useMounted()
 
