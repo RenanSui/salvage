@@ -10,6 +10,7 @@ export const PathsForm = ({ form }: { form: UseFormReturn<CreateBackupSchema> })
         label="Backup name"
         placeholder="Type the name of your backup here"
         control={form.control}
+        className="pb-0"
       />
       <BackupInputField
         name="source"
