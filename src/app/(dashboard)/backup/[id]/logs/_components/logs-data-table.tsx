@@ -38,15 +38,15 @@ export function LogsDataTable<TData, TValue>({ columns, data }: LogsDataTablePro
   })
 
   return (
-    <div className="flex min-h-[calc(100vh-114px)] flex-col">
+    <div className="flex flex-col">
       <div className="flex-1 rounded-b-md border">
         <Table>
-          <TableHeader className="min-w-full bg-green-500">
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="grid">
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="">
+                    <TableHead key={header.id}>
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   )

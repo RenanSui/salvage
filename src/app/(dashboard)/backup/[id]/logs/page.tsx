@@ -1,18 +1,18 @@
 'use client'
 
+import { Loadings } from '@/components/loadings'
 import { LoggerContext } from '@/components/providers/logger-provider'
-import { Shell } from '@/components/shells/shell'
+import { Shell, ShellCard } from '@/components/shells/shell'
 import { CardTitle } from '@/components/ui/card'
 import { useBackupById } from '@/hooks/use-backup-by-id'
+import { useMounted } from '@/hooks/use-mounted'
+import { useTauriSize } from '@/hooks/use-tauri-size'
 import * as React from 'react'
 import { logsColumns } from './_components/logs-columns'
 import { LogsDataTable } from './_components/logs-data-table'
-import { useMounted } from '@/hooks/use-mounted'
-import { Loadings } from '@/components/loadings'
-import { useTauriSize } from '@/hooks/use-tauri-size'
 
 export default function LogsPage({ params }: { params: { id: string } }) {
-  useTauriSize({ width: 600, height: 636 })
+  useTauriSize({ width: 600, height: 592 })
   const { data: backup } = useBackupById(params.id)
   const { logs } = React.useContext(LoggerContext)
   const backupLogs = logs[backup?.id || ''] || []
@@ -32,7 +32,9 @@ export default function LogsPage({ params }: { params: { id: string } }) {
   return (
     <Shell>
       <CardTitle className="pb-2 text-sm font-semibold">Logs</CardTitle>
-      <LogsDataTable columns={logsColumns(backup?.source || '')} data={backupLogs} />
+      <ShellCard className="min-h-[calc(100vh-112px)]">
+        <LogsDataTable columns={logsColumns(backup?.source || '')} data={backupLogs} />
+      </ShellCard>
     </Shell>
   )
 }

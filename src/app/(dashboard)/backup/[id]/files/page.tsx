@@ -2,16 +2,16 @@
 
 import { ButtonAction } from '@/components/button-action'
 import { Loadings } from '@/components/loadings'
-import { Shell } from '@/components/shells/shell'
+import { Shell, ShellCard } from '@/components/shells/shell'
 import { CardTitle } from '@/components/ui/card'
 import { useFileSizesById } from '@/hooks/use-file-sizes-by-id'
+import { useMounted } from '@/hooks/use-mounted'
 import { useTauriSize } from '@/hooks/use-tauri-size'
 import { filesColumns } from './_components/files-columns'
 import { FilesDataTable } from './_components/files-data-table'
-import { useMounted } from '@/hooks/use-mounted'
 
 export default function FilesPage({ params }: { params: { id: string } }) {
-  useTauriSize({ width: 600, height: 636 })
+  useTauriSize({ width: 600, height: 624 })
   const { data: fileSizes, isFetched, isLoading, isFetching, error, refetch } = useFileSizesById(params.id)
   const mounted = useMounted()
 
@@ -41,9 +41,11 @@ export default function FilesPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <Shell>
+    <Shell className="pb-0">
       <CardTitle className="pb-2 text-sm font-semibold">Files</CardTitle>
-      <FilesDataTable columns={filesColumns} data={fileSizes} />
+      <ShellCard className="min-h-[calc(100vh-112px)]">
+        <FilesDataTable columns={filesColumns} data={fileSizes} />
+      </ShellCard>
     </Shell>
   )
 }

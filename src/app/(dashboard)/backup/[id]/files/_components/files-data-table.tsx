@@ -39,16 +39,16 @@ export function FilesDataTable<TData, TValue>({ columns, data }: FilesDataTableP
   })
 
   return (
-    <div className="flex min-h-[calc(100vh-114px)] flex-col">
-      <div className="">
+    <div className="flex flex-col">
+      <div>
         <Input
           placeholder="Filter files..."
           value={(table.getColumn('file')?.getFilterValue() as string) ?? ''}
           onChange={(event) => table.getColumn('file')?.setFilterValue(event.target.value)}
-          className="rounded-b-none rounded-t-md border-b-transparent px-2 py-0"
+          className="rounded-none border-transparent border-b-input px-2 py-0"
         />
       </div>
-      <div className="flex-1 rounded-b-md border">
+      <div className="flex-1 border-b">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
