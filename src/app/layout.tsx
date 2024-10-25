@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { StartBackupWatcher } from './_components/start-backup-watcher'
+import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -29,7 +30,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontHeading.variable,
         )}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <TailwindIndicator />
+        </Providers>
         <Toaster />
         <StartBackupWatcher />
       </body>

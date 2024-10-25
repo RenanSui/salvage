@@ -118,6 +118,10 @@ async function open_in_explorer(path: string) {
   await tauriInvoke('open_in_explorer', { path })
 }
 
+async function get_env(key: string) {
+  return await tauriInvoke<string>('get_env', { key })
+}
+
 export const backupService = {
   // File/Folder Selection
   select_file,
@@ -143,4 +147,6 @@ export const backupService = {
   restart_individual_backup,
   // Statistics
   fetch_file_sizes_by_id,
+  // Helpers
+  get_env,
 }

@@ -22,6 +22,8 @@ type tauriInvokeCmdArgs =
   | 'restart_individual_backup'
   // Statistics
   | 'fetch_file_sizes_by_id'
+  // Helpers
+  | 'get_env'
 
 export async function tauriWindow() {
   if (typeof window !== 'undefined') {
