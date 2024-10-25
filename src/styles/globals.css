@@ -33,6 +33,11 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    /* App Colors */
+    --app-background: 0 0% 95%;
+    --app-shell: 0 0% 98%;
+    --app-card: 0 0% 100%;
+    --app-muted: 0 0% 96%;
   }
 
   .dark {
@@ -60,6 +65,11 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    /* App Colors */
+    --app-background: 0 0% 9%;
+    --app-shell: 0 0% 11%;
+    --app-card: 0 0% 9%;
+    --app-muted: 0 0% 15%;
   }
 }
 
@@ -70,6 +80,10 @@
 
   body {
     @apply bg-background text-foreground;
+  } 
+
+  h1, h3, p, button, a {
+    @apply cursor-default
   }
 }
 

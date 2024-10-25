@@ -5,7 +5,7 @@ import * as React from 'react'
 
 export function StartBackupWatcher() {
   React.useEffect(() => {
-    backupService.start_watching()
+    void backupService.start_watching()
   }, [])
 
   return null

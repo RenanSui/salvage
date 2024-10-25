@@ -306,3 +306,8 @@ pub fn open_in_explorer(path: String) -> Result<(), String> {
         Err(format!("Path does not exist: {}", path))
     }
 }
+
+#[tauri::command]
+pub fn get_env(key: &str) -> Option<String> {
+    std::env::var(String::from(key)).ok()
+}
