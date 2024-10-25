@@ -7,13 +7,18 @@ import { CardTitle } from '@/components/ui/card'
 import { useFileSizesById } from '@/hooks/use-file-sizes-by-id'
 import { useMounted } from '@/hooks/use-mounted'
 import { useTauriSize } from '@/hooks/use-tauri-size'
+import { useSearchParams } from 'next/navigation'
 import { filesColumns } from './_components/files-columns'
 import { FilesDataTable } from './_components/files-data-table'
 
-export default function FilesPage({ params }: { params: { id: string } }) {
+export default function FilesPage() {
   useTauriSize({ width: 600, height: 624 })
-  const { data: fileSizes, isFetched, isLoading, isFetching, error, refetch } = useFileSizesById(params.id)
+
+  const searchParams = useSearchParams()
   const mounted = useMounted()
+
+  const id = searchParams.get('id') as string | undefined
+  const { data: fileSizes, isFetched, isLoading, isFetching, error, refetch } = useFileSizesById(id || '')
 
   if (!isFetched || isLoading || isFetching || !mounted) {
     return (

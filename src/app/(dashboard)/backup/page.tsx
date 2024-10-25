@@ -11,13 +11,18 @@ import { useMounted } from '@/hooks/use-mounted'
 import { useTauriSize } from '@/hooks/use-tauri-size'
 import { ActivityLogIcon, Pencil2Icon } from '@radix-ui/react-icons'
 import { FilesIcon, Plug2Icon } from 'lucide-react'
-import { DeleteBackup } from './delete-backup'
-import { MonitorBackup } from './monitor-backup'
+import { useSearchParams } from 'next/navigation'
+import { DeleteBackup } from './_components/delete-backup'
+import { MonitorBackup } from './_components/monitor-backup'
 
-export default function Backup({ id }: { id: string }) {
+export default function BackupPage() {
   useTauriSize({ width: 600, height: 590 })
-  const { data: backup } = useBackupById(id)
+
+  const searchParams = useSearchParams()
   const mounted = useMounted()
+
+  const id = searchParams.get('id') as string | undefined
+  const { data: backup } = useBackupById(id || '')
 
   if (!mounted) {
     return (
@@ -36,7 +41,7 @@ export default function Backup({ id }: { id: string }) {
     )
   }
 
-  if (!backup) {
+  if (!backup || !id) {
     return (
       <Shell>
         <ShellCard>
@@ -65,7 +70,7 @@ export default function Backup({ id }: { id: string }) {
             Icon={Plug2Icon}
           />
           <ButtonLink
-            href={`/backup/${backup.id}/edit`}
+            href={`/backup/edit?id=${backup.id}`}
             title="Edit"
             description="Modify the details of your backup"
             Icon={Pencil2Icon}
@@ -79,13 +84,13 @@ export default function Backup({ id }: { id: string }) {
         <div className="animate-fade-up space-y-1 p-4" style={{ animationDelay: '0.20s', animationFillMode: 'both' }}>
           <CardTitle className="pb-1 text-sm font-semibold">Details</CardTitle>
           <ButtonLink
-            href={`/backup/${backup.id}/files`}
+            href={`/backup/files?id=${backup.id}`}
             title="Files"
             description="See the files associated with this backup"
             Icon={FilesIcon}
           />
           <ButtonLink
-            href={`/backup/${backup.id}/logs`}
+            href={`/backup/logs?id=${backup.id}`}
             title="Logs"
             description="Access and review the logs of this backup"
             Icon={ActivityLogIcon}

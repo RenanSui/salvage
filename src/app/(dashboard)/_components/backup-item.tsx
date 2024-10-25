@@ -8,7 +8,7 @@ export function BackupItem({ backup }: BackupItemProps) {
   const Icon = backup.is_file ? Icons.file : Icons.folder
 
   return (
-    <ButtonCard.Link variant="ghost" href={`/backup/${backup.id}`}>
+    <ButtonCard.Link variant="ghost" href={`/backup?id=${backup.id}`}>
       <ButtonCard.Icon variant="ghost">
         <Icon className="size-4" />
       </ButtonCard.Icon>

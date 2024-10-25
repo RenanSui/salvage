@@ -18,20 +18,24 @@ import { backupService } from '@/lib/backup/actions'
 import { cn } from '@/lib/utils'
 import { type CreateBackupSchema } from '@/lib/validations/backup'
 import { type BackupSchema } from '@/types'
-import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
 import { showUpdateToast, updateBackupFields } from './_lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 
-export default function EditPage({ params }: { params: { id: string } }) {
+export default function EditPage() {
   useTauriSize({ width: 600, height: 446 })
-  const { data: backup } = useBackupById(params.id)
-  const [formState, setFormState] = React.useState<FormState>('paths')
-  const { form, formArray, isPathsValid } = useBackupForm(backup)
+
+  const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const mounted = useMounted()
   const router = useRouter()
+
+  const [formState, setFormState] = React.useState<FormState>('paths')
+  const id = searchParams.get('id') as string | undefined
+  const { data: backup } = useBackupById(id || '')
+  const { form, formArray, isPathsValid } = useBackupForm(backup)
 
   const editBackup = React.useCallback(
     async (values: CreateBackupSchema) => {
@@ -51,7 +55,7 @@ export default function EditPage({ params }: { params: { id: string } }) {
         await queryClient.invalidateQueries({ queryKey: ['backups'] })
         await backupService.restart_backups()
         showUpdateToast(updates)
-        router.push(`/backup/${backup.id}`)
+        router.push(`/backup?id=${backup.id}`)
         form.reset()
       } catch (error) {
         console.error(error)
@@ -126,31 +130,12 @@ export default function EditPage({ params }: { params: { id: string } }) {
       <div className="flex items-center justify-between">
         <Link
           className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-          href={backup ? `/backup/${backup?.id}` : '/'}
+          href={backup ? `/backup?id=${backup?.id}` : '/'}
         >
           Cancel
         </Link>
         {currentButtons}
       </div>
-    </Shell>
-  )
-
-  return (
-    <Shell>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(editBackup)} className="flex min-h-[calc(100vh-86px)] flex-col space-y-4">
-          <ShellCard size="auto">{currentForm}</ShellCard>
-          <div className="flex items-center justify-between">
-            <Link
-              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-              href={backup ? `/backup/${backup?.id}` : '/'}
-            >
-              Cancel
-            </Link>
-            {currentButtons}
-          </div>
-        </form>
-      </Form>
     </Shell>
   )
 }
