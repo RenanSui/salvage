@@ -74,5 +74,6 @@ const config = {
       rootDir: ['./'],
     },
   },
+  ignorePatterns: ['out/'],
 }
 module.exports = config
