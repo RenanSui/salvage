@@ -22,7 +22,8 @@
         "minimize": true,
         "unmaximize": true,
         "unminimize": true,
-        "startDragging": true
+        "startDragging": true,
+        "setSize": true
       }
     },
     "bundle": {
@@ -67,13 +68,12 @@
     "windows": [
       {
         "decorations": false,
+        "transparent": true,
         "fullscreen": false,
-        "resizable": true,
+        "resizable": false,
         "title": "Salvage",
-        "width": 800,
-        "height": 690,
-        "minWidth": 800,
-        "minHeight": 690
+        "width": 600,
+        "height": 600
       }
     ]
   }

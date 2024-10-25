@@ -1,156 +1,46 @@
 'use client'
 
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger,
-} from '@/components/ui/menubar'
-import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
-
-import { useSidebar } from '@/hooks/use-sidebar'
-import { backupService } from '@/lib/backup/actions'
+import { Icons } from '@/components/icons'
+import { Button } from '@/components/ui/button'
 import { tauriWindow } from '@/lib/tauri'
-import { useTheme } from 'next-themes'
-import Link from 'next/link'
-import { Icons } from '../icons'
-import { Separator } from '../ui/separator'
+import { ThemeToggle } from './theme-toggle'
 
-export default function TitleBar() {
+type TitleBarProps = {
+  title?: string
+  customBreadcrumb?: React.ComponentType<{ defaultBreadcrumb: string }>
+}
+
+export function TitleBar({ title = 'Dashboard', customBreadcrumb: CustomBreadcrumb }: TitleBarProps) {
   return (
-    <header
-      className="sticky top-0 bg-accent dark:bg-transparent flex items-center backdrop-blur"
-      data-tauri-drag-region
-    >
-      <button className="px-2 group cursor-default">
-        <Icons.logo
-          className="transition-all"
-          middleStroke="group-hover:stroke-blue-400"
-          sideStrokes="group-hover:stroke-blue-400"
-        />
-      </button>
-
-      <TitleBarMenubar />
-
-      <div className="flex items-center ml-auto">
-        <button
-          className="w-11 h-7 hover:bg-border flex items-center justify-center transition-all cursor-default"
+    <header className="flex items-center justify-between gap-1 p-4" data-tauri-drag-region>
+      {CustomBreadcrumb ? (
+        <CustomBreadcrumb defaultBreadcrumb={title} />
+      ) : (
+        <h1 className="max-w-40 truncate text-lg font-medium text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline">
+          {title}
+        </h1>
+      )}
+      <div className="ml-auto flex items-center rounded-md border border-border bg-neutral-50 p-1 dark:bg-neutral-950">
+        <ThemeToggle />
+      </div>
+      <div className="flex items-center rounded-md border border-border bg-neutral-50 p-1 dark:bg-neutral-950">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 cursor-default rounded-sm px-2"
           onClick={async () => (await tauriWindow())?.appWindow.minimize()}
         >
           <Icons.minus />
-        </button>
-        <button
-          className="w-11 h-7 hover:bg-destructive flex items-center justify-center group transition-all cursor-default"
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 cursor-default rounded-sm px-2 hover:!bg-red-600"
           onClick={async () => (await tauriWindow())?.appWindow.close()}
         >
-          <Icons.cross className="group-hover:stroke-white" />
-        </button>
+          <Icons.cross />
+        </Button>
       </div>
     </header>
-  )
-}
-
-export function TitleBarMenubar() {
-  const { setTheme } = useTheme()
-  const { sidebar, setSidebar } = useSidebar()
-
-  return (
-    <Menubar className="bg-transparent shadow-none border-none p-0 h-7 px-1">
-      <MenubarMenu>
-        <MenubarTrigger className="bg-none py-0 px-2 text-muted-foreground opacity-80">
-          Tools
-        </MenubarTrigger>
-        <MenubarContent>
-          <MenubarSub>
-            <MenubarSubTrigger>
-              <Icons.logo className="mr-2 h-3 w-3" />
-              <span>Backup</span>
-            </MenubarSubTrigger>
-            <MenubarSubContent>
-              <Link href="/" className="cursor-pointer">
-                <MenubarItem>
-                  <Icons.dashboard className="mr-2 h-3 w-3" />
-                  <span>Dashboard</span>
-                </MenubarItem>
-              </Link>
-              <MenubarItem disabled>
-                <span className="text-center w-full">Quick Actions</span>
-              </MenubarItem>
-              <MenubarItem onClick={backupService.start_watching}>
-                <Icons.start className="mr-2 h-3 w-3" />
-                <span>Start all</span>
-              </MenubarItem>
-              <MenubarItem onClick={backupService.stop_watching}>
-                <Icons.stop className="mr-2 h-3 w-3" />
-                <span>Stop all</span>
-              </MenubarItem>
-              <MenubarItem onClick={backupService.restart_backups}>
-                <Icons.restart className="mr-2 h-3 w-3" />
-                <span>Restart all</span>
-              </MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-        </MenubarContent>
-      </MenubarMenu>
-
-      <MenubarMenu>
-        <MenubarTrigger className="bg-none py-0 px-2 text-muted-foreground opacity-80">
-          Preferences
-        </MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            <Icons.settings className="mr-2 h-3 w-3" />
-            <span>Settings</span>
-          </MenubarItem>
-          <Separator className="my-1" />
-          <MenubarItem disabled>
-            <span className="text-center w-full">Quick Settings</span>
-          </MenubarItem>
-          <MenubarItem role="dark-toggle" onClick={() => setTheme('light')}>
-            <SunIcon className="mr-2 h-3 w-3" />
-            <span>Light</span>
-          </MenubarItem>
-          <MenubarItem role="dark-toggle" onClick={() => setTheme('dark')}>
-            <MoonIcon className="mr-2 h-3 w-3" />
-            <span>Dark</span>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-
-      <MenubarMenu>
-        <MenubarTrigger className="bg-none py-0 px-2 text-muted-foreground opacity-80">
-          View
-        </MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem
-            role="sidebar-toggle"
-            onClick={() => setSidebar((state) => !state)}
-          >
-            {sidebar ? (
-              <Icons.check className="mr-2 h-3 w-3" />
-            ) : (
-              <Icons.cross className="mr-2 h-3 w-3" />
-            )}
-            <span>Sidebar</span>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-
-      <MenubarMenu>
-        <MenubarTrigger className="bg-none py-0 px-2 text-muted-foreground opacity-80">
-          Help
-        </MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            <Icons.about className="mr-2 h-3 w-3" />
-            <span>About</span>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
   )
 }

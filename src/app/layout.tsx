@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import '../styles/globals.css'
 
 import { Providers } from '@/components/providers/providers'
@@ -9,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { StartBackupWatcher } from './_components/start-backup-watcher'
+import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -24,13 +24,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body
         className={cn(
-          'min-h-screen font-sans antialiased [box-shadow:inset_0px_0px_0px_1px_#dedede] dark:[box-shadow:inset_0px_0px_0px_1px_#171717] ',
+          'min-h-screen bg-transparent font-sans antialiased',
           GeistSans.variable,
           GeistMono.variable,
           fontHeading.variable,
         )}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <TailwindIndicator />
+        </Providers>
         <Toaster />
         <StartBackupWatcher />
       </body>

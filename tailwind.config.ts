@@ -3,12 +3,7 @@ import { fontFamily } from 'tailwindcss/defaultTheme'
 
 const config = {
   darkMode: ['class'],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
+  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   prefix: '',
   theme: {
     container: {
@@ -53,17 +48,27 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // App Colors
+        app: {
+          DEFAULT: 'hsl(var(--app-background))',
+          background: 'hsl(var(--app-background))',
+          shell: 'hsl(var(--app-shell))',
+          card: 'hsl(var(--app-card))',
+          muted: 'hsl(var(--app-muted))',
+        },
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
         mono: ['var(--font-geist-mono)', ...fontFamily.mono],
         heading: ['var(--font-heading)', ...fontFamily.sans],
       },
-
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      boxShadow: {
+        border: 'inset 0px 0px 0px 1px hsl(var(--border))', // Customize as needed
       },
       keyframes: {
         'accordion-down': {
@@ -77,7 +82,7 @@ const config = {
         'fade-up': {
           '0%': {
             opacity: '0',
-            transform: 'translateY(10px)',
+            transform: 'translateY(25px)',
           },
           '75%': {
             opacity: '0.6',
@@ -104,8 +109,8 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-up': 'fade-up 0.7s ease-out',
-        'fade-down': 'fade-down 0.7s ease-out',
+        'fade-up': 'fade-up 0.4s ease-out',
+        'fade-down': 'fade-down 0.4s ease-out',
       },
     },
   },

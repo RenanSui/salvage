@@ -1,6 +1,6 @@
 'use client'
 
-import { UnlistenFn, listen } from '@tauri-apps/api/event'
+import { type UnlistenFn, listen } from '@tauri-apps/api/event'
 import * as React from 'react'
 
 export type LogMessage = {
@@ -38,16 +38,11 @@ export const LoggerProvider = ({ children }: { children: React.ReactNode }) => {
   // Logger Service
   React.useEffect(() => {
     const setupListener = async () => {
-      const unlisten: UnlistenFn = await listen<LogMessage>(
-        'log-message',
-        (event) => createLog(event.payload),
-      )
+      const unlisten: UnlistenFn = await listen<LogMessage>('log-message', (event) => createLog(event.payload))
       return unlisten
     }
 
-    setupListener().catch((err) =>
-      console.error('Error setting up listener:', err),
-    )
+    setupListener().catch((err) => console.error('Error setting up listener:', err))
 
     return () => {
       setupListener()
@@ -59,10 +54,7 @@ export const LoggerProvider = ({ children }: { children: React.ReactNode }) => {
   // Reset Logs
   React.useEffect(() => {
     const interval = setInterval(() => {
-      const totalLogs = Object.values(logs).reduce(
-        (acc, logArray) => acc + logArray.length,
-        0,
-      )
+      const totalLogs = Object.values(logs).reduce((acc, logArray) => acc + logArray.length, 0)
 
       if (totalLogs >= 1000) {
         setLogs({})
@@ -82,9 +74,5 @@ export const LoggerProvider = ({ children }: { children: React.ReactNode }) => {
   //   }
   // }, [logs])
 
-  return (
-    <LoggerContext.Provider value={{ logs, createLog }}>
-      {children}
-    </LoggerContext.Provider>
-  )
+  return <LoggerContext.Provider value={{ logs, createLog }}>{children}</LoggerContext.Provider>
 }

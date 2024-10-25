@@ -17,6 +17,12 @@ use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() -> TauriResult<()> {
+    if cfg!(debug_assertions) {
+        let _ = dotenvy::from_filename("./.env.development");
+    } else {
+        let _ = dotenvy::from_filename("./.env.production");
+    };
+
     tauri::Builder::default()
         .manage(watcher::AppState {
             watcher_state: Arc::new(Mutex::new(HashMap::new())),
@@ -35,7 +41,7 @@ async fn main() -> TauriResult<()> {
                             &backup.exclusions,
                             backup.id,
                             window_clone,
-                            None
+                            None,
                         )
                         .await;
                     }
@@ -66,6 +72,8 @@ async fn main() -> TauriResult<()> {
             commands::restart_individual_backup,
             // Statistics
             commands::fetch_file_sizes_by_id,
+            // Helpers
+            commands::get_env
         ])
         .run(tauri::generate_context!())
         .expect("# Error while running tauri application");

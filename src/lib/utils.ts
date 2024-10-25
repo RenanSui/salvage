@@ -1,4 +1,4 @@
-import { StatisticsSchema } from '@/types'
+import { type FilesSchema } from '@/types'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -6,13 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function sizeInBytes({
-  size,
-  unit,
-}: {
-  size: StatisticsSchema['size']
-  unit: StatisticsSchema['unit']
-}) {
+export function sizeInBytes({ size, unit }: { size: FilesSchema['size']; unit: FilesSchema['unit'] }) {
   const sizeNumber = parseFloat(size)
   switch (unit) {
     case 'Tb':
