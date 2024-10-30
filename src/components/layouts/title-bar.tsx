@@ -28,7 +28,7 @@ export function TitleBar({ title = 'Dashboard', customBreadcrumb: CustomBreadcru
           variant="ghost"
           size="sm"
           className="h-6 cursor-default rounded-sm px-2"
-          onClick={async () => (await tauriWindow())?.appWindow.minimize()}
+          onClick={async () => (await tauriWindow())?.getCurrentWindow().minimize()}
         >
           <Icons.minus />
         </Button>
@@ -36,7 +36,7 @@ export function TitleBar({ title = 'Dashboard', customBreadcrumb: CustomBreadcru
           variant="ghost"
           size="sm"
           className="h-6 cursor-default rounded-sm px-2 hover:!bg-red-600"
-          onClick={async () => (await tauriWindow())?.appWindow.close()}
+          onClick={async () => (await tauriWindow())?.getCurrentWindow().close()}
         >
           <Icons.cross />
         </Button>

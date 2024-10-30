@@ -44,7 +44,7 @@ pub mod statistics {
     }
 
     pub async fn fetch_file_sizes_by_id(
-        window: tauri::Window,
+        window: tauri::WebviewWindow,
         id: &str,
     ) -> Option<Vec<StatisticsItem>> {
         let backup = Backup::fetch_backup_by_id(id).await?;

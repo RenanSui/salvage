@@ -50,62 +50,32 @@ async function load_backups() {
 
 async function start_watching() {
   await tauriInvoke('start_watching')
-  toast({
-    title: 'Backup Monitoring Successfully Initialized.',
-    description: 'Your backup monitoring process has started successfully and will notify you of any changes.',
-  })
+  toast({ title: 'Backup Monitoring Successfully Initialized.' })
 }
 
 async function stop_watching() {
   await tauriInvoke('stop_watching')
-  toast({
-    variant: 'destructive',
-    title: 'Backup Monitoring Successfully Stopped.',
-    description: 'The backup monitoring process has been stopped. No further changes will be tracked.',
-  })
+  toast({ variant: 'destructive', title: 'Backup Monitoring Successfully Stopped.' })
 }
 
 async function restart_backups() {
   await tauriInvoke('restart_backups')
-  toast({
-    title: 'Backup Monitoring Restarted Successfully.',
-    description: 'The backup monitoring process has been successfully restarted and will resume tracking changes.',
-  })
+  toast({ title: 'Backup Monitoring Restarted Successfully.' })
 }
 
 async function start_individual_backup({ id, name }: BackupSchema) {
   await tauriInvoke('start_individual_backup', { id })
-  toast({
-    description: (
-      <p>
-        Backup <span className="font-semibold">{name}</span> successfully{' '}
-        <span className="font-semibold text-blue-500">initialized</span>.
-      </p>
-    ),
-  })
+  toast({ title: `Backup [${name}] successfully initialized.` })
 }
 
 async function stop_individual_backup({ id, name }: BackupSchema) {
   await tauriInvoke('stop_individual_backup', { id })
-  toast({
-    description: (
-      <p>
-        Backup <span className="font-semibold">{name}</span> successfully{' '}
-        <span className="font-semibold text-destructive">stopped</span>.
-      </p>
-    ),
-  })
+  toast({ title: `Backup [${name}] successfully stopped.` })
 }
 
 async function restart_individual_backup({ id, name }: BackupSchema) {
   await tauriInvoke('restart_individual_backup', { id })
-  toast({
-    description: (
-      <p>
-        Backup <span className="font-semibold text-blue-500">{name}</span> successfully restarted.
-      </p>
-    ),
-  })
+  toast({ title: `Backup [${name}] successfully restarted.` })
 }
 
 async function fetch_file_sizes_by_id(id: BackupSchema['id']) {

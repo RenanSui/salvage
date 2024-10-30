@@ -53,7 +53,7 @@ pub mod backup {
     }
 
     pub async fn rename_backup(
-        window: tauri::Window,
+        window: tauri::WebviewWindow,
         id: &str,
         name: &str,
     ) -> std::io::Result<bool> {
@@ -79,7 +79,7 @@ pub mod backup {
     }
 
     pub async fn change_backup_source(
-        window: tauri::Window,
+        window: tauri::WebviewWindow,
         id: &str,
         source: &str,
     ) -> std::io::Result<bool> {
@@ -104,7 +104,7 @@ pub mod backup {
     }
 
     pub async fn change_backup_destination(
-        window: tauri::Window,
+        window: tauri::WebviewWindow,
         id: &str,
         dest: &str,
     ) -> std::io::Result<bool> {
@@ -128,7 +128,7 @@ pub mod backup {
     }
 
     pub async fn modify_backup_exclusions(
-        window: tauri::Window,
+        window: tauri::WebviewWindow,
         id: &str,
         exclusions: &[String],
     ) -> std::io::Result<bool> {

@@ -21,10 +21,12 @@ export const useTauriSize = (initialSize: Size) => {
         return prevSize // Return the previous size if there's no change
       })
 
-      const appWindow = (await tauriWindow())?.appWindow
-      const LogicalSize = (await tauriWindow())?.LogicalSize
-      if (appWindow && LogicalSize) {
-        await appWindow?.setSize(new LogicalSize(newSize.width, newSize.height))
+      const window = await tauriWindow()
+      const webview = window?.getCurrentWindow()
+      const LogicalSize = window?.LogicalSize
+
+      if (webview && LogicalSize) {
+        await webview?.setSize(new LogicalSize(newSize.width, newSize.height))
       }
     },
     [], // No dependencies needed since we're using latest state in setSize
