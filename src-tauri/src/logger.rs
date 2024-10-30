@@ -1,6 +1,7 @@
 pub mod logger {
     use chrono::{DateTime, Local};
     use serde::Serialize;
+    use tauri::Emitter;
 
     #[derive(Clone, Debug, Serialize)]
     pub enum LogEventType {
@@ -28,7 +29,7 @@ pub mod logger {
     }
 
     pub fn log_event<S: Into<String>>(
-        window: &tauri::Window,
+        window: &tauri::WebviewWindow,
         id: String,
         message: S,
         event_type: LogEventType,
@@ -49,9 +50,15 @@ pub mod logger {
                     event_type,
                 };
 
-                if let Err(e) = window.emit("log-message", log_message) {
+                if let Err(e) = window.emit_to("main", "log-message", log_message) {
                     eprintln!("Failed to emit log message: {:?}", e);
                 }
+                // if let Err(e) = window.emit_to("log-message", log_message) {
+                //     eprintln!("Failed to emit log message: {:?}", e);
+                // }
+                // if let Err(e) = window.emit("log-message", log_message) {
+                //     eprintln!("Failed to emit log message: {:?}", e);
+                // }
             }
             None => (),
         }

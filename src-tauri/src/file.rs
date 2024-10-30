@@ -8,7 +8,7 @@ pub async fn initial_copy_files<P: AsRef<Path>, Q: AsRef<Path>>(
     dest: Q,
     exclusions: &Vec<String>,
     id: String,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     show_logs: Option<bool>,
 ) -> std::io::Result<()> {
     let source_path = source.as_ref();
@@ -64,7 +64,7 @@ pub async fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
     dest: Q,
     exclusions: Vec<String>,
     id: String,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
 ) -> std::io::Result<()> {
     let path = path.as_ref();
     let source = source.as_ref();
@@ -174,7 +174,7 @@ pub async fn handle_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
 }
 
 pub async fn path_have_exclusions(
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     path: &PathBuf,
     exclusions: Vec<String>,
     id: String,
@@ -240,7 +240,7 @@ pub async fn is_file_modified<P: AsRef<Path>, Q: AsRef<Path>>(
 }
 
 pub async fn copy_modified_file(
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     path: PathBuf,
     copy_to: &String,
     id: String,
@@ -293,7 +293,7 @@ pub async fn copy_modified_file(
 pub async fn create_file_dir<P: AsRef<Path>>(
     dir: P,
     id: String,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     show_logs: Option<bool>,
 ) -> Option<()> {
     let dir_parent = dir.as_ref().parent()?;
@@ -333,7 +333,7 @@ pub async fn copy_file_to_dir<P: AsRef<Path>, Q: AsRef<Path>>(
     src: P,
     dir: Q,
     id: String,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     show_logs: Option<bool>,
 ) -> Option<()> {
     match fs::copy(src.as_ref(), dir.as_ref()).await {

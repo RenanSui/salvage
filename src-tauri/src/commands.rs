@@ -56,12 +56,12 @@ pub async fn create_backup(mut backup: Backup::BackupItem) -> bool {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn rename_backup(window: tauri::Window, id: String, name: String) -> bool {
+pub async fn rename_backup(window: tauri::WebviewWindow, id: String, name: String) -> bool {
     Backup::rename_backup(window, &id, &name).await.is_ok()
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn change_backup_source(window: tauri::Window, id: String, source: String) -> bool {
+pub async fn change_backup_source(window: tauri::WebviewWindow, id: String, source: String) -> bool {
     Backup::change_backup_source(window, &id, &source)
         .await
         .is_ok()
@@ -69,7 +69,7 @@ pub async fn change_backup_source(window: tauri::Window, id: String, source: Str
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn change_backup_destination(
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     id: String,
     destination: String,
 ) -> bool {
@@ -80,7 +80,7 @@ pub async fn change_backup_destination(
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn modify_backup_exclusions(
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     id: String,
     exclusions: Vec<String>,
 ) -> bool {
@@ -101,7 +101,7 @@ pub async fn load_backups() -> Result<Vec<Backup::BackupItem>, tauri::Error> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn start_watching(state: State<'_, AppState>, window: tauri::Window) -> TauriResult<()> {
+pub async fn start_watching(state: State<'_, AppState>, window: tauri::WebviewWindow) -> TauriResult<()> {
     let backups = Backup::fetch_all_backups("./data.json").await?;
 
     for backup in backups {
@@ -149,7 +149,7 @@ pub async fn start_watching(state: State<'_, AppState>, window: tauri::Window) -
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn stop_watching(state: State<'_, AppState>, window: tauri::Window) -> TauriResult<()> {
+pub async fn stop_watching(state: State<'_, AppState>, window: tauri::WebviewWindow) -> TauriResult<()> {
     let backups = Backup::fetch_all_backups("./data.json").await?;
 
     for backup in backups {
@@ -181,7 +181,7 @@ pub async fn stop_watching(state: State<'_, AppState>, window: tauri::Window) ->
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn restart_backups(state: State<'_, AppState>, window: tauri::Window) -> TauriResult<()> {
+pub async fn restart_backups(state: State<'_, AppState>, window: tauri::WebviewWindow) -> TauriResult<()> {
     let _ = stop_watching(state.clone(), window.clone()).await;
     let _ = start_watching(state, window).await;
     Ok(())
@@ -190,7 +190,7 @@ pub async fn restart_backups(state: State<'_, AppState>, window: tauri::Window) 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn start_individual_backup(
     state: State<'_, AppState>,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     id: String,
 ) -> TauriResult<()> {
     if let Some(backup) = Backup::fetch_backup_by_id(&id).await {
@@ -232,7 +232,7 @@ pub async fn start_individual_backup(
 #[tauri::command(rename_all = "snake_case")]
 pub async fn stop_individual_backup(
     state: State<'_, AppState>,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     id: String,
 ) -> TauriResult<()> {
     if let Some(backup) = Backup::fetch_backup_by_id(&id).await {
@@ -269,7 +269,7 @@ pub async fn stop_individual_backup(
 #[tauri::command(rename_all = "snake_case")]
 pub async fn restart_individual_backup(
     state: State<'_, AppState>,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     id: String,
 ) -> TauriResult<()> {
     let _ = stop_individual_backup(state.clone(), window.clone(), id.clone()).await;
@@ -278,7 +278,7 @@ pub async fn restart_individual_backup(
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn fetch_file_sizes_by_id(
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     id: &str,
 ) -> Result<Vec<Statistics::StatisticsItem>, String> {
     match Statistics::fetch_file_sizes_by_id(window, id).await {

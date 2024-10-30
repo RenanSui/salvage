@@ -48,7 +48,7 @@ pub async fn handle_events<P: AsRef<Path>, Q: AsRef<Path>>(
     dst: Q,
     exclusions: Vec<String>,
     mut rx: Receiver<notify::Result<Event>>,
-    window: tauri::Window,
+    window: tauri::WebviewWindow,
     id: String,
 ) -> notify::Result<()> {
     let src = Arc::new(src.as_ref().to_path_buf());
